@@ -210,9 +210,12 @@ app.get("/issue/:issue/delete", function (req, res, next) {
     else {
         connection.query("DELETE FROM IssuePosts WHERE IssueID=?", [req.params.issue], function (err1) {
             if (err1) { next(err1); return; }
-            connection.query("DELETE FROM Issues WHERE ID=?", [req.params.issue], function (err2) {
+            connection.query("DELETE FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err2) {
                 if (err2) { next(err2); return; }
-                res.redirect("/issues");
+                connection.query("DELETE FROM Issues WHERE ID=?", [req.params.issue], function (err3) {
+                    if (err3) { next(err3); return; }
+                    res.redirect("/issues");
+                });
             });
         });
     }
