@@ -121,7 +121,9 @@ app.get("/createissue", function (req, res, next) {
 app.post("/createissue", function (req, res, next) {
     if (req.session.loginid === -1) res.redirect("/");
     else if (typeof req.body.name !== typeof "string") res.status(400).end();
+    else if (req.body.name === "") res.redirect("/");
     else if (typeof req.body.firsttext !== typeof "string") res.status(400).end();
+    else if (req.body.firsttext === "") res.redirect("/");
     else if (typeof req.body.projectid !== typeof "string") res.status(400).end();
     else if (isNaN(Number(req.body.projectid))) res.status(400).end();
     else
@@ -159,6 +161,7 @@ app.post("/issue/:issue", function (req, res, next) {
     if (typeof req.params.issue !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.issue))) res.redirect("/");
     else if (typeof req.body.text !== typeof "") res.status(400).end();
+    else if (req.body.text === "") res.redirect("/");
     else {
         connection.query("INSERT INTO IssuePosts (ContainedText,AuthorID,IssueID,DateOfCreation) VALUES (?,?,?,?)", [req.body.text, req.session.loginid, req.params.issue, new Date()], function (err, results) {
             if (err) { next(err); return; }
@@ -225,6 +228,7 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
     else if (typeof req.params.issue !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.issue))) res.redirect("/");
     else if (typeof req.query.tagtext !== typeof "") res.redirect("/");
+    else if (req.body.tagtext === "") res.redirect("/");
     else {
         connection.query("INSERT INTO IssueTags (TagText,IssueID) VALUES (?,?)", [req.query.tagtext, req.params.issue], function (err, results) {
             if (err) { next(err); return; }
@@ -287,7 +291,7 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                     if (err2) { next(err2); return; }
                     res.redirect("/issue/" + tags[0].IssueID);
                 });
-        })
+        });
     }
 });
 app.get("/logout", function (req, res) {
