@@ -15,13 +15,14 @@ block body
         else
             .assigneetext=issue.FullName + " is assigned"
         br
-    if req.user.isadmin
-        .toolbox
+    .toolbox
+        if req.user.isadmin || issue.AssigneeID === req.user.id
             if issue.IsClosed
                 a(href="/issue/" + issue.ID + "/open").toolbox-open Open
             else
                 a(href="/issue/" + issue.ID + "/close").toolbox-close Close
             |  
+        if req.user.isadmin
             a(href="/issue/" + issue.ID + "/delete/areyousure") Delete Issue
         br
     if req.user.id !== -1

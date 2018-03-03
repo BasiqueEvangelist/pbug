@@ -167,24 +167,36 @@ app.post("/issue/:issue", function (req, res, next) {
     }
 });
 app.get("/issue/:issue/open", function (req, res, next) {
-    if (!req.user.isadmin) res.redirect("/");
-    else if (typeof req.params.issue !== typeof "") res.redirect("/");
+    if (typeof req.params.issue !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.issue))) res.redirect("/");
     else {
-        connection.query("UPDATE Issues SET Issues.IsClosed = FALSE WHERE ID = ?", [req.params.issue], function (err, results) {
-            if (err) { next(err); return; }
-            res.redirect("/issue/" + req.params.issue);
+        connection.query("SELECT AssigneeID FROM Issues WHERE ID=?", [req.params.issue], function (err, results) {
+            if (err) {
+                next(err); return;
+            }
+            if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                connection.query("UPDATE Issues SET Issues.IsClosed = FALSE WHERE ID = ?", [req.params.issue], function (err, results) {
+                    if (err) { next(err); return; }
+                    res.redirect("/issue/" + req.params.issue);
+                });
+            }
         });
     }
 });
 app.get("/issue/:issue/close", function (req, res, next) {
-    if (!req.user.isadmin) res.redirect("/");
-    else if (typeof req.params.issue !== typeof "") res.redirect("/");
+    if (typeof req.params.issue !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.issue))) res.redirect("/");
     else {
-        connection.query("UPDATE Issues SET Issues.IsClosed = True WHERE ID = ?", [req.params.issue], function (err, results) {
-            if (err) { next(err); return; }
-            res.redirect("/issue/" + req.params.issue);
+        connection.query("SELECT AssigneeID FROM Issues WHERE ID=?", [req.params.issue], function (err, results) {
+            if (err) {
+                next(err); return;
+            }
+            if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                connection.query("UPDATE Issues SET Issues.IsClosed = TRUE WHERE ID = ?", [req.params.issue], function (err, results) {
+                    if (err) { next(err); return; }
+                    res.redirect("/issue/" + req.params.issue);
+                });
+            }
         });
     }
 });
