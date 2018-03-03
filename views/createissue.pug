@@ -1,0 +1,13 @@
+extends layout.pug
+
+block body
+    form(action="/createissue", method="POST",enctype="application/x-www-form-urlencoded")
+        input(type="text",name="name",placeholder="Name of issue")
+        br
+        textarea(name="firsttext",placeholder="Text of first post (Markdown)")
+        br
+        select(name="projectid")
+            each project in projects
+                option(value=project.ID.toString())= project.ProjectName
+        br
+        input(type="submit")

@@ -1,0 +1,32 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title PBug
+        link(rel="stylesheet",href="/static/global.css")
+    body
+        nav
+            .navlinks
+                a(href="/") Home
+                |  
+                a(href="/issues") Issues
+                |  
+                if req.user.id == -1
+                    a(href="/login") Login
+                    |  
+                    a(href="/register") Register
+                else
+                    if req.user.isadmin
+                        a(href="/createproject") Create Project
+                        |  
+                    a(href="/createissue") Create Issue
+                    |  
+                    a(href="/logout") Log out
+                |  
+                br
+        block body
+        footer(style="bottom: 0px; position: absolute; left: 50%;")
+            block footer
+                small Made by porez

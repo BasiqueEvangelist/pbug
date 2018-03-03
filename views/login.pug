@@ -1,0 +1,9 @@
+extends layout.pug
+
+block body
+    form(action="/login",method="POST",type="application/x-www-form-urlencoded")
+        input(type="text",name="username",placeholder="Login name")
+        br
+        input(type="password",name="password",placeholder="Password")
+        br
+        input(type="submit",value="login")

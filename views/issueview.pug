@@ -1,0 +1,53 @@
+extends layout.pug
+
+block body
+    h2 
+        = "[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] " + issue.IssueName + " ("
+        if issue.IsClosed
+            | Closed
+        else
+            | Opened
+        | ) 
+        each tag in tags
+            span.tag= "#" + tag.TagText + " "
+        if issue.AssigneeID === null
+            .assigneetext No assignee
+        else
+            .assigneetext=issue.FullName + " is assigned"
+        br
+    if req.user.isadmin
+        .toolbox
+            if issue.IsClosed
+                a(href="/issue/" + issue.ID + "/open").toolbox-open Open
+            else
+                a(href="/issue/" + issue.ID + "/close").toolbox-close Close
+            |  
+            a(href="/issue/" + issue.ID + "/delete/areyousure") Delete Issue
+        br
+    if req.user.id !== -1
+        form(action="/issue/" + issue.ID + "/assign",method="GET")
+            fieldset
+                legend Assign
+                select(name="userid")
+                    option(value="-1") Unassign
+                    each user in users
+                        option(value=user.ID)=user.FullName
+                input(type="submit",value="Assign")
+        br
+    if req.user.isadmin || posts[0].AuthorID === req.user.id
+        form(action="/issue/" + issue.ID + "/addtag",method="GET")
+            fieldset
+                legend Add tag
+                input(type="text",name="tagtext",placeholder="Tag name")
+                input(type="submit",value="Add")
+        br
+    each post in posts
+        .entry
+            .username=post.FullName
+            .date=post.DateOfCreation
+            blockquote!=parseMarkdown(post.ContainedText)
+    if req.user.id != -1
+        form(action="/issue/" + issue.ID, method="POST",enctype="application/x-www-form-urlencoded")
+            textarea(name="text",placeholder="Post contents (Markdown)")
+            br
+            input(type="submit")

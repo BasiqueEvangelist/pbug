@@ -1,0 +1,14 @@
+extends layout.pug
+block body
+    h2=title
+    ol
+    each issue in issues
+        li
+            a(href="/issue/" + issue.ID)="[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] " + issue.IssueName
+            |  (
+            if issue.IsClosed
+                | Closed
+            else
+                | Opened
+            | )
+            br

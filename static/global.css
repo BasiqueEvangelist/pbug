@@ -1,0 +1,74 @@
+body
+{
+	margin:40px auto;
+	max-width:650px;
+	line-height:1.6;
+	font-size:18px;
+	color:#444;
+	padding:15px;
+}
+
+h1,h2,h3
+{
+	line-height:1.2;
+	margin:0 -10px;
+} 
+
+h4,h5,h5
+{
+	line-height:1.2;
+	margin:0 -10px;
+}
+
+div.entry
+{
+	padding:10px 10px;
+	font-size:14px;
+}
+
+nav > div.navlinks 
+{
+    border-width: 2px;
+    border-color: black;
+    padding: 5px;
+    border-style: solid;
+    margin-bottom: 10px;
+}
+
+nav > div.navlinks > a {
+    color: black;
+    border-right: 2px solid black;
+    padding-right: 5px;
+}
+
+div.entry > div.date
+{
+	margin:0 -10px ;
+	font-size:10px;
+}
+
+div.entry > div.username 
+{
+    font-size:16px; 
+    font-weight: bold;
+}
+
+span.tag:hover 
+{
+    background-color: black;
+    color: white
+}
+
+hr
+{
+	margin:20px -10px 0;
+}
+
+p
+{
+    text-indent: 10px;
+}
+
+a {
+    text-decoration: none;
+}

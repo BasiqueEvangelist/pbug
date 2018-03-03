@@ -1,0 +1,18 @@
+{
+    "rules": {
+        "semi": [
+            "error",
+            "always"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "eqeqeq": "error",
+        "no-undef": "error",
+        "use-isnan": "warn"
+    },
+    "env": {
+        "node": true
+    }
+}
