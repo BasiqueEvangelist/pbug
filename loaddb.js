@@ -1,6 +1,6 @@
 var mysql = require("sync-mysql");
 var fs = require("fs");
-var connection = new mysql.createConnection({
+var connection = new mysql({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASS,
