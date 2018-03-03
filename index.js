@@ -143,7 +143,7 @@ app.get("/issue/:issue", function (req, res, next) {
             else {
                 connection.query("SELECT IssuePosts.ContainedText,IssuePosts.DateOfCreation,Users.FullName,IssuePosts.AuthorID FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.IssueID=?", [issues[0].ID], function (err2, posts) {
                     if (err2) { next(err2); return; }
-                    connection.query("SELECT TagText FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err3, tags) {
+                    connection.query("SELECT TagText,ID FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err3, tags) {
                         if (err3) { next(err3); return; }
                         connection.query("SELECT ID,FullName FROM Users", function (err4, users) {
                             if (err4) { next(err4); return; }
@@ -259,6 +259,22 @@ app.post("/createproject", function (req, res, next) {
             if (err) { next(err); return; }
             res.redirect("/");
         });
+    }
+});
+app.get("/tag/:tag/remove", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.tag !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.tag))) res.redirect("/");
+    else {
+        connection.query("SELECT IssueID FROM IssueTags WHERE ID=?", [req.params.tag], function (err1, tags) {
+            if (err1) { next(err1); return; }
+            else if (tags.length < 1) { res.redirect("/"); }
+            else
+                connection.query("DELETE FROM IssueTags WHERE ID=?", [req.params.tag], function (err2, results) {
+                    if (err2) { next(err2); return; }
+                    res.redirect("/issue/" + tags[0].IssueID);
+                });
+        })
     }
 });
 app.get("/logout", function (req, res) {
