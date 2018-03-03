@@ -143,7 +143,7 @@ app.get("/issue/:issue", function (req, res, next) {
             if (err1) { next(err1); return; }
             if (issues.length < 1) res.render("issuenotfound");
             else {
-                connection.query("SELECT IssuePosts.ContainedText,IssuePosts.DateOfCreation,Users.FullName,IssuePosts.AuthorID,IssuePosts.ID FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.IssueID=?", [issues[0].ID], function (err2, posts) {
+                connection.query("SELECT IssuePosts.ContainedText,IssuePosts.DateOfCreation,IssuePosts.DateOfEdit,Users.FullName,IssuePosts.AuthorID,IssuePosts.ID FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.IssueID=?", [issues[0].ID], function (err2, posts) {
                     if (err2) { next(err2); return; }
                     connection.query("SELECT TagText,ID FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err3, tags) {
                         if (err3) { next(err3); return; }
@@ -299,7 +299,7 @@ app.get("/post/:post/edit", function (req, res, next) {
     else if (typeof req.params.post !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.post))) res.redirect("/");
     else {
-        connection.query("SELECT IssuePosts.ID,IssuePosts.ContainedText,IssuePosts.AuthorID,IssuePosts.DateOfCreation,Users.FullName FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.ID=?", [req.params.post], function (err1, posts) {
+        connection.query("SELECT IssuePosts.ID,IssuePosts.ContainedText,IssuePosts.AuthorID,IssuePosts.DateOfCreation,IssuePosts.DateOfEdit,Users.FullName FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.ID=?", [req.params.post], function (err1, posts) {
             if (err1) { next(err1); return; }
             else if (posts.length < 1) { res.redirect("/"); }
             else if (posts[0].AuthorID !== req.user.id) { res.redirect("/"); }
@@ -320,7 +320,7 @@ app.post("/post/:post/edit", function (req, res, next) {
             else if (posts.length < 1) { res.redirect("/"); }
             else if (posts[0].AuthorID !== req.user.id) { res.redirect("/"); }
             else {
-                connection.query("UPDATE IssuePosts SET ContainedText=? WHERE ID=?", [req.body.newtext, req.params.post], function (err2, results) {
+                connection.query("UPDATE IssuePosts SET ContainedText=?,DateOfEdit=? WHERE ID=?", [req.body.newtext, new Date(), req.params.post], function (err2, results) {
                     if (err2) { next(err2); return; }
                     res.redirect("/");
                 });

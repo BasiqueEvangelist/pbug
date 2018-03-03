@@ -55,6 +55,8 @@ block body
         .entry
             .username=post.FullName
             .date=post.DateOfCreation
+            if post.DateOfEdit !== null
+                .date="Edited on " + post.DateOfEdit
             if req.user.id == post.AuthorID
                 .underpanel
                     a(href="/post/" + post.ID + "/edit") edit
