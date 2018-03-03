@@ -1,0 +1,9 @@
+extends layout
+block body
+    h2 Editing post
+    form(action="/post/" + post.ID + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+        .entry
+            .username=post.FullName
+            .date=post.DateOfCreation
+            textarea(name="newtext")=post.ContainedText
+        input(type="submit", value="Repost")

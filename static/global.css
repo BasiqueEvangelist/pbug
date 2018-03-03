@@ -54,6 +54,12 @@ div.entry > div.username
     font-weight: bold;
 }
 
+div.entry > div.underpanel
+{
+	font-size: 10px;
+	color: black;
+}
+
 span.tag:hover 
 {
     background-color: black;

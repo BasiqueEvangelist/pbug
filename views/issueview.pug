@@ -55,6 +55,9 @@ block body
         .entry
             .username=post.FullName
             .date=post.DateOfCreation
+            if req.user.id == post.AuthorID
+                .underpanel
+                    a(href="/post/" + post.ID + "/edit") edit
             blockquote!=parseMarkdown(post.ContainedText)
     if req.user.id != -1
         form(action="/issue/" + issue.ID, method="POST",enctype="application/x-www-form-urlencoded")
