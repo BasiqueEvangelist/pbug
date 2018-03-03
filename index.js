@@ -245,6 +245,19 @@ app.get("/issue/:issue/assign", function (req, res, next) {
         });
     }
 });
+app.get("/issue/:issue/changetitle", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.issue !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.issue))) res.redirect("/");
+    else if (typeof req.query.newtitle !== typeof "") res.redirect("/");
+    else if (req.query.newtitle === "") res.redirect("/");
+    else {
+        connection.query("UPDATE Issues SET IssueName=? WHERE ID=?", [req.query.newtitle, req.params.issue], function (err, results) {
+            if (err) { next(err); return; }
+            res.redirect("/issue/" + req.params.issue);
+        });
+    }
+});
 app.get("/createproject", function (req, res, next) {
     if (!req.user.isadmin) res.redirect("/");
     else res.render("createproject");

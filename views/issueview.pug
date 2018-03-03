@@ -10,6 +10,9 @@ block body
         | ) 
         each tag in tags
             span.tag= "#" + tag.TagText + " "
+            | (
+            a(href="/tag/" + tag.ID + "/remove") Remove
+            | ) 
         if issue.AssigneeID === null
             .assigneetext No assignee
         else
@@ -42,6 +45,12 @@ block body
                 input(type="text",name="tagtext",placeholder="Tag name")
                 input(type="submit",value="Add")
         br
+        form(action="/issue/" + issue.ID + "/changetitle",method="GET")
+            fieldset
+                legend Change title
+                input(type="text",name="newtitle",placeholder="New title")
+                input(type="submit", value="Change")
+                
     each post in posts
         .entry
             .username=post.FullName
