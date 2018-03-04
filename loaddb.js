@@ -17,7 +17,7 @@ dbob.issues.forEach(function (element) {
     connection.query("INSERT INTO Issues VALUES (?,?,?,?,?)", [element.ID, element.IssueName, element.ProjectID, element.IsClosed, element.AssigneeID]);
 });
 dbob.issueposts.forEach(function (element) {
-    connection.query("INSERT INTO IssuePosts VALUES (?,?,?,?,?)", [element.ID, element.AuthorID, element.IssueID, element.ContainedText, element.DateOfCreation]);
+    connection.query("INSERT INTO IssuePosts VALUES (?,?,?,?,?,?)", [element.ID, element.AuthorID, element.IssueID, element.ContainedText, element.DateOfCreation, element.DateOfEdit]);
 });
 dbob.issuetags.forEach(function (element) {
     connection.query("INSERT INTO IssueTags VALUES (?,?,?)", [element.ID, element.IssueID, element.TagText]);
