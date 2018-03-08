@@ -2,6 +2,7 @@ var express = require("express");
 var mysql = require("mysql");
 var session = require("express-session");
 var sha512 = require("sha512");
+var compression = require("compression");
 var markdown = require("markdown").markdown;
 var connection = new mysql.createConnection({
     host: process.env.MYSQL_HOST,
@@ -11,6 +12,7 @@ var connection = new mysql.createConnection({
 });
 var MySQLStore = require("express-mysql-session")(session);
 var app = express();
+app.use(compression());
 var store = new MySQLStore({}, connection);
 app.use(session({
     name: "pbug.sid",

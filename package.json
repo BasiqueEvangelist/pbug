@@ -2,6 +2,7 @@
     "name": "pbug",
     "private": true,
     "dependencies": {
+        "compression": "^1.7.2",
         "express": "^4.16.2",
         "express-mysql-session": "^1.2.3",
         "express-session": "^1.15.6",
