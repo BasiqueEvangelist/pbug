@@ -8,24 +8,23 @@ html(lang="en")
         link(rel="stylesheet",href="/static/global.css")
     body
         nav
-            .navlinks
-                a(href="/") Home
+            a(href="/") Home
+            |  
+            a(href="/issues") Issues
+            |  
+            if req.user.id == -1
+                a(href="/login") Login
                 |  
-                a(href="/issues") Issues
-                |  
-                if req.user.id == -1
-                    a(href="/login") Login
+                a(href="/register") Register
+            else
+                if req.user.isadmin
+                    a(href="/createproject") Create Project
                     |  
-                    a(href="/register") Register
-                else
-                    if req.user.isadmin
-                        a(href="/createproject") Create Project
-                        |  
-                    a(href="/createissue") Create Issue
-                    |  
-                    a(href="/logout") Log out
+                a(href="/createissue") Create Issue
                 |  
-                br
+                a(href="/logout") Log out
+            |  
+            br
         block body
         footer(style="bottom: 0px; position: fixed; left: 50%;")
             block footer

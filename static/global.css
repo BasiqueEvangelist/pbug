@@ -27,7 +27,7 @@ div.entry
 	font-family: monospace;
 }
 
-nav > div.navlinks 
+nav
 {
     border-width: 2px;
     border-color: black;
@@ -36,7 +36,7 @@ nav > div.navlinks
     margin-bottom: 10px;
 }
 
-nav > div.navlinks > a {
+nav > a {
     color: black;
     border-right: 2px solid black;
     padding-right: 5px;
