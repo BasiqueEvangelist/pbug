@@ -5,10 +5,10 @@ block body
     each issue in issues
         li
             a(href="/issue/" + issue.ID)="[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] " + issue.IssueName
-            |  (
-            if issue.IsClosed
-                | Closed
-            else
-                | Opened
-            | )
+            //- |  (
+            //- if issue.IsClosed
+            //-     | Closed
+            //- else
+            //-     | Opened
+            //- | )
             br
