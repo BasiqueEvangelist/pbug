@@ -7,25 +7,30 @@ html(lang="en")
         title PBug
         link(rel="stylesheet",href="/static/global.css")
     body
-        nav
-            a(href="/") Home
-            |  
-            a(href="/issues") Issues
-            |  
-            if req.user.id == -1
-                a(href="/login") Login
-                |  
-                a(href="/register") Register
-            else
-                if req.user.isadmin
-                    a(href="/createproject") Create Project
-                    |  
-                a(href="/createissue") Create Issue
-                |  
-                a(href="/logout") Log out
-            |  
-            br
-        block body
-        footer(style="bottom: 0px; position: fixed; left: 50%;")
-            block footer
-                small Made by porez
+        header.flex-container
+            .inner-element
+                .helper
+                    img.logo(src="/static/PB.svg",width="32",height="32")
+                .helper
+                    nav
+                        a(href="/") Home
+                        |  | 
+                        a(href="/issues") Issues
+                        |  | 
+                        if req.user.id == -1
+                            a(href="/login") Login
+                            |  | 
+                            a(href="/register") Register
+                        else
+                            if req.user.isadmin
+                                a(href="/createproject") Create Project
+                                |  | 
+                            a(href="/createissue") Create Issue
+                            |  | 
+                            a(href="/logout") Log out
+                        |  | 
+        .page-main
+            block body
+            footer
+                block footer
+                    small Made by porez

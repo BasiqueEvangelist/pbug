@@ -1,23 +1,19 @@
 body
 {
-	margin:40px auto;
-	max-width:650px;
 	line-height:1.6;
-	font-size:18px;
-	color:#444;
-	padding:15px;
+	font-size:16px;
+	font-family: sans-serif;
+	color:#222;
+	margin:0;
+	background-color:#fafaff;
 }
 
-h1,h2,h3
+h1,h2,h3,h4,h5,h5
 {
+	color:#059;
 	line-height:1.2;
-	margin:0 -10px;
-} 
-
-h4,h5,h5
-{
-	line-height:1.2;
-	margin:0 -10px;
+	margin:0 10px;
+	font-family: tahoma, sans-serif;
 }
 
 div.entry
@@ -27,19 +23,111 @@ div.entry
 	font-family: monospace;
 }
 
-nav
+header
 {
-    border-width: 2px;
-    border-color: black;
-    padding: 5px;
-    border-style: solid;
-    margin-bottom: 10px;
+	background-color: #059;
+	padding:10px 0px 10px 0px;
+	font-size: 18px;
+	width: 100%;
+	font-family: tahoma;
 }
 
-nav > a {
-    color: black;
-    border-right: 2px solid black;
-    padding-right: 5px;
+nav
+{
+  display: inline-block;
+}
+
+.flex-container
+{
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-element
+{
+  display: inline-block;
+  width: 750px;
+}
+
+.helper
+{
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.helper > img
+{
+    vertical-align: middle;
+}
+
+div.page-main
+{
+    max-width:750px;
+	margin:auto;
+	margin-top:20px;
+	}
+
+.issues-list
+{
+	list-style-type: none;
+	padding-left:0;
+	width:100%;
+}
+
+.issues-list  a
+{
+	display:block;
+	color:#222;
+}
+
+.issues-list li
+{
+	padding:5px;
+	padding-left:10px;
+	margin:5px;
+}
+
+.issue-tag
+{
+	font-size: 12px;
+	font-family:tahoma;
+	color: #059;
+	margin-bottom: -5px;
+}
+
+
+.issues-list li:nth-child(odd)
+{
+	background: #f0f0ff;
+}
+
+.issues-list li:hover
+{
+	background: #fff;
+}
+
+nav
+{
+    color: #eef;
+}
+
+nav > a
+{
+    color: #eef;
+	padding:5px;
+    padding-right:10px;
+    padding-left:10px;
+}
+
+nav > a:hover
+{
+	background-color: #036;
+    color: #fff;
 }
 
 div.entry > div.date
@@ -76,6 +164,13 @@ p
     text-indent: 10px;
 }
 
-a {
+a
+{
     text-decoration: none;
+}
+
+footer
+{
+	padding-top:25px;
+	text-align: center;
 }
