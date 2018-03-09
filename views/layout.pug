@@ -10,10 +10,11 @@ html(lang="en")
         header.flex-container
             .inner-element
                 .helper
-                    img.logo(src="/static/PB.svg",width="32",height="32")
-                .helper
                     nav
-                        a(href="/") Home
+                        a(href="/",style="display:inline-block")
+                            .helper
+                                img.logo(src="/static/PB.svg",width="32",height="32")
+                            |  Home
                         |  | 
                         a(href="/issues") Issues
                         |  | 
