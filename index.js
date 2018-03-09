@@ -230,7 +230,7 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
     else if (typeof req.params.issue !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.issue))) res.redirect("/");
     else if (typeof req.query.tagtext !== typeof "") res.redirect("/");
-    else if (req.body.tagtext === "") res.redirect("/");
+    else if (req.query.tagtext === "") res.redirect("back");
     else {
         connection.query("INSERT INTO IssueTags (TagText,IssueID) VALUES (?,?)", [req.query.tagtext, req.params.issue], function (err, results) {
             if (err) { next(err); return; }
@@ -315,7 +315,7 @@ app.post("/post/:post/edit", function (req, res, next) {
     else if (typeof req.params.post !== typeof "") res.status(400).end();
     else if (isNaN(Number(req.params.post))) res.status(400).end();
     else if (typeof req.body.newtext !== typeof "") res.status(400).end();
-    else if (req.body.newtext === "") res.redirect("/");
+    else if (req.body.newtext === "") res.redirect("back");
     else {
         connection.query("SELECT AuthorID FROM IssuePosts WHERE ID=?", [req.params.post], function (err1, posts) {
             if (err1) { next(err1); return; }
