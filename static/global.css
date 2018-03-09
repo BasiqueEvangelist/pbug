@@ -29,7 +29,7 @@ header
 	padding:10px 0px 10px 0px;
 	font-size: 18px;
 	width: 100%;
-	font-family: tahoma;
+	font-family: tahoma, sans-serif;
 }
 
 nav
@@ -95,7 +95,7 @@ div.page-main
 .issue-tag
 {
 	font-size: 12px;
-	font-family:tahoma;
+	font-family:tahoma,sans-serif;
 	color: #059;
 	margin-bottom: -5px;
 }
