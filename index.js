@@ -5,12 +5,13 @@ var sha512 = require("sha512");
 var compression = require("compression");
 var markdown = require("markdown").markdown;
 require("dotenv").config();
-var connection = new mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DB
-});
+var connection = require("./database.js")(
+    process.env.DB_TYPE,
+    process.env.DB_HOST,
+    process.env.DB_USER,
+    process.env.DB_PASS,
+    process.env.DB_DB
+);
 var MySQLStore = require("express-mysql-session")(session);
 var app = express();
 app.use(compression());
