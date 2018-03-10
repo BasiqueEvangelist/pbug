@@ -16,11 +16,25 @@ h1,h2,h3,h4,h5,h5
 	font-family: tahoma, sans-serif;
 }
 
-div.entry
+.entry
 {
 	padding:10px 10px;
 	font-size:14px;
 	font-family: monospace;
+}
+
+
+ul.postlist
+{
+	list-style-type: none;
+	padding-left: 0px;
+	padding-right: 0px;
+	width: 100%;
+}
+
+ul.postlist li:nth-child(odd)
+{
+	background-color: #f0f0ff;
 }
 
 header
@@ -34,43 +48,48 @@ header
 
 nav
 {
-  display: inline-block;
+	display: inline-block;
 }
 
 .flex-container
 {
-  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
-  display: -ms-flexbox;  /* TWEENER - IE 10 */
-  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
-  display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
-  justify-content: center;
-  align-items: center;
+	display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+	display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+	justify-content: center;
+	align-items: center;
 }
 
 .inner-element
 {
-  display: inline-block;
-  width: 750px;
+	display: inline-block;
+	width: 750px;
 }
 
 .helper
 {
-    display: inline-block;
+	display: inline-block;
     height: 100%;
     vertical-align: middle;
 }
 
 .helper > img
 {
-    vertical-align: middle;
+	vertical-align: middle;
+}
+
+span.assigneetext
+{
+	color:black;
 }
 
 div.page-main
 {
-    max-width:750px;
+	max-width:750px;
 	margin:auto;
 	margin-top:20px;
-	}
+}
 
 .issues-list
 {
@@ -113,12 +132,12 @@ div.page-main
 
 nav
 {
-    color: #eef;
+	color: #eef;
 }
 
 nav > a
 {
-    color: #eef;
+	color: #eef;
 	padding:5px;
     padding-right:10px;
     padding-left:10px;
@@ -130,47 +149,102 @@ nav > a:hover
     color: #fff;
 }
 
-div.entry > div.date
+.entry
 {
-	margin:0 -10px ;
+	font-family: tahoma, sans-serif;
+}
+
+.entry div.date
+{
 	font-size:10px;
+	color:#059;
 }
 
-div.entry > div.username 
+.entry div.username 
 {
-    font-size:16px; 
-    font-weight: bold;
+	font-size:18px; 
 }
 
-div.entry > div.underpanel
+.entry textarea.submit-text
+{
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	height: 10em;
+}
+
+.entry input.submitpost
+{
+	background-color: #059;
+	color: white;
+	border: none;
+	width: 6em;
+	height: 1.5em;
+}
+
+div.underpanel
 {
 	font-size: 10px;
 	color: black;
+	padding-left: 15px;
 }
 
-span.tag:hover 
+span.tag a, span.tag 
 {
-    background-color: black;
+	background-color: white;
+	color: gray;
+}
+
+span.tag:hover, span.tag:hover a 
+{
+	background-color: black;
     color: white
+}
+
+
+span.issue-closed-marker 
+{
+	color: red;
+}
+
+span.issue-opened-marker 
+{
+	color: green;
+}
+
+.issue-name
+{
+	margin-top: 5px;
+	margin-left: 0px;
+	color: black;
+	font-weight: normal;
+}
+
+div.taglist 
+{
+	margin-top: 10px;
 }
 
 hr
 {
-	margin:20px -10px 0;
+	border-color: #05b;
+	border-width: 0px 0px 2px;
+	margin: 0px;
 }
 
 p
 {
-    text-indent: 10px;
+	text-indent: 10px;
 }
 
 a
 {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 footer
 {
 	padding-top:25px;
 	text-align: center;
+	color: #059;
 }

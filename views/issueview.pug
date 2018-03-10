@@ -1,32 +1,33 @@
 extends layout.pug
 
 block body
-    h2 
-        = "[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] " + issue.IssueName + " ("
+    .issue-tag
+        = "[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] ("
         if issue.IsClosed
-            | Closed
+            span.issue-closed-marker Closed
         else
-            | Opened
+            span.issue-opened-marker Open
         | ) 
-        each tag in tags
-            span.tag= "#" + tag.TagText + " "
-            | (
-            a(href="/tag/" + tag.ID + "/remove") Remove
-            | ) 
         if issue.AssigneeID === null
-            .assigneetext No assignee
+            span.assigneetext No assignee
         else
-            .assigneetext=issue.FullName + " is assigned"
-        br
-    .toolbox
+            span.assigneetext="Assignee: " + issue.FullName
+    h2.issue-name=issue.IssueName
+    hr
+    .taglist
+        each tag in tags
+            span.tag
+                = "#" + tag.TagText + " "
+                a(href="/tag/" + tag.ID + "/remove") &times; 
+    .underpanel
         if req.user.isadmin || issue.AssigneeID === req.user.id
             if issue.IsClosed
-                a(href="/issue/" + issue.ID + "/open").toolbox-open Open
+                a(href="/issue/" + issue.ID + "/open") open
             else
-                a(href="/issue/" + issue.ID + "/close").toolbox-close Close
+                a(href="/issue/" + issue.ID + "/close") close
             |  
         if req.user.isadmin
-            a(href="/issue/" + issue.ID + "/delete/areyousure") Delete Issue
+            a(href="/issue/" + issue.ID + "/delete/areyousure") delete issue
         br
     if req.user.id !== -1
         form(action="/issue/" + issue.ID + "/assign",method="GET")
@@ -50,19 +51,22 @@ block body
                 legend Change title
                 input(type="text",name="newtitle",placeholder="New title")
                 input(type="submit", value="Change")
-                
-    each post in posts
-        .entry
-            .username=post.FullName
-            .date=post.DateOfCreation
-            if post.DateOfEdit !== null
-                .date="Edited on " + post.DateOfEdit
-            if req.user.id == post.AuthorID
-                .underpanel
-                    a(href="/post/" + post.ID + "/edit") edit
-            blockquote!=parseMarkdown(post.ContainedText)
-    if req.user.id != -1
-        form(action="/issue/" + issue.ID, method="POST",enctype="application/x-www-form-urlencoded")
-            textarea(name="text",placeholder="Post contents (Markdown)")
-            br
-            input(type="submit")
+    ul.postlist
+        each post in posts
+            li.entry
+                .username=post.FullName
+                .date=post.DateOfCreation
+                if post.DateOfEdit !== null
+                    .date="Edited on " + post.DateOfEdit
+                if req.user.id == post.AuthorID
+                    .underpanel
+                        a(href="/post/" + post.ID + "/edit") edit
+                !=parseMarkdown(post.ContainedText)
+        if req.user.id != -1
+            li.entry
+                form(action="/issue/" + issue.ID, method="POST",enctype="application/x-www-form-urlencoded")
+                    .username=req.user.fullname
+                    .date=new Date()
+                    textarea.submit-text(name="text",placeholder="Post contents (Markdown)")
+                    br
+                    input.submitpost(type="submit",style="float: right")

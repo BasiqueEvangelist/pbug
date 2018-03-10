@@ -31,6 +31,7 @@ app.use(function (req, res, next) {
     req.user = {};
     req.user.id = req.session.loginid;
     req.user.isadmin = req.session.loginadmin;
+    req.user.fullname = req.session.loginfullname;
     res.locals.req = req;
     next();
 });
@@ -77,12 +78,13 @@ app.post("/login", function (req, res, next) {
     else if (typeof req.body.username !== typeof "string") res.status(400).end();
     else if (typeof req.body.password !== typeof "string") res.status(400).end();
     else {
-        connection.query("SELECT ID,PasswordSalt,PasswordHash,IsAdministrator FROM Users WHERE Username=?", [req.body.username], function (err, users) {
+        connection.query("SELECT ID,PasswordSalt,PasswordHash,IsAdministrator,FullName FROM Users WHERE Username=?", [req.body.username], function (err, users) {
             if (err) { next(err); return; }
             if (users.length < 1) { res.status(403); return; }
             if (sha512(req.body.password + users[0].PasswordSalt).toString("hex") === users[0].PasswordHash) {
                 req.session.loginid = users[0].ID;
                 req.session.loginadmin = users[0].IsAdministrator;
+                req.session.loginfullname = users[0].FullName;
                 res.redirect("/");
             }
             else {
