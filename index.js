@@ -4,6 +4,7 @@ var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
 var markdown = require("markdown").markdown;
+require("dotenv").config();
 var connection = new mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
