@@ -2,11 +2,11 @@ extends layout.pug
 
 block body
     form(action="/createissue", method="POST",enctype="application/x-www-form-urlencoded")
-        input(type="text",name="name",placeholder="Name of issue")
+        input(type="text",name="name",placeholder="Name of issue",required)
         br
-        textarea(name="firsttext",placeholder="Text of first post (Markdown)")
+        textarea(name="firsttext",placeholder="Text of first post (Markdown)",required)
         br
-        select(name="projectid")
+        select(name="projectid",required)
             each project in projects
                 option(value=project.ID.toString())= project.ProjectName
         br
