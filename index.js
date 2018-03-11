@@ -15,7 +15,11 @@ var connection = require("./database.js")(
 var MySQLStore = require("express-mysql-session")(session);
 var app = express();
 app.use(compression());
-var store = new MySQLStore({}, connection);
+var store;
+if (process.env.PBUG_USESTORE === "mysql")
+    store = new MySQLStore({}, connection);
+else if (process.env.PBUG_USESTORE === "memory")
+    store = new session.MemoryStore();
 app.use(session({
     name: "pbug.sid",
     secret: "pbugpbugpbugpbug",
