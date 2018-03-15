@@ -3,7 +3,12 @@ var mysql = require("mysql");
 var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
+var debug = {};
+debug.all = require("debug")("pbug*");
+debug.request = require("debug")("pbug:request");
+debug.userapi = require("debug")("pbug:userapi");
 var markdown = require("markdown").markdown;
+debug.all("starting pbug");
 require("dotenv").config();
 var connection = require("./database.js")(
     process.env.DB_TYPE,
@@ -32,12 +37,14 @@ app.locals.parseMarkdown = function (markd) {
     return htmlr;
 };
 app.use(function (req, res, next) {
+    debug.request("(%s) %s %s - %s", req.connection.remoteAddress, req.method, req.path, req.headers["user-agent"]);
     if (typeof req.session.loginid === typeof undefined) req.session.loginid = -1;
     if (req.session.loginid === -1) req.session.loginadmin = false;
     req.user = {};
     req.user.id = req.session.loginid;
     req.user.isadmin = req.session.loginadmin;
     req.user.fullname = req.session.loginfullname;
+    req.user.username = req.session.loginusername;
     res.locals.req = req;
     next();
 });
@@ -80,40 +87,78 @@ app.get("/register", function (req, res) {
     else res.render("register");
 });
 app.post("/login", function (req, res, next) {
-    if (req.session.loginid !== -1) res.redirect("/");
-    else if (typeof req.body.username !== typeof "string") res.status(400).end();
-    else if (typeof req.body.password !== typeof "string") res.status(400).end();
+    if (req.session.loginid !== -1) {
+        debug.userapi("login only for anonymous users");
+        res.redirect("/");
+    }
+    else if (typeof req.body.username !== typeof "string") {
+        debug.userapi("username of incorrect type");
+        res.status(400).end();
+    }
+    else if (typeof req.body.password !== typeof "string") {
+        debug.userapi("password of incorrect type");
+        res.status(400).end();
+    }
     else {
-        connection.query("SELECT ID,PasswordSalt,PasswordHash,IsAdministrator,FullName FROM Users WHERE Username=?", [req.body.username], function (err, users) {
+        debug.userapi("login request as %s:%s", req.body.username, req.body.password);
+        connection.query("SELECT ID,PasswordSalt,PasswordHash,IsAdministrator,FullName,Username FROM Users WHERE Username=?", [req.body.username], function (err, users) {
             if (err) { next(err); return; }
-            if (users.length < 1) { res.status(403); return; }
+            if (users.length < 1) {
+                debug.userapi("user %s not found", req.body.username);
+                res.status(403);
+                return;
+            }
             if (sha512(req.body.password + users[0].PasswordSalt).toString("hex") === users[0].PasswordHash) {
+                debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
                 req.session.loginid = users[0].ID;
                 req.session.loginadmin = users[0].IsAdministrator;
                 req.session.loginfullname = users[0].FullName;
+                req.session.loginusername = users[0].Username;
                 res.redirect("/");
             }
             else {
+                debug.userapi("incorrect password for %s: %s", req.body.username, req.body.password);
                 res.status(403).end();
             }
         });
     }
 });
 app.post("/register", function (req, res, next) {
-    if (req.session.loginid !== -1) res.redirect("/");
-    else if (typeof req.body.username !== typeof "string") res.status(400).end();
-    else if (typeof req.body.name !== typeof "string") res.status(400).end();
-    else if (typeof req.body.password !== typeof "string") res.status(400).end();
+    if (req.session.loginid !== -1) {
+        debug.userapi("registration only for anonymous users");
+        res.redirect("/");
+    }
+    else if (typeof req.body.username !== typeof "string") {
+        debug.userapi("username of incorrect type");
+        res.status(400).end();
+    }
+    else if (typeof req.body.name !== typeof "string") {
+        debug.userapi("full name of incorrect type");
+        res.status(400).end();
+    }
+    else if (typeof req.body.password !== typeof "string") {
+        debug.userapi("password of incorrect type");
+        res.status(400).end();
+    }
     else {
+        debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
         connection.query("SELECT ID FROM Users WHERE Username=?", [req.body.username], function (err1, users) {
             if (err1) { next(err1); return; }
-            if (users.length > 0) { res.status(403); return; }
+            if (users.length > 0) {
+                debug.userapi("user %s already exists", req.body.username);
+                res.status(403);
+                return;
+            }
             var salt = Math.floor(Math.random() * 100000);
+            debug.userapi("generated salt %s for %s", salt, req.body.username);
             var hash = sha512(req.body.password + salt).toString("hex");
             connection.query("INSERT INTO Users (Username,FullName,PasswordHash,PasswordSalt) VALUES (?,?,?,?)", [req.body.username, req.body.name, hash, salt], function (err2, results) {
                 if (err2) { next(err2); return; }
+                debug.userapi("created user %s", req.body.username);
                 req.session.loginid = results.insertId;
                 req.session.loginadmin = false;
+                req.session.loginfullname = req.body.name;
+                req.session.loginusername = req.body.username;
                 res.redirect("/");
             });
         });
@@ -339,7 +384,9 @@ app.post("/post/:post/edit", function (req, res, next) {
     }
 });
 app.get("/logout", function (req, res) {
+    debug.userapi("logging out %s", req.user.username);
     req.session.loginid = -1;
     res.redirect("/");
 });
 app.listen(Number(process.env.PBUG_PORT || process.env.PORT || 8080));
+debug.all("listening on " + Number(process.env.PBUG_PORT || process.env.PORT || 8080));

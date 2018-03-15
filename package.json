@@ -3,6 +3,7 @@
     "private": true,
     "dependencies": {
         "compression": "^1.7.2",
+        "debug": "^3.1.0",
         "dotenv": "^5.0.1",
         "express": "^4.16.2",
         "express-mysql-session": "^1.2.3",
