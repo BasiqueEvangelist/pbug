@@ -19,7 +19,7 @@ var connection = require("./database.js")(
 );
 var MySQLStore = require("express-mysql-session")(session);
 var app = express();
-app.use(compression());
+// app.use(compression());
 var store;
 if (process.env.PBUG_USESTORE === "mysql")
     store = new MySQLStore({}, connection);
