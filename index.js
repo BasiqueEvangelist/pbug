@@ -384,7 +384,8 @@ app.post("/post/:post/edit", function (req, res, next) {
     }
 });
 app.get("/logout", function (req, res) {
-    debug.userapi("logging out %s", req.user.username);
+    if (req.session.loginid !== -1)
+        debug.userapi("logging out %s", req.user.username);
     req.session.loginid = -1;
     res.redirect("/");
 });
