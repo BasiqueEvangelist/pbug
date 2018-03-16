@@ -13,13 +13,17 @@ module.exports = function (type, host, user, pass, db) {
             database: db
         });
         return {
-            query: function (query, parameters, callback) {
-                debug("performing query \"%s\" with params %o", query, parameters);
-                conn.query(query, parameters, function (err) {
+            query: function () {
+                var topargs = arguments;
+                if (arguments.length === 3)
+                    debug("performing query \"%s\" with params %o", arguments[0], arguments[1]);
+                else
+                    debug("performing query \"%s\"", arguments[0]);
+                conn.query(arguments[0], arguments.length === 3 ? arguments[1] : [], function (err) {
                     if (err) {
                         debug("query error: %o", err);
                     }
-                    callback.apply(this, arguments);
+                    (topargs.length === 3 ? topargs[2] : topargs[1]).apply(this, arguments);
                 });
             }
         };
@@ -31,14 +35,19 @@ module.exports = function (type, host, user, pass, db) {
             password: pass,
             database: db
         });
+        conn.connect();
         return {
-            query: function (query, parameters, callback) {
-                debug("performing query \"%s\" with params %o", query, parameters);
-                conn.query(query, parameters, function (err) {
+            query: function () {
+                var topargs = arguments;
+                if (arguments.length === 3)
+                    debug("performing query \"%s\" with params %o", arguments[0], arguments[1]);
+                else
+                    debug("performing query \"%s\"", arguments[0]);
+                conn.query(arguments[0], arguments.length === 3 ? arguments[1] : [], function (err) {
                     if (err) {
                         debug("query error: %o", err);
                     }
-                    callback.apply(this, arguments);
+                    (topargs.length === 3 ? topargs[2] : topargs[1]).apply(this, arguments);
                 });
             }
         };
