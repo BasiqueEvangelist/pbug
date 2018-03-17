@@ -1,10 +1,11 @@
 var mysql = require("sync-mysql");
 var fs = require("fs");
+require("dotenv").config();
 var connection = new mysql({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DB
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DB
 });
 var dbob = JSON.parse(fs.readFileSync("dbdump.json"));
 dbob.users.forEach(function (element) {

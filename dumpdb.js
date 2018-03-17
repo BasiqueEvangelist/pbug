@@ -1,11 +1,12 @@
-var mysql = require("mysql");
 var fs = require("fs");
-var connection = new mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DB
-});
+require("dotenv").config();
+var connection = require("./database.js")(
+    process.env.DB_TYPE,
+    process.env.DB_HOST,
+    process.env.DB_USER,
+    process.env.DB_PASS,
+    process.env.DB_DB
+);
 var dbob = {};
 dbob.users = [];
 dbob.projects = [];
@@ -32,6 +33,7 @@ connection.query("SELECT * FROM Users", function (err, results) {
                         if (err) throw err;
                         dbob.sessions = results;
                         fs.writeFileSync("dbdump.json", JSON.stringify(dbob));
+                        process.exit(0);
                     });
                 });
             });
