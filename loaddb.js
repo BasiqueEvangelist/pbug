@@ -9,7 +9,7 @@ var connection = new mysql({
 });
 var dbob = JSON.parse(fs.readFileSync("dbdump.json"));
 dbob.users.forEach(function (element) {
-    connection.query("INSERT INTO Users VALUES (?,?,?,?,?,?)", [element.ID, element.Username, element.FullName, element.IsAdministrator, element.PasswordHash, element.PasswordSalt]);
+    connection.query("INSERT INTO Users VALUES (?,?,?,?,?,?,?)", [element.ID, element.Username, element.FullName, element.IsAdministrator, element.PasswordHash, element.PasswordSalt, element.APIKey]);
 });
 dbob.projects.forEach(function (element) {
     connection.query("INSERT INTO Projects VALUES (?,?,?,?)", [element.ID, element.ProjectName, element.ShortProjectID, element.AuthorID]);
