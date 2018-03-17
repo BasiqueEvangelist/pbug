@@ -218,7 +218,7 @@ app.post("/createissue", function (req, res, next) {
     }
     else {
         debug.issueapi("%s is creating issue", req.user.username);
-        connection.query("INSERT INTO Issues (IssueName,ProjectID) VALUES (?,?)", [req.body.name, Number(req.body.projectid)], function (err1, results) {
+        connection.query("INSERT INTO Issues (IssueName,ProjectID,AuthorID) VALUES (?,?,?)", [req.body.name, Number(req.body.projectid), req.user.id], function (err1, results) {
             if (err1) { next(err1); return; }
             debug.issueapi("successfully created issue");
             connection.query("INSERT INTO IssuePosts (IssueID,AuthorID,ContainedText,DateOfCreation) VALUES (?,?,?,?)", [results.insertId, req.session.loginid, req.body.firsttext, new Date()], function (err2, results2) {
