@@ -163,8 +163,10 @@ app.post("/register", function (req, res, next) {
             }
             var salt = Math.floor(Math.random() * 100000);
             debug.userapi("generated salt %s for %s", salt, req.body.username);
+            var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
+            debug.userapi("generated apikey %s for %s", apikey, req.body.username);
             var hash = sha512(req.body.password + salt).toString("hex");
-            connection.query("INSERT INTO Users (Username,FullName,PasswordHash,PasswordSalt) VALUES (?,?,?,?)", [req.body.username, req.body.name, hash, salt], function (err2, results) {
+            connection.query("INSERT INTO Users (Username,FullName,PasswordHash,PasswordSalt,APIKey) VALUES (?,?,?,?,?)", [req.body.username, req.body.name, hash, salt, apikey], function (err2, results) {
                 if (err2) { next(err2); return; }
                 debug.userapi("created user %s", req.body.username);
                 req.session.loginid = results.insertId;
