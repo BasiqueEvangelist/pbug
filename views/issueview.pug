@@ -2,26 +2,26 @@ extends layout.pug
 
 block body
     .issue-tag
-        = "[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] ("
-        if issue.IsClosed
+        = "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] ("
+        if issue.isclosed
             span.issue-closed-marker Closed
         else
             span.issue-opened-marker Open
         | ) 
-        if issue.AssigneeID === null
+        if issue.assigneeid === null
             span.assigneetext No assignee
         else
-            span.assigneetext="Assignee: " + issue.FullName
-    h2.issue-name=issue.IssueName
+            span.assigneetext="Assignee: " + issue.fullname
+    h2.issue-name=issue.issuename
     hr
     .taglist
         each tag in tags
             span.tag
-                = "#" + tag.TagText + " "
-                a(href="/tag/" + tag.ID + "/remove") &times; 
+                = "#" + tag.tagtext + " "
+                a(href="/tag/" + tag.id + "/remove") &times; 
     .underpanel
         if req.user.isadmin || issue.AssigneeID === req.user.id
-            if issue.IsClosed
+            if issue.isclosed
                 a(href="/issue/" + issue.ID + "/open") open
             else
                 a(href="/issue/" + issue.ID + "/close") close
@@ -36,10 +36,10 @@ block body
                 select(name="userid")
                     option(value="-1") Unassign
                     each user in users
-                        option(value=user.ID)=user.FullName
+                        option(value=user.ID)=user.fullname
                 input(type="submit",value="Assign")
         br
-    if req.user.isadmin || posts[0].AuthorID === req.user.id
+    if req.user.isadmin || posts[0].authorid === req.user.id
         form(action="/issue/" + issue.ID + "/addtag",method="GET")
             fieldset
                 legend Add tag
@@ -54,17 +54,17 @@ block body
     ul.postlist
         each post in posts
             li.entry
-                .username=post.FullName
-                .date=post.DateOfCreation
-                if post.DateOfEdit !== null
-                    .date="Edited on " + post.DateOfEdit
-                if req.user.id == post.AuthorID
+                .username=post.fullname
+                .date=post.dateofcreation
+                if post.dateofedit !== null
+                    .date="Edited on " + post.dateofedit
+                if req.user.id == post.authorid
                     .underpanel
-                        a(href="/post/" + post.ID + "/edit") edit
-                !=parseMarkdown(post.ContainedText)
+                        a(href="/post/" + post.id + "/edit") edit
+                !=parseMarkdown(post.containedtext)
         if req.user.id != -1
             li.entry
-                form(action="/issue/" + issue.ID, method="POST",enctype="application/x-www-form-urlencoded")
+                form(action="/issue/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Post contents (Markdown)")

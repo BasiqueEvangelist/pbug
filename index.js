@@ -204,6 +204,7 @@ app.post("/register", function (req, res, next) {
                 debug.userapi("generated apikey %s for %s", apikey, req.body.username);
                 var hash = sha512(req.body.password + salt).toString("hex");
                 connection("users")
+                    .returning("id")
                     .insert({
                         "username": req.body.username,
                         "fullname": req.body.name,
@@ -225,15 +226,14 @@ app.post("/register", function (req, res, next) {
 app.get("/createissue", function (req, res, next) {
     if (req.session.loginid === -1) res.redirect("/");
     else {
-        connection.query("SELECT ID,ProjectName FROM projects", function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            res.render("createissue", {
-                projects: results
+        connection
+            .select("id", "projectname")
+            .from("projects")
+            .then(function (results) {
+                res.render("createissue", {
+                    projects: results
+                });
             });
-        });
     };
 });
 app.post("/createissue", function (req, res, next) {
@@ -260,21 +260,27 @@ app.post("/createissue", function (req, res, next) {
         res.status(400).end();
     } else {
         debug.issueapi("%s is creating issue", req.user.username);
-        connection.query("INSERT INTO issues (IssueName,ProjectID,AuthorID) VALUES (?,?,?)", [req.body.name, Number(req.body.projectid), req.user.id], function (err1, results) {
-            if (err1) {
-                next(err1);
-                return;
-            }
-            debug.issueapi("successfully created issue");
-            connection.query("INSERT INTO IssuePosts (IssueID,AuthorID,ContainedText,DateOfCreation) VALUES (?,?,?,?)", [results.insertId, req.session.loginid, req.body.firsttext, new Date()], function (err2, results2) {
-                if (err2) {
-                    next(err2);
-                    return;
-                }
-                debug.issueapi("successfully created first post");
-                res.redirect("/issue/" + results.insertId);
+        connection("issues")
+            .insert({
+                "issuename": req.body.name,
+                "projectid": Number(req.body.projectid),
+                "authorid": req.user.id
+            })
+            .returning("id")
+            .then(function (ids) {
+                debug.issueapi("successfully created issue");
+                connection("issueposts")
+                    .insert({
+                        "issueid": ids[0],
+                        "authorid": req.session.loginid,
+                        "containedtext": req.body.firsttext,
+                        "dateofcreation": new Date()
+                    })
+                    .then(function () {
+                        debug.issueapi("successfully created first post");
+                        res.redirect("/issue/" + ids[0]);
+                    });
             });
-        });
     }
 });
 app.get("/issue/:issue", function (req, res, next) {
@@ -286,45 +292,53 @@ app.get("/issue/:issue", function (req, res, next) {
         res.redirect("/");
     } else {
         debug.issueapi("issue request for issue %s", req.params.issue);
-        connection.query("SELECT issues.ID,issues.IssueName,projects.ShortProjectID,issues.IsClosed,issues.AssigneeID,Users.FullName FROM issues LEFT JOIN projects ON issues.ProjectID = projects.ID LEFT JOIN Users ON issues.AssigneeID = Users.ID WHERE issues.ID=?", [Number(req.params.issue)], function (err1, issues) {
-            if (err1) {
-                next(err1);
-                return;
-            }
-            if (issues.length < 1) {
-                debug.issueapi("issue %s not found", req.params.issue);
-                res.render("issuenotfound");
-            } else {
-                debug.issueapi("successfully retrieved issue");
-                connection.query("SELECT IssuePosts.ContainedText,IssuePosts.DateOfCreation,IssuePosts.DateOfEdit,Users.FullName,IssuePosts.AuthorID,IssuePosts.ID FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.IssueID=?", [issues[0].ID], function (err2, posts) {
-                    if (err2) {
-                        next(err2);
-                        return;
-                    }
-                    debug.issueapi("successfully retrieved issue posts");
-                    connection.query("SELECT TagText,ID FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err3, tags) {
-                        if (err3) {
-                            next(err3);
-                            return;
-                        }
-                        debug.issueapi("successfully retrieved issue tags");
-                        connection.query("SELECT ID,FullName FROM Users", function (err4, users) {
-                            if (err4) {
-                                next(err4);
-                                return;
-                            }
-                            debug.issueapi("successfully retrieved users");
-                            res.render("issueview", {
-                                issue: issues[0],
-                                posts: posts,
-                                tags: tags,
-                                users: users
-                            });
+        connection
+            .select("issues.id", "issues.issuename", "projects.shortprojectid", "issues.isclosed", "issues.assigneeid", "users.fullname")
+            .from("issues")
+            .leftJoin("projects", "issues.projectid", "projects.id")
+            .leftJoin("users", "issues.assigneeid", "users.id")
+            .where({
+                "issues.id": Number(req.params.issue)
+            })
+            .then(function (issues) {
+                if (issues.length < 1) {
+                    debug.issueapi("issue %s not found", req.params.issue);
+                    res.render("issuenotfound");
+                } else {
+                    debug.issueapi("successfully retrieved issue");
+                    connection
+                        .select("issueposts.containedtext", "issueposts.dateofcreation", "issueposts.dateofedit", "users.fullname", "issueposts.authorid", "issueposts.id")
+                        .from("issueposts")
+                        .leftJoin("users", "issueposts.authorid", "users.id")
+                        .where({
+                            "issueposts.issueid": issues[0].id
+                        })
+                        .then(function (posts) {
+                            debug.issueapi("successfully retrieved issue posts");
+                            connection
+                                .select("tagtext", "id")
+                                .from("issuetags")
+                                .where({
+                                    "issueid": req.params.issue
+                                })
+                                .then(function (tags) {
+                                    debug.issueapi("successfully retrieved issue tags");
+                                    connection
+                                        .select("id", "fullname")
+                                        .from("users")
+                                        .then(function (users) {
+                                            debug.issueapi("successfully retrieved users");
+                                            res.render("issueview", {
+                                                issue: issues[0],
+                                                posts: posts,
+                                                tags: tags,
+                                                users: users
+                                            });
+                                        });
+                                });
                         });
-                    });
-                });
-            };
-        });
+                };
+            });
     }
 });
 app.post("/issue/:issue", function (req, res, next) {

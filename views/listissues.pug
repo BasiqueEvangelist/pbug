@@ -4,6 +4,6 @@ block body
     ul.issues-list
         each issue in issues
             li
-                a(href="/issue/" + issue.ID)
-                    .issue-tag= "[" + issue.ShortProjectID + "-" + ("0000" + issue.ID).slice(-4) + "] "
-                    = issue.IssueName
+                a(href="/issue/" + issue.id)
+                    .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                    = issue.issuename

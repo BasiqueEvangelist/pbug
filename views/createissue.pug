@@ -8,6 +8,6 @@ block body
         br
         select(name="projectid",required)
             each project in projects
-                option(value=project.ID.toString())= project.ProjectName
+                option(value=project.id.toString())= project.projectname
         br
         input(type="submit")
