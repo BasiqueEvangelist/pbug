@@ -1,51 +1,51 @@
 DROP TABLE IF EXISTS sessions;
-DROP TABLE IF EXISTS IssuePosts;
-DROP TABLE IF EXISTS IssueTags;
-DROP TABLE IF EXISTS Issues;
-DROP TABLE IF EXISTS Projects;
-DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS issueposts;
+DROP TABLE IF EXISTS issuetags;
+DROP TABLE IF EXISTS issues;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS users;
 
-CREATE TABLE IF NOT EXISTS Users (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Username VARCHAR(64) NOT NULL UNIQUE,
-    FullName VARCHAR(100) NOT NULL,
-    IsAdministrator BOOLEAN DEFAULT FALSE,
-    PasswordHash CHAR(128) NOT NULL,
-    PasswordSalt INT NOT NULL,
-    APIKey CHAR(128) NOT NULL UNIQUE
+CREATE TABLE IF NOT EXISTS users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL UNIQUE,
+    fullname VARCHAR(100) NOT NULL,
+    isadministrator BOOLEAN DEFAULT FALSE,
+    passwordhash CHAR(128) NOT NULL,
+    passwordsalt INT NOT NULL,
+    apikey CHAR(128) NOT NULL UNIQUE
 );
-CREATE TABLE IF NOT EXISTS Projects (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    ProjectName VARCHAR(100) NOT NULL,
-    ShortProjectID VARCHAR(3) NOT NULL UNIQUE,
-    AuthorID INT NOT NULL,
-    FOREIGN KEY (AuthorID) REFERENCES Users(ID)  
+CREATE TABLE IF NOT EXISTS projects (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    projectname VARCHAR(100) NOT NULL,
+    shortprojectid VARCHAR(3) NOT NULL UNIQUE,
+    authorid INT NOT NULL,
+    FOREIGN KEY (authorid) REFERENCES users(id)  
 );
-CREATE TABLE IF NOT EXISTS Issues (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    IssueName VARCHAR(100) NOT NULL,
-    AuthorID INT,
-    FOREIGN KEY (AuthorID) REFERENCES Users(ID),
-    ProjectID INT NOT NULL,
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ID),
-    IsClosed BOOLEAN DEFAULT FALSE,
-    AssigneeID INT,
-    FOREIGN KEY (AssigneeID) REFERENCES Users(ID)
+CREATE TABLE IF NOT EXISTS issues (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    issuename VARCHAR(100) NOT NULL,
+    authorid INT,
+    FOREIGN KEY (authorid) REFERENCES users(id),
+    projectid INT NOT NULL,
+    FOREIGN KEY (projectid) REFERENCES projects(id),
+    isclosed BOOLEAN DEFAULT FALSE,
+    assigneeid INT,
+    FOREIGN KEY (assigneeid) REFERENCES users(id)
 );
-CREATE TABLE IF NOT EXISTS IssuePosts (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    AuthorID INT NOT NULL,
-    IssueID INT NOT NULL,
-    FOREIGN KEY (AuthorID) REFERENCES Users(ID),
-    FOREIGN KEY (IssueID) REFERENCES Issues(ID),
-    ContainedText TEXT NOT NULL,
-    DateOfCreation DATETIME NOT NULL,
-    DateOfEdit DATETIME
+CREATE TABLE IF NOT EXISTS issueposts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    authorid INT NOT NULL,
+    issueid INT NOT NULL,
+    FOREIGN KEY (authorid) REFERENCES users(id),
+    FOREIGN KEY (issueid) REFERENCES issues(id),
+    containedtext TEXT NOT NULL,
+    dateofcreation DATETIME NOT NULL,
+    dateofedit DATETIME
 );
-CREATE TABLE IF NOT EXISTS IssueTags (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    IssueID INT NOT NULL,
-    FOREIGN KEY (IssueID) REFERENCES Issues(ID),
+CREATE TABLE IF NOT EXISTS issuetags (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    Issueid INT NOT NULL,
+    FOREIGN KEY (Issueid) REFERENCES issues(id),
     TagText VARCHAR(64) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
