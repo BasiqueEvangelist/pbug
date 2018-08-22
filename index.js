@@ -71,24 +71,12 @@ app.get("/", function (req, res, next) {
                     title: "List of open issues"
                 });
             });
-        // connection.query("SELECT issues.ID, issues.IssueName, issues.IsClosed, projects.ShortProjectID FROM issues LEFT JOIN projects ON issues.ProjectID = projects.ID WHERE issues.IsClosed = FALSE ORDER BY ID DESC", function (err, results) {
-        //     if (err) {
-        //         next(err);
-        //         return;
-        //     }
-        //     debug.issueapi("issues retrieved, sending body");
-        //     res.render("listissues", {
-        //         issues: results,
-        //         title: "List of open issues"
-        //     });
-        // });
-
     } else {
         debug.issueapi("showing all open issues assigned to %s", req.user.username);
         connection
             .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
             .from("issues")
-            .leftJoin("projects", "issues.ProjectID", "projects.ID")
+            .leftJoin("projects", "issues.projectid", "projects.id")
             .where({
                 "issues.isclosed": false,
                 "issues.assigneeid": req.user.id
@@ -101,17 +89,6 @@ app.get("/", function (req, res, next) {
                     title: "List of open issues assigned to you"
                 });
             });
-        // connection.query("SELECT issues.ID, issues.IssueName, issues.IsClosed, projects.ShortProjectID FROM issues LEFT JOIN projects ON issues.ProjectID = projects.ID WHERE issues.IsClosed = FALSE AND AssigneeID=? ORDER BY ID DESC", [req.user.id], function (err, results) {
-        //     if (err) {
-        //         next(err);
-        //         return;
-        //     }
-        //     debug.issueapi("issues retrieved, sending body");
-        //     res.render("listissues", {
-        //         issues: results,
-        //         title: "List of open issues assigned to you"
-        //     });
-        // });
     }
 });
 app.get("/issues", function (req, res) {
@@ -119,17 +96,8 @@ app.get("/issues", function (req, res) {
 });
 app.get("/issues/open", function (req, res, next) {
     debug.issueapi("showing all open issues");
-    // connection.query("SELECT issues.ID, issues.IssueName, issues.IsClosed, projects.ShortProjectID FROM issues LEFT JOIN projects ON issues.ProjectID = projects.ID WHERE issues.IsClosed = FALSE ORDER BY ID DESC", function (err, results) {
-    //     if (err) {
-    //         next(err);
-    //         return;
-    //     }
-    //     debug.issueapi("issues retrieved, sending body");
-    //     res.render("listissuesopen", {
-    //         issues: results
-    //     });
-    // });
-    connection.select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+    connection
+        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
         .where({
@@ -145,23 +113,14 @@ app.get("/issues/open", function (req, res, next) {
 });
 app.get("/issues/all", function (req, res, next) {
     debug.issueapi("showing all issues");
-    // connection.query("SELECT issues.ID, issues.IssueName, issues.IsClosed, projects.ShortProjectID FROM issues LEFT JOIN projects ON issues.ProjectID = projects.ID ORDER BY ID DESC", function (err, results) {
-    //     if (err) {
-    //         next(err);
-    //         return;
-    //     }
-    //     debug.issueapi("issues retrieved, sending body");
-    //     res.render("listissuesall", {
-    //         issues: results
-    //     });
-    // });
-    connection.select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+    connection
+        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
         .orderBy("issues.id", "desc")
         .then(function (results) {
             debug.issueapi("issues retrieved, sending body");
-            res.render("listissuesopen", {
+            res.render("listissuesall", {
                 issues: results
             });
         });
@@ -186,28 +145,29 @@ app.post("/login", function (req, res, next) {
         res.status(400).end();
     } else {
         debug.userapi("login request as %s:%s", req.body.username, req.body.password);
-        connection.query("SELECT ID,PasswordSalt,PasswordHash,IsAdministrator,FullName,Username FROM Users WHERE Username=?", [req.body.username], function (err, users) {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (users.length < 1) {
-                debug.userapi("user %s not found", req.body.username);
-                res.status(403);
-                return;
-            }
-            if (sha512(req.body.password + users[0].PasswordSalt).toString("hex") === users[0].PasswordHash) {
-                debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
-                req.session.loginid = users[0].ID;
-                req.session.loginadmin = users[0].IsAdministrator;
-                req.session.loginfullname = users[0].FullName;
-                req.session.loginusername = users[0].Username;
-                res.redirect("/");
-            } else {
-                debug.userapi("incorrect password for %s: %s", req.body.username, req.body.password);
-                res.status(403).end();
-            }
-        });
+        connection
+            .select("id", "passwordsalt", "passwordhash", "isadministrator", "fullname", "username")
+            .from("users")
+            .where({
+                "username": req.body.username
+            }).then(function (users) {
+                if (users.length < 1) {
+                    debug.userapi("user %s not found", req.body.username);
+                    res.status(403);
+                    return;
+                }
+                if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
+                    debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
+                    req.session.loginid = users[0].id;
+                    req.session.loginadmin = users[0].isadministrator;
+                    req.session.loginfullname = users[0].fullname;
+                    req.session.loginusername = users[0].username;
+                    res.redirect("/");
+                } else {
+                    debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
+                    res.status(403).end();
+                }
+            });
     }
 });
 app.post("/register", function (req, res, next) {
@@ -225,35 +185,41 @@ app.post("/register", function (req, res, next) {
         res.status(400).end();
     } else {
         debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
-        connection.query("SELECT ID FROM Users WHERE Username=?", [req.body.username], function (err1, users) {
-            if (err1) {
-                next(err1);
-                return;
-            }
-            if (users.length > 0) {
-                debug.userapi("user %s already exists", req.body.username);
-                res.status(403);
-                res.end();
-                return;
-            }
-            var salt = Math.floor(Math.random() * 100000);
-            debug.userapi("generated salt %s for %s", salt, req.body.username);
-            var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
-            debug.userapi("generated apikey %s for %s", apikey, req.body.username);
-            var hash = sha512(req.body.password + salt).toString("hex");
-            connection.query("INSERT INTO Users (Username,FullName,PasswordHash,PasswordSalt,APIKey) VALUES (?,?,?,?,?)", [req.body.username, req.body.name, hash, salt, apikey], function (err2, results) {
-                if (err2) {
-                    next(err2);
+        connection
+            .select("id")
+            .from("users")
+            .where({
+                "username": req.body.username
+            })
+            .then(function (users) {
+                if (users.length > 0) {
+                    debug.userapi("user %s already exists", req.body.username);
+                    res.status(403);
+                    res.end();
                     return;
                 }
-                debug.userapi("created user %s", req.body.username);
-                req.session.loginid = results.insertId;
-                req.session.loginadmin = false;
-                req.session.loginfullname = req.body.name;
-                req.session.loginusername = req.body.username;
-                res.redirect("/");
+                var salt = Math.floor(Math.random() * 100000);
+                debug.userapi("generated salt %s for %s", salt, req.body.username);
+                var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
+                debug.userapi("generated apikey %s for %s", apikey, req.body.username);
+                var hash = sha512(req.body.password + salt).toString("hex");
+                connection("users")
+                    .insert({
+                        "username": req.body.username,
+                        "fullname": req.body.name,
+                        "passwordhash": hash,
+                        "passwordsalt": salt,
+                        "apikey": apikey
+                    })
+                    .then(function (results) {
+                        debug.userapi("created user %s", req.body.username);
+                        req.session.loginid = results[0];
+                        req.session.loginadmin = false;
+                        req.session.loginfullname = req.body.name;
+                        req.session.loginusername = req.body.username;
+                        res.redirect("/");
+                    });
             });
-        });
     }
 });
 app.get("/createissue", function (req, res, next) {
