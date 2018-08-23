@@ -444,28 +444,31 @@ app.get("/issue/:issue/delete", function (req, res, next) {
         debug.issueapi("issue id is not identifier");
         res.redirect("/");
     } else {
-        connection.query("DELETE FROM IssuePosts WHERE IssueID=?", [req.params.issue], function (err1) {
-            if (err1) {
-                next(err1);
-                return;
-            }
-            debug.issueapi("deleted all posts in issue %s", req.params.issue);
-            connection.query("DELETE FROM IssueTags WHERE IssueID=?", [req.params.issue], function (err2) {
-                if (err2) {
-                    next(err2);
-                    return;
-                }
-                debug.issueapi("deleted all tags in issue %s", req.params.issue);
-                connection.query("DELETE FROM issues WHERE ID=?", [req.params.issue], function (err3) {
-                    if (err3) {
-                        next(err3);
-                        return;
-                    }
-                    debug.issueapi("deleted issue %s", req.params.issue);
-                    res.redirect("/issues");
-                });
+        connection("issueposts")
+            .where({
+                "issueid": req.params.issue
+            })
+            .del()
+            .then(function () {
+                debug.issueapi("deleted all posts in issue %s", req.params.issue);
+                connection("issuetags")
+                    .where({
+                        "issueid": req.params.issue
+                    })
+                    .del()
+                    .then(function () {
+                        debug.issueapi("deleted all tags in issue %s", req.params.issue);
+                        connection("issues")
+                            .where({
+                                "id": req.params.issue
+                            })
+                            .del()
+                            .then(function () {
+                                debug.issueapi("deleted issue %s", req.params.issue);
+                                res.redirect("/issues");
+                            });
+                    });
             });
-        });
     }
 });
 app.get("/issue/:issue/addtag", function (req, res, next) {
