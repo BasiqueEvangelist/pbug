@@ -572,13 +572,15 @@ app.post("/createproject", function (req, res, next) {
     else if (typeof req.body.shortprojectid !== typeof "string") res.status(400).end();
     else if (req.body.shortprojectid.length > 3 || req.body.shortprojectid === 0) res.status(400).end();
     else {
-        connection.query("INSERT INTO projects (ProjectName,AuthorID,ShortProjectID) VALUES (?,?,?)", [req.body.name, req.session.loginid, req.body.shortprojectid], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            res.redirect("/");
-        });
+        connection("projects")
+            .insert({
+                "projectname": req.body.name,
+                "authorid": req.session.loginid,
+                "shortprojectid": req.body.shortprojectid
+            })
+            .then(function () {
+                res.redirect("/");
+            });
     }
 });
 app.get("/tag/:tag/remove", function (req, res, next) {
