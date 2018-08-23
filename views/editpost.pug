@@ -1,11 +1,11 @@
 extends layout
 block body
     h2 Editing post
-    form(action="/post/" + post.ID + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+    form(action="/post/" + post.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
         .entry
-            .username=post.FullName
-            .date=post.DateOfCreation
-            if post.DateOfEdit !== null
-                .date="Edited on " + post.DateOfEdit
-            textarea(name="newtext")=post.ContainedText
+            .username=post.fullname
+            .date=post.dateofcreation
+            if post.dateofedit !== null
+                .date="Edited on " + post.dateofedit
+            textarea(name="newtext")=post.containedtext
         input(type="submit", value="Repost")

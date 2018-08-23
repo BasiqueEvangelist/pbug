@@ -615,19 +615,23 @@ app.get("/post/:post/edit", function (req, res, next) {
     else if (typeof req.params.post !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.post))) res.redirect("/");
     else {
-        connection.query("SELECT IssuePosts.ID,IssuePosts.ContainedText,IssuePosts.AuthorID,IssuePosts.DateOfCreation,IssuePosts.DateOfEdit,Users.FullName FROM IssuePosts LEFT JOIN Users ON IssuePosts.AuthorID=Users.ID WHERE IssuePosts.ID=?", [req.params.post], function (err1, posts) {
-            if (err1) {
-                next(err1);
-                return;
-            } else if (posts.length < 1) {
-                res.redirect("/");
-            } else if (posts[0].AuthorID !== req.user.id) {
-                res.redirect("/");
-            } else
-                res.render("editpost", {
-                    post: posts[0]
-                });
-        });
+        connection
+            .select("issueposts.id", "issueposts.containedtext", "issueposts.authorid", "issueposts.dateofcreation", "issueposts.dateofedit", "users.fullname")
+            .from("issueposts")
+            .leftJoin("users", "issueposts.authorid", "users.id")
+            .where({
+                "issueposts.id": req.params.post
+            })
+            .then(function (posts) {
+                if (posts.length < 1) {
+                    res.redirect("/");
+                } else if (posts[0].authorid !== req.user.id) {
+                    res.redirect("/");
+                } else
+                    res.render("editpost", {
+                        post: posts[0]
+                    });
+            });
     }
 });
 app.post("/post/:post/edit", function (req, res, next) {
@@ -637,24 +641,31 @@ app.post("/post/:post/edit", function (req, res, next) {
     else if (typeof req.body.newtext !== typeof "") res.status(400).end();
     else if (req.body.newtext === "") res.redirect("back");
     else {
-        connection.query("SELECT AuthorID FROM IssuePosts WHERE ID=?", [req.params.post], function (err1, posts) {
-            if (err1) {
-                next(err1);
-                return;
-            } else if (posts.length < 1) {
-                res.redirect("/");
-            } else if (posts[0].AuthorID !== req.user.id) {
-                res.redirect("/");
-            } else {
-                connection.query("UPDATE IssuePosts SET ContainedText=?,DateOfEdit=? WHERE ID=?", [req.body.newtext, new Date(), req.params.post], function (err2, results) {
-                    if (err2) {
-                        next(err2);
-                        return;
-                    }
+        connection
+            .select("authorid")
+            .from("issueposts")
+            .where({
+                "id": req.params.post
+            })
+            .then(function (posts) {
+                if (posts.length < 1) {
                     res.redirect("/");
-                });
-            }
-        });
+                } else if (posts[0].authorid !== req.user.id) {
+                    res.redirect("/");
+                } else {
+                    connection("issueposts")
+                        .where({
+                            "id": req.params.post
+                        })
+                        .update({
+                            "containedtext": req.body.newtext,
+                            "dateofedit": new Date()
+                        })
+                        .then(function () {
+                            res.redirect("/");
+                        });
+                }
+            });
     }
 });
 app.get("/logout", function (req, res) {
