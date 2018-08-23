@@ -517,14 +517,17 @@ app.get("/issue/:issue/assign", function (req, res, next) {
         res.redirect("/");
     } else {
         debug.issueapi("assign request for issue %s", req.params.issue);
-        connection.query("UPDATE issues SET AssigneeID=? WHERE ID=?", [req.query.userid === "-1" ? null : req.query.userid, req.params.issue], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            debug.issueapi("changed assignee for issue %s", req.params.issue);
-            res.redirect("/issue/" + req.params.issue);
-        });
+        connection("issues")
+            .where({
+                "id": req.params.issue
+            })
+            .update({
+                "assigneeid": req.query.userid === "-1" ? null : req.query.userid
+            })
+            .then(function () {
+                debug.issueapi("changed assignee for issue %s", req.params.issue);
+                res.redirect("/issue/" + req.params.issue);
+            });
     }
 });
 app.get("/issue/:issue/changetitle", function (req, res, next) {
