@@ -549,14 +549,17 @@ app.get("/issue/:issue/changetitle", function (req, res, next) {
         res.redirect("back");
     } else {
         debug.issueapi("changetitle request for issue %s", req.params.issue);
-        connection.query("UPDATE issues SET IssueName=? WHERE ID=?", [req.query.newtitle, req.params.issue], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            debug.issueapi("changed title for issue %s", req.params.issue);
-            res.redirect("/issue/" + req.params.issue);
-        });
+        connection("issues")
+            .where({
+                "id": req.params.issue
+            })
+            .update({
+                "issuename": req.query.newtitle
+            })
+            .then(function () {
+                debug.issueapi("changed title for issue %s", req.params.issue);
+                res.redirect("/issue/" + req.params.issue);
+            });
     }
 });
 app.get("/createproject", function (req, res, next) {
