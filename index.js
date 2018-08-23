@@ -312,6 +312,7 @@ app.get("/issue/:issue", function (req, res, next) {
                         .where({
                             "issueposts.issueid": issues[0].id
                         })
+                        .orderBy("issueposts.id", "asc")
                         .then(function (posts) {
                             debug.issueapi("successfully retrieved issue posts");
                             connection
