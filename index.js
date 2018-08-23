@@ -153,7 +153,7 @@ app.post("/login", function (req, res, next) {
             }).then(function (users) {
                 if (users.length < 1) {
                     debug.userapi("user %s not found", req.body.username);
-                    res.status(403);
+                    res.status(403).end();
                     return;
                 }
                 if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
