@@ -368,25 +368,31 @@ app.get("/issue/:issue/open", function (req, res, next) {
         res.redirect("/");
     } else {
         debug.issueapi("open request for issue %s", req.params.issue);
-        connection.query("SELECT AssigneeID FROM issues WHERE ID=?", [req.params.issue], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
-                debug.issueapi("opening issue %s", req.params.issue);
-                connection.query("UPDATE issues SET issues.IsClosed = FALSE WHERE ID = ?", [req.params.issue], function (err, results) {
-                    if (err) {
-                        next(err);
-                        return;
-                    }
-                    debug.issueapi("successfully opened issue %s", req.params.issue);
-                    res.redirect("/issue/" + req.params.issue);
-                });
-            } else {
-                debug.issueapi("user is not privileged enough to open issue");
-            }
-        });
+        connection
+            .select("assigneeid")
+            .from("issues")
+            .where({
+                "id": req.params.issue
+            })
+            .then(function (results) {
+                if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                    debug.issueapi("opening issue %s", req.params.issue);
+                    connection("issues")
+                        .where({
+                            "id": req.params.issue
+                        })
+                        .update({
+                            "isclosed": false
+                        })
+                        .then(function (_) {
+                            debug.issueapi("successfully opened issue %s", req.params.issue);
+                            res.redirect("/issue/" + req.params.issue);
+                        });
+                } else {
+                    res.status(403);
+                    debug.issueapi("user is not privileged enough to open issue");
+                }
+            });
     }
 });
 app.get("/issue/:issue/close", function (req, res, next) {
@@ -398,25 +404,30 @@ app.get("/issue/:issue/close", function (req, res, next) {
         res.redirect("/");
     } else {
         debug.issueapi("close request for issue %s", req.params.issue);
-        connection.query("SELECT AssigneeID FROM issues WHERE ID=?", [req.params.issue], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
-                debug.issueapi("closing issue %s", req.params.issue);
-                connection.query("UPDATE issues SET issues.IsClosed = TRUE WHERE ID = ?", [req.params.issue], function (err, results) {
-                    if (err) {
-                        next(err);
-                        return;
-                    }
-                    debug.issueapi("successfully closed issue %s", req.params.issue);
-                    res.redirect("/issue/" + req.params.issue);
-                });
-            } else {
-                debug.issueapi("user is not privileged enough to close issue");
-            }
-        });
+        connection
+            .select("assigneeid")
+            .from("issues")
+            .where({
+                "id": req.params.issue
+            })
+            .then(function (results) {
+                if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                    debug.issueapi("closing issue %s", req.params.issue);
+                    connection("issues")
+                        .where({
+                            "id": req.params.issue
+                        })
+                        .update({
+                            "isclosed": true
+                        })
+                        .then(function () {
+                            debug.issueapi("successfully closed issue %s", req.params.issue);
+                            res.redirect("/issue/" + req.params.issue);
+                        });
+                } else {
+                    debug.issueapi("user is not privileged enough to close issue");
+                }
+            });
     }
 });
 app.get("/issue/:issue/delete/areyousure", function (req, res) {

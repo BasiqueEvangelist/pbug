@@ -20,33 +20,33 @@ block body
                 = "#" + tag.tagtext + " "
                 a(href="/tag/" + tag.id + "/remove") &times; 
     .underpanel
-        if req.user.isadmin || issue.AssigneeID === req.user.id
+        if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
-                a(href="/issue/" + issue.ID + "/open") open
+                a(href="/issue/" + issue.id + "/open") open
             else
-                a(href="/issue/" + issue.ID + "/close") close
+                a(href="/issue/" + issue.id + "/close") close
             |  
         if req.user.isadmin
-            a(href="/issue/" + issue.ID + "/delete/areyousure") delete issue
+            a(href="/issue/" + issue.id + "/delete/areyousure") delete issue
         br
     if req.user.id !== -1
-        form(action="/issue/" + issue.ID + "/assign",method="GET")
+        form(action="/issue/" + issue.id + "/assign",method="GET")
             fieldset
                 legend Assign
                 select(name="userid")
                     option(value="-1") Unassign
                     each user in users
-                        option(value=user.ID)=user.fullname
+                        option(value=user.id)=user.fullname
                 input(type="submit",value="Assign")
         br
     if req.user.isadmin || posts[0].authorid === req.user.id
-        form(action="/issue/" + issue.ID + "/addtag",method="GET")
+        form(action="/issue/" + issue.id + "/addtag",method="GET")
             fieldset
                 legend Add tag
                 input(type="text",name="tagtext",placeholder="Tag name")
                 input(type="submit",value="Add")
         br
-        form(action="/issue/" + issue.ID + "/changetitle",method="GET")
+        form(action="/issue/" + issue.id + "/changetitle",method="GET")
             fieldset
                 legend Change title
                 input(type="text",name="newtitle",placeholder="New title")
