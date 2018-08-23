@@ -489,14 +489,15 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
         res.redirect("back");
     } else {
         debug.issueapi("addtag request for issue %s", req.params.issue);
-        connection.query("INSERT INTO IssueTags (TagText,IssueID) VALUES (?,?)", [req.query.tagtext, req.params.issue], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            debug.issueapi("added tag to issue %s", req.params.issue);
-            res.redirect("/issue/" + req.params.issue);
-        });
+        connection("issuetags")
+            .insert({
+                "tagtext": req.query.tagtext,
+                "issueid": req.params.issue
+            })
+            .then(function () {
+                debug.issueapi("added tag to issue %s", req.params.issue);
+                res.redirect("/issue/" + req.params.issue);
+            });
     }
 });
 app.get("/issue/:issue/assign", function (req, res, next) {
