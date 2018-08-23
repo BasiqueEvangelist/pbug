@@ -139,10 +139,10 @@ app.post("/login", function (req, res, next) {
         res.redirect("/");
     } else if (typeof req.body.username !== typeof "string") {
         debug.userapi("username of incorrect type");
-        res.status(400).end();
+        res.status(400).send("username of incorrect type").end();
     } else if (typeof req.body.password !== typeof "string") {
         debug.userapi("password of incorrect type");
-        res.status(400).end();
+        res.status(400).send("password of incorrect type").end();
     } else {
         debug.userapi("login request as %s:%s", req.body.username, req.body.password);
         connection
@@ -153,7 +153,7 @@ app.post("/login", function (req, res, next) {
             }).then(function (users) {
                 if (users.length < 1) {
                     debug.userapi("user %s not found", req.body.username);
-                    res.status(403).end();
+                    res.status(403).send("user " + req.body.username + " not found").end();
                     return;
                 }
                 if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
@@ -165,7 +165,7 @@ app.post("/login", function (req, res, next) {
                     res.redirect("/");
                 } else {
                     debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
-                    res.status(403).end();
+                    res.status(403).send("incorrect password for " + req.body.username).end();
                 }
             });
     }
@@ -176,13 +176,13 @@ app.post("/register", function (req, res, next) {
         res.redirect("/");
     } else if (typeof req.body.username !== typeof "string") {
         debug.userapi("username of incorrect type");
-        res.status(400).end();
+        res.status(400).send("username of incorrect type").end();
     } else if (typeof req.body.name !== typeof "string") {
         debug.userapi("full name of incorrect type");
-        res.status(400).end();
+        res.status(400).send("full name of incorrect type").end();
     } else if (typeof req.body.password !== typeof "string") {
         debug.userapi("password of incorrect type");
-        res.status(400).end();
+        res.status(400).send("password of incorrect type").end();
     } else {
         debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
         connection
@@ -194,8 +194,7 @@ app.post("/register", function (req, res, next) {
             .then(function (users) {
                 if (users.length > 0) {
                     debug.userapi("user %s already exists", req.body.username);
-                    res.status(403);
-                    res.end();
+                    res.status(403).send("user " + req.body.username + " already exists").end();
                     return;
                 }
                 var salt = Math.floor(Math.random() * 100000);
