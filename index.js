@@ -347,13 +347,16 @@ app.post("/issue/:issue", function (req, res, next) {
     else if (typeof req.body.text !== typeof "") res.status(400).end();
     else if (req.body.text === "") res.redirect("/");
     else {
-        connection.query("INSERT INTO IssuePosts (ContainedText,AuthorID,IssueID,DateOfCreation) VALUES (?,?,?,?)", [req.body.text, req.session.loginid, req.params.issue, new Date()], function (err, results) {
-            if (err) {
-                next(err);
-                return;
-            }
-            res.redirect("/issue/" + req.params.issue);
-        });
+        connection("issueposts")
+            .insert({
+                "containedtext": req.body.text,
+                "authorid": req.session.loginid,
+                "issueid": req.params.issue,
+                "dateofcreation": new Date()
+            })
+            .then(function () {
+                res.redirect("/issue/" + req.params.issue);
+            });
     }
 });
 app.get("/issue/:issue/open", function (req, res, next) {
