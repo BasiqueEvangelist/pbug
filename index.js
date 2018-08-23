@@ -588,21 +588,26 @@ app.get("/tag/:tag/remove", function (req, res, next) {
     else if (typeof req.params.tag !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.tag))) res.redirect("/");
     else {
-        connection.query("SELECT IssueID FROM IssueTags WHERE ID=?", [req.params.tag], function (err1, tags) {
-            if (err1) {
-                next(err1);
-                return;
-            } else if (tags.length < 1) {
-                res.redirect("/");
-            } else
-                connection.query("DELETE FROM IssueTags WHERE ID=?", [req.params.tag], function (err2, results) {
-                    if (err2) {
-                        next(err2);
-                        return;
-                    }
-                    res.redirect("/issue/" + tags[0].IssueID);
-                });
-        });
+        connection
+            .select("issueid")
+            .from("issuetags")
+            .where({
+                "id": req.params.tag
+            })
+            .then(function (tags) {
+                if (tags.length < 1) {
+                    res.redirect("/");
+                } else
+                    connection("issuetags")
+                    .where({
+                        "id": req.params.tag
+                    })
+                    .del()
+                    .then(function () {
+                        res.redirect("/issue/" + tags[0].issueid);
+                    });
+            });
+
     }
 });
 app.get("/post/:post/edit", function (req, res, next) {
