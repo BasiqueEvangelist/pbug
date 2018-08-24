@@ -660,7 +660,7 @@ app.post("/post/:post/edit", function (req, res, next) {
     else if (req.body.newtext === "") res.redirect("back");
     else {
         connection
-            .select("authorid")
+            .select("authorid", "issueid")
             .from("issueposts")
             .where({
                 "id": req.params.post
@@ -680,7 +680,7 @@ app.post("/post/:post/edit", function (req, res, next) {
                             "dateofedit": new Date()
                         })
                         .then(function () {
-                            res.redirect("/");
+                            res.redirect("/issue/" + posts[0].issueid);
                         });
                 }
             });
