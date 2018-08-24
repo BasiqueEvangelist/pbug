@@ -91,6 +91,7 @@ app.get("/", function (req, res, next) {
                     .from("issues")
                     .leftJoin("projects", "issues.projectid", "projects.id")
                     .where({
+                        "issues.isclosed": false,
                         "issues.authorid": req.user.id
                     })
                     .orderBy("issues.id", "desc")

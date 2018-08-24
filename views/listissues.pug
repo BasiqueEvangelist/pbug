@@ -8,7 +8,7 @@ block body
                     .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                     = issue.issuename
     if req.user.id !== -1
-        h2 Issues authored by you
+        h2 Open issues authored by you
         ul.issues-list
             each issue in aissues
                 li
