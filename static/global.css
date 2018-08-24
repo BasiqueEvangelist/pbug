@@ -1,180 +1,160 @@
-body
-{
-	line-height:1.6;
-	font-size:16px;
+body {
+	line-height: 1.6;
+	font-size: 16px;
 	font-family: sans-serif;
-	color:#222;
-	margin:0;
-	background-color:#fafaff;
+	color: #222;
+	margin: 0;
+	background-color: #fafaff;
 }
 
-h1,h2,h3,h4,h5,h5
-{
-	color:#059;
-	line-height:1.2;
-	margin:0 10px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h5 {
+	color: #059;
+	line-height: 1.2;
+	margin: 0 10px;
 	font-family: tahoma, sans-serif;
 }
 
-.entry
-{
-	padding:10px 10px;
-	font-size:14px;
+.entry {
+	padding: 10px 10px;
+	font-size: 14px;
 	font-family: monospace;
 }
 
-
-ul.postlist
-{
+ul.postlist {
 	list-style-type: none;
 	padding-left: 0px;
 	padding-right: 0px;
 	width: 100%;
 }
 
-ul.postlist li:nth-child(odd)
-{
+ul.postlist li:nth-child(odd) {
 	background-color: #f0f0ff;
 }
 
-header
-{
+header {
 	background-color: #059;
-	padding:10px 0px 10px 0px;
+	padding: 10px 0px 10px 0px;
 	font-size: 18px;
 	width: 100%;
 	font-family: tahoma, sans-serif;
 }
 
-nav
-{
+nav {
 	display: inline-block;
 }
 
-.flex-container
-{
-	display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
-	display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
-	display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+.flex-container {
+	display: -webkit-box;
+	/* OLD - iOS 6-, Safari 3.1-6, BB7 */
+	display: -ms-flexbox;
+	/* TWEENER - IE 10 */
+	display: -webkit-flex;
+	/* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+	display: flex;
+	/* NEW, Spec - Firefox, Chrome, Opera */
 	justify-content: center;
 	align-items: center;
 }
 
-.inner-element
-{
+.inner-element {
 	display: inline-block;
 	width: 750px;
 }
 
-.helper
-{
+.helper {
 	display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-}
-
-.helper > img
-{
+	height: 100%;
 	vertical-align: middle;
 }
 
-span.assigneetext
-{
-	color:black;
+.helper>img {
+	vertical-align: middle;
 }
 
-div.page-main
-{
-	max-width:750px;
-	margin:auto;
-	margin-top:20px;
+span.assigneetext {
+	color: black;
 }
 
-.issues-list
-{
+div.page-main {
+	max-width: 750px;
+	margin: auto;
+	margin-top: 20px;
+}
+
+.issues-list {
 	list-style-type: none;
-	padding-left:0;
-	width:100%;
+	padding-left: 0;
+	width: 100%;
 }
 
-.issues-list  a
-{
-	display:block;
-	color:#222;
+.issues-list a {
+	display: block;
+	color: #222;
 }
 
-.issues-list li
-{
-	padding:5px;
-	padding-left:10px;
-	margin:5px;
+.issues-list li {
+	padding: 5px;
+	padding-left: 10px;
+	margin: 5px;
 }
 
-.issue-tag
-{
+.issue-tag {
 	font-size: 12px;
-	font-family:tahoma,sans-serif;
+	font-family: tahoma, sans-serif;
 	color: #059;
 	margin-bottom: -5px;
 }
 
-
-.issues-list li:nth-child(odd)
-{
+.issues-list li:nth-child(odd) {
 	background: #f0f0ff;
 }
 
-.issues-list li:hover
-{
+.issues-list li:hover {
 	background: #fff;
 }
 
-nav
-{
+nav {
 	color: #eef;
 }
 
-nav > a
-{
+nav>a {
 	color: #eef;
-	padding:5px;
-    padding-right:10px;
-    padding-left:10px;
+	padding: 5px;
+	padding-right: 10px;
+	padding-left: 10px;
 }
 
-nav > a:hover
-{
+nav>a:hover {
 	background-color: #036;
-    color: #fff;
+	color: #fff;
 }
 
-.entry
-{
+.entry {
 	font-family: tahoma, sans-serif;
 }
 
-.entry div.date
-{
-	font-size:10px;
-	color:#059;
+.entry div.date {
+	font-size: 10px;
+	color: #059;
 }
 
-.entry div.username 
-{
-	font-size:18px; 
+.entry div.username {
+	font-size: 18px;
 }
 
-.entry textarea.submit-text
-{
+textarea.submit-text {
 	width: 100%;
 	min-width: 100%;
 	max-width: 100%;
 	height: 10em;
 }
 
-.entry input.submitpost
-{
+.entry input.submitpost {
 	background-color: #059;
 	color: white;
 	border: none;
@@ -182,69 +162,60 @@ nav > a:hover
 	height: 1.5em;
 }
 
-div.underpanel
-{
+div.underpanel {
 	font-size: 10px;
 	color: black;
 	padding-left: 15px;
 }
 
-span.tag a, span.tag 
-{
+span.tag a,
+span.tag {
 	background-color: white;
 	color: gray;
 }
 
-span.tag:hover, span.tag:hover a 
-{
+span.tag:hover,
+span.tag:hover a {
 	background-color: black;
-    color: white
+	color: white
 }
 
-
-span.issue-closed-marker 
-{
+span.issue-closed-marker {
 	color: red;
 }
 
-span.issue-opened-marker 
-{
+span.issue-opened-marker {
 	color: green;
 }
 
-.issue-name
-{
+.issue-name {
 	margin-top: 5px;
 	margin-left: 0px;
+	margin-bottom: 5px;
 	color: black;
 	font-weight: normal;
 }
 
-div.taglist 
-{
+div.taglist {
 	margin-top: 10px;
 }
 
-hr
-{
+hr {
 	border-color: #05b;
 	border-width: 0px 0px 2px;
 	margin: 0px;
 }
 
-p
-{
+p {
 	text-indent: 10px;
 }
 
-a
-{
+a {
 	text-decoration: none;
 }
 
-footer
-{
-	padding-top:25px;
+footer {
+	padding-top: 25px;
 	text-align: center;
 	color: #059;
 }
