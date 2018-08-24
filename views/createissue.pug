@@ -6,7 +6,8 @@ block body
         br
         textarea(name="firsttext",placeholder="Text of first post (Markdown)",required)
         br
-        select(name="projectid",required)
+        label(for="projectchooser") Project: 
+        select#projectchooser(name="projectid",required)
             each project in projects
                 option(value=project.id.toString())= project.projectname
         br
