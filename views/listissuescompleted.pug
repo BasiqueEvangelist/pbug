@@ -1,12 +1,12 @@
 extends layout.pug
 block body
     h2 List of issues
-    | Open | 
+    a(href="/issues/open") Open
+    |  | 
     a(href="/issues/all") All
     |  | 
     a(href="/issues/orphan") Orphan
-    |  | 
-    a(href="/issues/completed") Completed
+    |  | Completed
     ul.issues-list
         each issue in issues
             li

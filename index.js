@@ -143,6 +143,23 @@ app.get("/issues/orphan", function (req, res, next) {
             });
         });
 });
+app.get("/issues/completed", function (req, res, next) {
+    debug.issueapi("showing all completed issues");
+    connection
+        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+        .from("issues")
+        .leftJoin("projects", "issues.projectid", "projects.id")
+        .where({
+            "issues.isclosed": true
+        })
+        .orderBy("issues.id", "desc")
+        .then(function (results) {
+            debug.issueapi("issues retrieved, sending body");
+            res.render("listissuescompleted", {
+                issues: results
+            });
+        });
+});
 app.get("/login", function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");
     else res.render("login");
