@@ -372,8 +372,9 @@ app.post("/issue/:issue", function (req, res, next) {
                 "issueid": req.params.issue,
                 "dateofcreation": new Date()
             })
-            .then(function () {
-                res.redirect("/issue/" + req.params.issue);
+            .returning("id")
+            .then(function (ids) {
+                res.redirect("/issue/" + req.params.issue + "#" + ids[0]);
             });
     }
 });
@@ -680,7 +681,7 @@ app.post("/post/:post/edit", function (req, res, next) {
                             "dateofedit": new Date()
                         })
                         .then(function () {
-                            res.redirect("/issue/" + posts[0].issueid);
+                            res.redirect("/issue/" + posts[0].issueid + "#" + req.params.post);
                         });
                 }
             });

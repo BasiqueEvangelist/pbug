@@ -53,7 +53,7 @@ block body
                 input(type="submit", value="Change")
     ul.postlist
         each post in posts
-            li.entry
+            li.entry(id=post.id)
                 .username=post.fullname
                 .date=post.dateofcreation
                 if post.dateofedit !== null
