@@ -7,3 +7,11 @@ block body
                 a(href="/issue/" + issue.id)
                     .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                     = issue.issuename
+    if req.user.id !== -1
+        h2 Issues authored by you
+        ul.issues-list
+            each issue in aissues
+                li
+                    a(href="/issue/" + issue.id)
+                        .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                        = issue.issuename

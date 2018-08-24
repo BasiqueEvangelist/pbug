@@ -85,11 +85,23 @@ app.get("/", function (req, res, next) {
             })
             .orderBy("issues.id", "desc")
             .then(function (results) {
-                debug.issueapi("issues retrieved, sending body");
-                res.render("listissues", {
-                    issues: results,
-                    title: "List of open issues assigned to you"
-                });
+                debug.issueapi("retrieving issues authored by user");
+                connection
+                    .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+                    .from("issues")
+                    .leftJoin("projects", "issues.projectid", "projects.id")
+                    .where({
+                        "issues.authorid": req.user.id
+                    })
+                    .orderBy("issues.id", "desc")
+                    .then(function (aresults) {
+                        debug.issueapi("issues retrieved, sending body");
+                        res.render("listissues", {
+                            issues: results,
+                            aissues: aresults,
+                            title: "List of open issues assigned to you"
+                        });
+                    });
             });
     }
 });
