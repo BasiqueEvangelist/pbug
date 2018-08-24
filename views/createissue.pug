@@ -8,8 +8,8 @@ block body
         textarea.submit-text(name="firsttext",placeholder="Description",required)
         br
         label(for="projectchooser") Project: 
-        select#projectchooser(name="projectid",required)
+        select.blueunderline#projectchooser(name="projectid",required)
             each project in projects
                 option(value=project.id.toString())= project.projectname
         br
-        input.submitpost(type="submit",value="Post")
+        input.submitpost(type="submit",value="Post",style="float:right")

@@ -169,7 +169,6 @@ input.submitpost {
 	border: none;
 	width: 6em;
 	height: 1.5em;
-	float: right;
 }
 
 div.underpanel {
@@ -234,11 +233,15 @@ label {
 	color: #05b;
 }
 
-select {
+.blueunderline {
 	border-top: 0px;
 	border-left: 0px;
 	border-right: 0px;
 	border-bottom-width: 2px;
 	border-color: #05b;
 	background-color: #fafaff;
+}
+
+.h2 {
+	font-size: 1.5em;
 }
