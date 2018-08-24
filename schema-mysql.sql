@@ -44,9 +44,9 @@ CREATE TABLE IF NOT EXISTS issueposts (
 );
 CREATE TABLE IF NOT EXISTS issuetags (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    Issueid INT NOT NULL,
-    FOREIGN KEY (Issueid) REFERENCES issues(id),
-    TagText VARCHAR(64) NOT NULL
+    issueid INT NOT NULL,
+    FOREIGN KEY (issueid) REFERENCES issues(id),
+    tagtext VARCHAR(64) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
     session_id VARCHAR(128) NOT NULL PRIMARY KEY,
