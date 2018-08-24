@@ -154,6 +154,10 @@ textarea.submit-text {
 	height: 10em;
 }
 
+input.title-input {
+	width: 75%;
+}
+
 .entry input.submitpost {
 	background-color: #059;
 	color: white;
