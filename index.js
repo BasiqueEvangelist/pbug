@@ -125,6 +125,24 @@ app.get("/issues/all", function (req, res, next) {
             });
         });
 });
+app.get("/issues/orphan", function (req, res, next) {
+    debug.issueapi("showing all orphan issues");
+    connection
+        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+        .from("issues")
+        .leftJoin("projects", "issues.projectid", "projects.id")
+        .where({
+            "issues.isclosed": false,
+            "issues.assigneeid": null
+        })
+        .orderBy("issues.id", "desc")
+        .then(function (results) {
+            debug.issueapi("issues retrieved, sending body");
+            res.render("listissuesorphan", {
+                issues: results
+            });
+        });
+});
 app.get("/login", function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");
     else res.render("login");
