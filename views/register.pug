@@ -5,17 +5,29 @@ block body
         fieldset
             legend Error
             = errors[Number(req.query.error)]
-    form(action="/register",method="POST",type="application/x-www-form-urlencoded",style="text-align:center; margin-top: 100px")
-        img#fnresult(style="width:1.5em; margin-right:5px")
-        input.h2.blueunderline#fntb(type="text",name="name",placeholder="Full name",required)
+    form.register-grid(action="/register",method="POST",type="application/x-www-form-urlencoded")
+        img#fnresult.icon.valcol.namerow
+        input.h2.blueunderline.fieldcol.namerow#fntb(type="text",name="name",placeholder="Full name",required)
+        div.infocol.namerow
+            | Used to sign your posts.
+            br 
+            |  You can change it later.
         br
-        img#uresult(style="width:1.5em; margin-right:5px")
-        input.h2.blueunderline#usernametb(type="text",name="username",placeholder="Username",required)
+        img#uresult.icon.valcol.loginrow
+        input.h2.blueunderline.fieldcol.loginrow#usernametb(type="text",name="username",placeholder="Username",required)
+        div.infocol.loginrow
+            | Used for signing in and in the 
+            br
+            | address of your user page
         br
-        img#presult(style="width:1.5em; margin-right:5px")
-        input.h2.blueunderline#ptb(type="password",name="password",placeholder="Password",required)
+        img#presult.icon.valcol.passrow
+        input.h2.blueunderline.fieldcol.passrow#ptb(type="password",name="password",placeholder="Password",required)
+        div.infocol.passrow
+            | 6 characters or more. 
+            br
+            |  Passphrases welcome.
         br
-        input.h2.submitpost(type="submit",value="Register",style="margin-top:10px")
+        input.h2.submitpost.fieldcol.buttonrow(type="submit",value="Register",style="margin-top:10px; justify-self: center;")
     script.
         $(function() {
             var timer = 0;

@@ -245,3 +245,52 @@ label {
 .h2 {
 	font-size: 1.5em;
 }
+
+.register-grid {
+	display: grid;
+	grid-template-columns: [val] 100px [fields] 300px [info] 300px [end-col];
+	grid-template-rows: [name] auto [login] auto [pass] auto [btn] auto [end-row];
+	column-gap: 15px;
+	row-gap: 25px;
+	text-align: center;
+	margin-top: 100px;
+}
+
+.valcol {
+	grid-column: val;
+	justify-self: end;
+}
+
+.fieldcol {
+	grid-column: fields;
+	justify-self: stretch;
+	align-self: start;
+}
+
+.infocol {
+	grid-column: info;
+	justify-self: start;
+	align-self: start;
+	text-align: left;
+}
+
+.namerow {
+	grid-row: name;
+}
+
+.loginrow {
+	grid-row: login;
+}
+
+.passrow {
+	grid-row: pass;
+}
+
+.btnrow {
+	grid-row: btn;
+}
+
+.icon {
+	width: 1.5em;
+	margin-right: 5px;
+}
