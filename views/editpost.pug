@@ -7,5 +7,5 @@ block body
             .date=post.dateofcreation
             if post.dateofedit !== null
                 .date="Edited on " + post.dateofedit
-            textarea(name="newtext")=post.containedtext
+            textarea.submit-text(name="newtext")=post.containedtext
         input(type="submit", value="Repost")
