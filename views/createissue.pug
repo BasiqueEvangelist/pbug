@@ -2,9 +2,9 @@ extends layout.pug
 
 block body
     form(action="/createissue", method="POST",enctype="application/x-www-form-urlencoded")
-        input(type="text",name="name",placeholder="Name of issue",required)
+        input(type="text",name="name",placeholder="Title",required)
         br
-        textarea.submit-text(name="firsttext",placeholder="Text of first post (Markdown)",required)
+        textarea.submit-text(name="firsttext",placeholder="Description",required)
         br
         label(for="projectchooser") Project: 
         select#projectchooser(name="projectid",required)
