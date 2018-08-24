@@ -259,6 +259,21 @@ app.post("/register", function (req, res, next) {
             });
     }
 });
+app.post("/checkusername", function (req, res) {
+    connection
+        .select("id")
+        .from("users")
+        .where({
+            "username": req.body.username
+        })
+        .then(function (resu) {
+            if (resu.length !== 1) {
+                res.send("Username available");
+            } else {
+                res.send("Username taken");
+            }
+        });
+});
 app.get("/createissue", function (req, res, next) {
     if (req.session.loginid === -1) res.redirect("/");
     else {

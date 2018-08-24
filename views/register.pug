@@ -5,11 +5,51 @@ block body
         fieldset
             legend Error
             = errors[Number(req.query.error)]
-    form(action="/register",method="POST",type="application/x-www-form-urlencoded")
-        input(type="text",name="name",placeholder="Full name",required)
+    form(action="/register",method="POST",type="application/x-www-form-urlencoded",style="text-align:center; margin-top: 100px")
+        img#fnresult(style="width:1.5em; margin-right:5px")
+        input.h2.blueunderline#fntb(type="text",name="name",placeholder="Full name",required)
         br
-        input(type="text",name="username",placeholder="Username",required)
+        img#uresult(style="width:1.5em; margin-right:5px")
+        input.h2.blueunderline#usernametb(type="text",name="username",placeholder="Username",required)
         br
-        input(type="password",name="password",placeholder="Password",required)
+        img#presult(style="width:1.5em; margin-right:5px")
+        input.h2.blueunderline#ptb(type="password",name="password",placeholder="Password",required)
         br
-        input(type="submit",value="Register")
+        input.h2.submitpost(type="submit",value="Register",style="margin-top:10px")
+    script.
+        $(function() {
+            var timer = 0;
+            $("#usernametb").keyup(function() {
+                clearTimeout(timer);
+                var v = $(this).val()
+                timer = setTimeout(function() {
+                    $.post("/checkusername", {username:v},function(res) {
+                        if (res === "Username available" && v !== "") {
+                            $("#uresult").attr("src","/static/tick.png");
+                        }
+                        else {
+                            $("#uresult").attr("src","/static/cross.png");
+                        }
+                    });
+                },500);
+            });
+            $("#utb").keyup();
+            $("#fntb").keyup(function() {
+                if ($(this).val() !== "") {
+                    $("#fnresult").attr("src","/static/tick.png");
+                }
+                else {
+                    $("#fnresult").attr("src","/static/cross.png");
+                }
+            });
+            $("#fntb").keyup();
+            $("#ptb").keyup(function() {
+                if ($(this).val() !== "") {
+                    $("#presult").attr("src","/static/tick.png");
+                }
+                else {
+                    $("#presult").attr("src","/static/cross.png");
+                }
+            });
+            $("#ptb").keyup();
+        });
