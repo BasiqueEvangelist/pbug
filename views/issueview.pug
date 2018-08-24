@@ -58,9 +58,12 @@ block body
                 .date=post.dateofcreation
                 if post.dateofedit !== null
                     .date="Edited on " + post.dateofedit
-                if req.user.id == post.authorid
-                    .underpanel
+                .underpanel
+                    if req.user.id == post.authorid
                         a(href="/post/" + post.id + "/edit") edit
+                        |  
+                    a(href="/issue/" + issue.id + "#" + post.id) permalink
+                    |  
                 !=parseMarkdown(post.containedtext)
         if req.user.id != -1
             li.entry
