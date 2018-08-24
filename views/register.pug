@@ -56,7 +56,7 @@ block body
             });
             $("#fntb").keyup();
             $("#ptb").keyup(function() {
-                if ($(this).val() !== "") {
+                if ($(this).val().length >= 6) {
                     $("#presult").attr("src","/static/tick.png");
                 }
                 else {
