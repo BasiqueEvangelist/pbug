@@ -4,6 +4,7 @@ var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
 var Knex = require("knex");
+var errors = require("./errors");
 var debug = {};
 debug.all = require("debug")("pbug*");
 debug.request = require("debug")("pbug:request");
@@ -46,6 +47,7 @@ app.use(function (req, res, next) {
     req.user.fullname = req.session.loginfullname;
     req.user.username = req.session.loginusername;
     res.locals.req = req;
+    res.locals.errors = errors;
     next();
 });
 app.use(express.urlencoded({
@@ -174,10 +176,10 @@ app.post("/login", function (req, res, next) {
         res.redirect("/");
     } else if (typeof req.body.username !== typeof "string") {
         debug.userapi("username of incorrect type");
-        res.status(400).send("username of incorrect type").end();
+        res.redirect("/login?error=" + 0);
     } else if (typeof req.body.password !== typeof "string") {
         debug.userapi("password of incorrect type");
-        res.status(400).send("password of incorrect type").end();
+        res.redirect("/login?error=" + 1);
     } else {
         debug.userapi("login request as %s:%s", req.body.username, req.body.password);
         connection
@@ -188,7 +190,7 @@ app.post("/login", function (req, res, next) {
             }).then(function (users) {
                 if (users.length < 1) {
                     debug.userapi("user %s not found", req.body.username);
-                    res.status(403).send("user " + req.body.username + " not found").end();
+                    res.redirect("/login?error=" + 3);
                     return;
                 }
                 if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
@@ -200,7 +202,7 @@ app.post("/login", function (req, res, next) {
                     res.redirect("/");
                 } else {
                     debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
-                    res.status(403).send("incorrect password for " + req.body.username).end();
+                    res.redirect("/login?error=" + 4);
                 }
             });
     }
@@ -211,13 +213,13 @@ app.post("/register", function (req, res, next) {
         res.redirect("/");
     } else if (typeof req.body.username !== typeof "string") {
         debug.userapi("username of incorrect type");
-        res.status(400).send("username of incorrect type").end();
+        res.redirect("/register?error=" + 0);
     } else if (typeof req.body.name !== typeof "string") {
         debug.userapi("full name of incorrect type");
-        res.status(400).send("full name of incorrect type").end();
+        res.redirect("/register?error=" + 2);
     } else if (typeof req.body.password !== typeof "string") {
         debug.userapi("password of incorrect type");
-        res.status(400).send("password of incorrect type").end();
+        res.redirect("/register?error=" + 1);
     } else {
         debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
         connection
@@ -229,7 +231,7 @@ app.post("/register", function (req, res, next) {
             .then(function (users) {
                 if (users.length > 0) {
                     debug.userapi("user %s already exists", req.body.username);
-                    res.status(403).send("user " + req.body.username + " already exists").end();
+                    res.redirect("/register?error=" + 5);
                     return;
                 }
                 var salt = Math.floor(Math.random() * 100000);

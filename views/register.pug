@@ -1,6 +1,10 @@
 extends layout.pug
 
 block body
+    if typeof req.query.error !== "undefined"
+        fieldset
+            legend Error
+            = errors[Number(req.query.error)]
     form(action="/register",method="POST",type="application/x-www-form-urlencoded")
         input(type="text",name="name",placeholder="Full name",required)
         br
