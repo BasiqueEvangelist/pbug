@@ -55,19 +55,25 @@ block body
                 input(type="text",name="newtitle",placeholder="New title")
                 input(type="submit", value="Change")
     ul.postlist
-        each post in posts
-            li.entry(id=post.id)
-                .username=post.fullname
-                .date=post.dateofcreation
-                if post.dateofedit !== null
-                    .date="Edited on " + post.dateofedit
-                .underpanel
-                    if req.user.id == post.authorid
-                        a(href="/post/" + post.id + "/edit") edit
+        each thing in things
+            if typeof thing.containedtext == typeof ""
+                li.entry(id=thing.id)
+                    .username=thing.fullname
+                    .date=thing.dateofcreation
+                    if thing.dateofedit !== null
+                        .date="Edited on " + thing.dateofedit
+                    .underpanel
+                        if req.user.id == thing.authorid
+                            a(href="/post/" + thing.id + "/edit") edit
+                            |  
+                        a(href="/issue/" + issue.id + "#" + thing.id) permalink
                         |  
-                    a(href="/issue/" + issue.id + "#" + post.id) permalink
-                    |  
-                !=parseMarkdown(post.containedtext)
+                    !=parseMarkdown(thing.containedtext)
+            else
+                li.entry
+                    .username=thing.fullname
+                    .date=thing.dateofoccurance
+                    =JSON.stringify(thing)
         if req.user.id != -1
             li.entry
                 form(action="/issue/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")

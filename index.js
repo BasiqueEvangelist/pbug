@@ -399,12 +399,27 @@ app.get("/issue/:issue", function (req, res, next) {
                                         .from("users")
                                         .then(function (users) {
                                             debug.issueapi("successfully retrieved users");
-                                            res.render("issueview", {
-                                                issue: issues[0],
-                                                posts: posts,
-                                                tags: tags,
-                                                users: users
-                                            });
+                                            connection
+                                                .select()
+                                                .from("issueactivities")
+                                                .leftJoin("users", "issueactivities.authorid", "users.id")
+                                                .where({
+                                                    "issueid": req.params.issue
+                                                })
+                                                .then(function (activities) {
+                                                    debug.issueapi("successfully retrieved activities");
+                                                    var mix = posts.concat(activities).sort(function (a, b) {
+                                                        var adate = (typeof a.dateofcreation !== "undefined") ? a.dateofcreation : a.dateofoccurance;
+                                                        var bdate = (typeof b.dateofcreation !== "undefined") ? b.dateofcreation : b.dateofoccurance;
+                                                        return adate > bdate ? 1 : (adate < bdate ? -1 : 0);
+                                                    });
+                                                    res.render("issueview", {
+                                                        issue: issues[0],
+                                                        things: mix,
+                                                        tags: tags,
+                                                        users: users
+                                                    });
+                                                })
                                         });
                                 });
                         });
