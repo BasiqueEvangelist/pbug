@@ -71,9 +71,40 @@ block body
                     !=parseMarkdown(thing.containedtext)
             else
                 li.entry
-                    .username=thing.fullname
                     .date=thing.dateofoccurance
-                    =JSON.stringify(thing)
+                    span.username=thing.fullname
+                    |  
+                    if thing.data.type == "changetitle"
+                        span.blue has changed the title from "
+                        = thing.data.oldtitle
+                        span.blue " to "
+                        = thing.data.newtitle
+                        span.blue "
+                    else if thing.data.type == "assign"
+                        if (thing.data.oldassigneeid === -1 && thing.data.newassigneeid !== -1)
+                            span.blue has assigned 
+                            span.username=thing.newfn
+                        else if (thing.data.newassigneeid !== -1 && thing.data.oldassigneeid !== -1)
+                            span.blue has reassigned
+                            span.username=thing.newfn
+                            span.blue  from 
+                            span.username=thing.oldfn
+                        else if (thing.data.newassigneeid === -1 && thing.data.oldassigneeid !== -1)
+                            span.blue has unassigned 
+                            span.username=thing.oldfn
+                    else if thing.data.type == "addtag"
+                        span.blue has added tag #
+                        = thing.data.text
+                    else if thing.data.type == "deltag"
+                        span.blue has removed tag #
+                        = thing.data.text
+                    else if thing.data.type == "status"
+                        span.blue has changed issue status to 
+                        = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
+                        span.blue  from 
+                        = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
+                    else
+                        =JSON.stringify(thing.data)
         if req.user.id != -1
             li.entry
                 form(action="/issue/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")

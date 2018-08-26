@@ -410,16 +410,44 @@ app.get("/issue/:issue", function (req, res, next) {
                                                 })
                                                 .then(function (activities) {
                                                     debug.issueapi("successfully retrieved activities");
-                                                    var mix = posts.concat(activities).sort(function (a, b) {
-                                                        var adate = (typeof a.dateofcreation !== "undefined") ? a.dateofcreation : a.dateofoccurance;
-                                                        var bdate = (typeof b.dateofcreation !== "undefined") ? b.dateofcreation : b.dateofoccurance;
-                                                        return adate > bdate ? 1 : (adate < bdate ? -1 : 0);
-                                                    });
-                                                    res.render("issueview", {
-                                                        issue: issues[0],
-                                                        things: mix,
-                                                        tags: tags,
-                                                        users: users
+                                                    Promise.all(activities.map(function (t) {
+                                                        return new Promise(function (resolve, reject) {
+                                                            if (t.data.type == "assign") {
+                                                                connection
+                                                                    .select("fullname")
+                                                                    .from("users")
+                                                                    .where({ id: t.data.oldassigneeid })
+                                                                    .then(function (oldfns) {
+                                                                        connection
+                                                                            .select("fullname")
+                                                                            .from("users")
+                                                                            .where({ id: t.data.newassigneeid })
+                                                                            .then(function (newfns) {
+                                                                                var newt = t;
+                                                                                if (oldfns.length == 1)
+                                                                                    newt.oldfn = oldfns[0].fullname;
+                                                                                if (newfns.length == 1)
+                                                                                    newt.newfn = newfns[0].fullname;
+                                                                                resolve(newt);
+                                                                            });
+                                                                    });
+                                                            }
+                                                            else {
+                                                                resolve(t);
+                                                            }
+                                                        })
+                                                    })).then(function (activities) {
+                                                        var mix = posts.concat(activities).sort(function (a, b) {
+                                                            var adate = (typeof a.dateofcreation !== "undefined") ? a.dateofcreation : a.dateofoccurance;
+                                                            var bdate = (typeof b.dateofcreation !== "undefined") ? b.dateofcreation : b.dateofoccurance;
+                                                            return adate > bdate ? 1 : (adate < bdate ? -1 : 0);
+                                                        });
+                                                        res.render("issueview", {
+                                                            issue: issues[0],
+                                                            things: mix,
+                                                            tags: tags,
+                                                            users: users
+                                                        });
                                                     });
                                                 })
                                         });

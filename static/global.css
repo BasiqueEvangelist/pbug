@@ -138,13 +138,18 @@ nav>a:hover {
 	font-family: tahoma, sans-serif;
 }
 
-.entry div.date {
+.entry .date {
 	font-size: 10px;
 	color: #059;
 }
 
-.entry div.username {
+.entry .username {
 	font-size: 18px;
+}
+
+.entry .activitytag {
+	font-size: 10px;
+	color: green;
 }
 
 textarea.submit-text {
@@ -195,6 +200,10 @@ span.issue-closed-marker {
 
 span.issue-opened-marker {
 	color: green;
+}
+
+.blue {
+	color:#059;
 }
 
 .issue-name {
