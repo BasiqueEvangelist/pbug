@@ -1,5 +1,8 @@
 extends layout.pug
 
+block css
+    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+
 block body
     .issue-tag
         = "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] ("

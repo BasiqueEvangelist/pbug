@@ -10,7 +10,15 @@ debug.all = require("debug")("pbug*");
 debug.request = require("debug")("pbug:request");
 debug.userapi = require("debug")("pbug:userapi");
 debug.issueapi = require("debug")("pbug:issueapi");
-var markdown = require("markdown").markdown;
+var marked = require("marked");
+marked.setOptions({
+    highlight: function (code) {
+        return require('highlight.js').highlightAuto(code).value;
+    },
+    // sanitize: true,
+    headerIds: false,
+    gfm: true
+});
 debug.all("starting pbug");
 var connection = new Knex({
     client: process.env.DB_TYPE,
@@ -33,10 +41,7 @@ app.use(session({
         knex: connection
     })
 }));
-app.locals.parseMarkdown = function (markd) {
-    var htmlr = markdown.toHTML(markd);
-    return htmlr;
-};
+app.locals.parseMarkdown = marked;
 app.use(function (req, res, next) {
     debug.request("(%s) %s %s - %s", req.connection.remoteAddress, req.method, req.path, req.headers["user-agent"]);
     if (typeof req.session.loginid === typeof undefined) req.session.loginid = -1;
@@ -53,6 +58,7 @@ app.use(function (req, res, next) {
 app.use(express.urlencoded({
     extended: false
 }));
+app.use("/static/highlightstyles", express.static("node_modules/highlight.js/styles"));
 app.use("/static", express.static("static"));
 app.set("view engine", "pug");
 app.get("/", function (req, res, next) {
@@ -665,13 +671,13 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                     res.redirect("/");
                 } else
                     connection("issuetags")
-                    .where({
-                        "id": req.params.tag
-                    })
-                    .del()
-                    .then(function () {
-                        res.redirect("/issue/" + tags[0].issueid);
-                    });
+                        .where({
+                            "id": req.params.tag
+                        })
+                        .del()
+                        .then(function () {
+                            res.redirect("/issue/" + tags[0].issueid);
+                        });
             });
 
     }
