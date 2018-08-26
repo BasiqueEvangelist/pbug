@@ -457,8 +457,17 @@ app.get("/issue/:issue/open", function (req, res, next) {
                             "isclosed": false
                         })
                         .then(function (_) {
-                            debug.issueapi("successfully opened issue %s", req.params.issue);
-                            res.redirect("/issue/" + req.params.issue);
+                            connection("issueactivities")
+                                .insert({
+                                    "dateofoccurance": new Date(),
+                                    "issueid": req.params.issue,
+                                    "authorid": req.user.id,
+                                    "closedstatus": false
+                                })
+                                .then(function () {
+                                    debug.issueapi("successfully opened issue %s", req.params.issue);
+                                    res.redirect("/issue/" + req.params.issue);
+                                });
                         });
                 } else {
                     res.status(403);
@@ -492,9 +501,18 @@ app.get("/issue/:issue/close", function (req, res, next) {
                         .update({
                             "isclosed": true
                         })
-                        .then(function () {
-                            debug.issueapi("successfully closed issue %s", req.params.issue);
-                            res.redirect("/issue/" + req.params.issue);
+                        .then(function (_) {
+                            connection("issueactivities")
+                                .insert({
+                                    "dateofoccurance": new Date(),
+                                    "issueid": req.params.issue,
+                                    "authorid": req.user.id,
+                                    "closedstatus": true
+                                })
+                                .then(function () {
+                                    debug.issueapi("successfully closed issue %s", req.params.issue);
+                                    res.redirect("/issue/" + req.params.issue);
+                                });
                         });
                 } else {
                     debug.issueapi("user is not privileged enough to close issue");
@@ -567,8 +585,18 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
                 "issueid": req.params.issue
             })
             .then(function () {
-                debug.issueapi("added tag to issue %s", req.params.issue);
-                res.redirect("/issue/" + req.params.issue);
+                connection("issueactivities")
+                    .insert({
+                        "dateofoccurance": new Date(),
+                        "issueid": req.params.issue,
+                        "authorid": req.user.id,
+                        "tagadded": true,
+                        "tagtext": req.query.tagtext
+                    })
+                    .then(function () {
+                        debug.issueapi("added tag to issue %s", req.params.issue);
+                        res.redirect("/issue/" + req.params.issue);
+                    });
             });
     }
 });
@@ -598,8 +626,18 @@ app.get("/issue/:issue/assign", function (req, res, next) {
                 "assigneeid": req.query.userid === "-1" ? null : req.query.userid
             })
             .then(function () {
-                debug.issueapi("changed assignee for issue %s", req.params.issue);
-                res.redirect("/issue/" + req.params.issue);
+                connection("issueactivities")
+                    .insert({
+                        "dateofoccurance": new Date(),
+                        "issueid": req.params.issue,
+                        "authorid": req.user.id,
+                        "assigneeid": req.query.userid === "-1" ? null : req.query.userid,
+                        "assigned": true
+                    })
+                    .then(function () {
+                        debug.issueapi("changed assignee for issue %s", req.params.issue);
+                        res.redirect("/issue/" + req.params.issue);
+                    });
             });
     }
 });
@@ -629,8 +667,17 @@ app.get("/issue/:issue/changetitle", function (req, res, next) {
                 "issuename": req.query.newtitle
             })
             .then(function () {
-                debug.issueapi("changed title for issue %s", req.params.issue);
-                res.redirect("/issue/" + req.params.issue);
+                connection("issueactivities")
+                    .insert({
+                        "dateofoccurance": new Date(),
+                        "issueid": req.params.issue,
+                        "authorid": req.user.id,
+                        "newtitle": req.query.newtitle
+                    })
+                    .then(function () {
+                        debug.issueapi("changed title for issue %s", req.params.issue);
+                        res.redirect("/issue/" + req.params.issue);
+                    });
             });
     }
 });
@@ -661,7 +708,7 @@ app.get("/tag/:tag/remove", function (req, res, next) {
     else if (isNaN(Number(req.params.tag))) res.redirect("/");
     else {
         connection
-            .select("issueid")
+            .select("issueid", "tagtext")
             .from("issuetags")
             .where({
                 "id": req.params.tag
@@ -676,6 +723,14 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                         })
                         .del()
                         .then(function () {
+                            connection("issueactivities")
+                                .insert({
+                                    "dateofoccurance": new Date(),
+                                    "issueid": req.params.issue,
+                                    "authorid": req.user.id,
+                                    "tagtext": tags[0].tagtext,
+                                    "tagadded": false
+                                })
                             res.redirect("/issue/" + tags[0].issueid);
                         });
             });
