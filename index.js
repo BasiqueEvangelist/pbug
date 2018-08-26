@@ -458,13 +458,13 @@ app.get("/issue/:issue/open", function (req, res, next) {
     } else {
         debug.issueapi("open request for issue %s", req.params.issue);
         connection
-            .select("assigneeid")
+            .select("assigneeid", "isclosed")
             .from("issues")
             .where({
                 "id": req.params.issue
             })
             .then(function (results) {
-                if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                if (req.user.id === results[0].assigneeid || req.user.isadmin) {
                     debug.issueapi("opening issue %s", req.params.issue);
                     connection("issues")
                         .where({
@@ -481,7 +481,8 @@ app.get("/issue/:issue/open", function (req, res, next) {
                                     "authorid": req.user.id,
                                     "data": {
                                         type: "status",
-                                        status: "open"
+                                        newstatus: "open",
+                                        oldstatus: results.isclosed ? "closed" : "open"
                                     }
                                 })
                                 .then(function () {
@@ -506,13 +507,13 @@ app.get("/issue/:issue/close", function (req, res, next) {
     } else {
         debug.issueapi("close request for issue %s", req.params.issue);
         connection
-            .select("assigneeid")
+            .select("assigneeid", "isclosed")
             .from("issues")
             .where({
                 "id": req.params.issue
             })
             .then(function (results) {
-                if (req.user.id === results[0].AssigneeID || req.user.isadmin) {
+                if (req.user.id === results[0].assigneeid || req.user.isadmin) {
                     debug.issueapi("closing issue %s", req.params.issue);
                     connection("issues")
                         .where({
@@ -529,7 +530,8 @@ app.get("/issue/:issue/close", function (req, res, next) {
                                     "authorid": req.user.id,
                                     "data": {
                                         type: "status",
-                                        status: "closed"
+                                        newstatus: "closed",
+                                        oldstatus: results[0].isclosed ? "closed" : "opened"
                                     }
                                 })
                                 .then(function () {
@@ -651,27 +653,36 @@ app.get("/issue/:issue/assign", function (req, res, next) {
         res.redirect("/");
     } else {
         debug.issueapi("assign request for issue %s", req.params.issue);
-        connection("issues")
+        connection
+            .select("assigneeid")
+            .from("issues")
             .where({
                 "id": req.params.issue
             })
-            .update({
-                "assigneeid": req.query.userid === "-1" ? null : req.query.userid
-            })
-            .then(function () {
-                connection("issueactivities")
-                    .insert({
-                        "dateofoccurance": new Date(),
-                        "issueid": req.params.issue,
-                        "authorid": req.user.id,
-                        "data": {
-                            type: "assign",
-                            assigneeid: Number(req.query.userid)
-                        }
+            .then(function (issues) {
+                connection("issues")
+                    .where({
+                        "id": req.params.issue
+                    })
+                    .update({
+                        "assigneeid": req.query.userid === "-1" ? null : req.query.userid
                     })
                     .then(function () {
-                        debug.issueapi("changed assignee for issue %s", req.params.issue);
-                        res.redirect("/issue/" + req.params.issue);
+                        connection("issueactivities")
+                            .insert({
+                                "dateofoccurance": new Date(),
+                                "issueid": req.params.issue,
+                                "authorid": req.user.id,
+                                "data": {
+                                    type: "assign",
+                                    newassigneeid: Number(req.query.userid),
+                                    oldassigneeid: issues[0].assigneeid === null ? -1 : issues[0].assigneeid
+                                }
+                            })
+                            .then(function () {
+                                debug.issueapi("changed assignee for issue %s", req.params.issue);
+                                res.redirect("/issue/" + req.params.issue);
+                            });
                     });
             });
     }
@@ -694,27 +705,36 @@ app.get("/issue/:issue/changetitle", function (req, res, next) {
         res.redirect("back");
     } else {
         debug.issueapi("changetitle request for issue %s", req.params.issue);
-        connection("issues")
+        connection
+            .select("issuename")
+            .from("issues")
             .where({
                 "id": req.params.issue
             })
-            .update({
-                "issuename": req.query.newtitle
-            })
-            .then(function () {
-                connection("issueactivities")
-                    .insert({
-                        "dateofoccurance": new Date(),
-                        "issueid": req.params.issue,
-                        "authorid": req.user.id,
-                        "data": {
-                            type: "changetitle",
-                            newtitle: req.query.newtitle
-                        }
+            .then(function (issues) {
+                connection("issues")
+                    .where({
+                        "id": req.params.issue
+                    })
+                    .update({
+                        "issuename": req.query.newtitle
                     })
                     .then(function () {
-                        debug.issueapi("changed title for issue %s", req.params.issue);
-                        res.redirect("/issue/" + req.params.issue);
+                        connection("issueactivities")
+                            .insert({
+                                "dateofoccurance": new Date(),
+                                "issueid": req.params.issue,
+                                "authorid": req.user.id,
+                                "data": {
+                                    type: "changetitle",
+                                    newtitle: req.query.newtitle,
+                                    oldtitle: issues[0].issuename
+                                }
+                            })
+                            .then(function () {
+                                debug.issueapi("changed title for issue %s", req.params.issue);
+                                res.redirect("/issue/" + req.params.issue);
+                            });
                     });
             });
     }
