@@ -400,7 +400,12 @@ app.get("/issue/:issue", function (req, res, next) {
                                         .then(function (users) {
                                             debug.issueapi("successfully retrieved users");
                                             connection
-                                                .select()
+                                                .select("issueactivities.id", "dateofoccurance",
+                                                    "issueid", "authorid",
+                                                    "closedstatus", "tagtext",
+                                                    "tagadded", "assigneeid",
+                                                    "assigned", "newtitle"
+                                                    , "users.fullname")
                                                 .from("issueactivities")
                                                 .leftJoin("users", "issueactivities.authorid", "users.id")
                                                 .where({
