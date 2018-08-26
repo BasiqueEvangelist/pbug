@@ -402,10 +402,7 @@ app.get("/issue/:issue", function (req, res, next) {
                                             connection
                                                 .select("issueactivities.id", "dateofoccurance",
                                                     "issueid", "authorid",
-                                                    "closedstatus", "tagtext",
-                                                    "tagadded", "assigneeid",
-                                                    "assigned", "newtitle"
-                                                    , "users.fullname")
+                                                    "data", "users.fullname")
                                                 .from("issueactivities")
                                                 .leftJoin("users", "issueactivities.authorid", "users.id")
                                                 .where({
@@ -482,7 +479,10 @@ app.get("/issue/:issue/open", function (req, res, next) {
                                     "dateofoccurance": new Date(),
                                     "issueid": req.params.issue,
                                     "authorid": req.user.id,
-                                    "closedstatus": false
+                                    "data": {
+                                        type: "status",
+                                        status: "open"
+                                    }
                                 })
                                 .then(function () {
                                     debug.issueapi("successfully opened issue %s", req.params.issue);
@@ -527,7 +527,10 @@ app.get("/issue/:issue/close", function (req, res, next) {
                                     "dateofoccurance": new Date(),
                                     "issueid": req.params.issue,
                                     "authorid": req.user.id,
-                                    "closedstatus": true
+                                    "data": {
+                                        type: "status",
+                                        status: "closed"
+                                    }
                                 })
                                 .then(function () {
                                     debug.issueapi("successfully closed issue %s", req.params.issue);
@@ -568,15 +571,23 @@ app.get("/issue/:issue/delete", function (req, res, next) {
                     .del()
                     .then(function () {
                         debug.issueapi("deleted all tags in issue %s", req.params.issue);
-                        connection("issues")
+                        connection("issueactivities")
                             .where({
-                                "id": req.params.issue
+                                "issueid": req.params.issue
                             })
                             .del()
                             .then(function () {
-                                debug.issueapi("deleted issue %s", req.params.issue);
-                                res.redirect("/issues");
-                            });
+                                debug.issueapi("deleted all activities in issue %s", req.params.issue);
+                                connection("issues")
+                                    .where({
+                                        "id": req.params.issue
+                                    })
+                                    .del()
+                                    .then(function () {
+                                        debug.issueapi("deleted issue %s", req.params.issue);
+                                        res.redirect("/issues");
+                                    });
+                            })
                     });
             });
     }
@@ -610,8 +621,10 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
                         "dateofoccurance": new Date(),
                         "issueid": req.params.issue,
                         "authorid": req.user.id,
-                        "tagadded": true,
-                        "tagtext": req.query.tagtext
+                        "data": {
+                            type: "addtag",
+                            text: req.query.tagtext
+                        }
                     })
                     .then(function () {
                         debug.issueapi("added tag to issue %s", req.params.issue);
@@ -651,8 +664,10 @@ app.get("/issue/:issue/assign", function (req, res, next) {
                         "dateofoccurance": new Date(),
                         "issueid": req.params.issue,
                         "authorid": req.user.id,
-                        "assigneeid": req.query.userid === "-1" ? null : req.query.userid,
-                        "assigned": true
+                        "data": {
+                            type: "assign",
+                            assigneeid: Number(req.query.userid)
+                        }
                     })
                     .then(function () {
                         debug.issueapi("changed assignee for issue %s", req.params.issue);
@@ -692,7 +707,10 @@ app.get("/issue/:issue/changetitle", function (req, res, next) {
                         "dateofoccurance": new Date(),
                         "issueid": req.params.issue,
                         "authorid": req.user.id,
-                        "newtitle": req.query.newtitle
+                        "data": {
+                            type: "changetitle",
+                            newtitle: req.query.newtitle
+                        }
                     })
                     .then(function () {
                         debug.issueapi("changed title for issue %s", req.params.issue);
@@ -746,12 +764,16 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                             connection("issueactivities")
                                 .insert({
                                     "dateofoccurance": new Date(),
-                                    "issueid": req.params.issue,
+                                    "issueid": tags[0].issueid,
                                     "authorid": req.user.id,
-                                    "tagtext": tags[0].tagtext,
-                                    "tagadded": false
+                                    "data": {
+                                        type: "deltag",
+                                        text: tags[0].tagtext
+                                    }
                                 })
-                            res.redirect("/issue/" + tags[0].issueid);
+                                .then(function () {
+                                    res.redirect("/issue/" + tags[0].issueid);
+                                })
                         });
             });
 

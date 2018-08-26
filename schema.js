@@ -53,11 +53,6 @@ console.log(
             tbl.dateTime("dateofoccurance");
             tbl.integer("issueid").references("id").inTable("issues").notNullable();
             tbl.integer("authorid").references("id").inTable("users").notNullable();
-            tbl.boolean("closedstatus").defaultTo(null);
-            tbl.string("tagtext", 64);
-            tbl.boolean("tagadded").defaultTo(null);
-            tbl.integer("assigneeid").references("id").inTable("users");
-            tbl.boolean("assigned").defaultTo(false);
-            tbl.string("newtitle", 100).defaultTo(null);
+            tbl.jsonb("data");
         })
         .toString());
