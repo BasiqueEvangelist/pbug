@@ -42,7 +42,7 @@ block body
                         option(value=user.id)=user.fullname
                 input(type="submit",value="Assign")
         br
-    if req.user.isadmin || posts[0].authorid === req.user.id
+    if req.user.isadmin || things[0].authorid === req.user.id
         form(action="/issue/" + issue.id + "/addtag",method="GET")
             fieldset
                 legend Add tag
