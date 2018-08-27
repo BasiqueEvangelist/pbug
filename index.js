@@ -449,7 +449,7 @@ app.get("/issue/:issue", function (req, res, next) {
                                                             users: users
                                                         });
                                                     });
-                                                })
+                                                });
                                         });
                                 });
                         });
@@ -617,7 +617,7 @@ app.get("/issue/:issue/delete", function (req, res, next) {
                                         debug.issueapi("deleted issue %s", req.params.issue);
                                         res.redirect("/issues");
                                     });
-                            })
+                            });
                     });
             });
     }
@@ -821,10 +821,9 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                                 })
                                 .then(function () {
                                     res.redirect("/issue/" + tags[0].issueid);
-                                })
+                                });
                         });
             });
-
     }
 });
 app.get("/post/:post/edit", function (req, res, next) {
@@ -882,6 +881,177 @@ app.post("/post/:post/edit", function (req, res, next) {
                             res.redirect("/issue/" + posts[0].issueid + "#" + req.params.post);
                         });
                 }
+            });
+    }
+});
+app.get("/kb/create", function (req, res, next) {
+    if (req.session.loginid === -1) res.redirect("/");
+    else {
+        res.render("createinfopage");
+    };
+});
+app.post("/kb/create", function (req, res, next) {
+    if (req.session.loginid === -1) {
+        debug.issueapi("unprivileged user tried to create info page");
+        res.redirect("/");
+    } else if (typeof req.body.name !== typeof "string") {
+        debug.issueapi("info page name of incorrect type");
+        res.status(400).end();
+    } else if (req.body.name === "") {
+        debug.issueapi("info page name empty");
+        res.redirect("/");
+    } else if (typeof req.body.text !== typeof "string") {
+        debug.issueapi("info page text of incorrect type");
+        res.status(400).end();
+    } else if (req.body.text === "") {
+        debug.issueapi("info page text empty");
+        res.redirect("/");
+    } else {
+        debug.issueapi("%s is creating info page", req.user.username);
+        connection("infopages")
+            .insert({
+                "pagename": req.body.name,
+                "authorid": req.user.id,
+                "editorid": req.user.id,
+                "containedtext": req.body.text,
+                "dateofcreation": new Date(),
+                "dateofedit": new Date()
+            })
+            .returning("id")
+            .then(function (ids) {
+                debug.issueapi("successfully created infopage");
+                res.redirect("/kb/" + ids[0]);
+            });
+    }
+});
+app.get("/kb/post/:post/edit", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.post !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.post))) res.redirect("/");
+    else {
+        connection
+            .select("infopagecomments.id", "infopagecomments.containedtext", "infopagecomments.authorid",
+                "infopagecomments.dateofcreation", "infopagecomments.dateofedit", "users.fullname")
+            .from("infopagecomments")
+            .leftJoin("users", "infopagecomments.authorid", "users.id")
+            .where({
+                "infopagecomments.id": req.params.post
+            })
+            .then(function (posts) {
+                if (posts.length < 1) {
+                    res.redirect("/");
+                } else if (posts[0].authorid !== req.user.id) {
+                    res.redirect("/");
+                } else
+                    res.render("editcomment", {
+                        post: posts[0]
+                    });
+            });
+    }
+});
+app.post("/kb/post/:post/edit", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.post !== typeof "") res.status(400).end();
+    else if (isNaN(Number(req.params.post))) res.status(400).end();
+    else if (typeof req.body.newtext !== typeof "") res.status(400).end();
+    else if (req.body.newtext === "") res.redirect("back");
+    else {
+        connection
+            .select("authorid", "infopageid")
+            .from("infopagecomments")
+            .where({
+                "id": req.params.post
+            })
+            .then(function (posts) {
+                if (posts.length < 1) {
+                    res.redirect("/");
+                } else if (posts[0].authorid !== req.user.id) {
+                    res.redirect("/");
+                } else {
+                    connection("infopagecomments")
+                        .where({
+                            "id": req.params.post
+                        })
+                        .update({
+                            "containedtext": req.body.newtext,
+                            "dateofedit": new Date()
+                        })
+                        .then(function () {
+                            res.redirect("/kb/" + posts[0].infopageid + "#" + req.params.post);
+                        });
+                }
+            });
+    }
+});
+app.get("/kb/:infopage", function (req, res, next) {
+    if (typeof req.params.infopage !== typeof "") {
+        debug.issueapi("infopage id of incorrect type");
+        res.redirect("/");
+    } else if (isNaN(Number(req.params.infopage))) {
+        debug.issueapi("infopage id is not identifier");
+        res.redirect("/");
+    } else {
+        debug.issueapi("infopage request for infopage %s", req.params.infopage);
+        connection
+            .select("infopages.id", "infopages.pagename", "infopages.containedtext",
+                "infopages.dateofcreation", "infopages.dateofedit", "infopages.authorid",
+                "infopages.editorid", "users.fullname")
+            .from("infopages")
+            .leftJoin("users", "infopages.authorid", "users.id")
+            .where({
+                "infopages.id": Number(req.params.infopage)
+            })
+            .then(function (infopages) {
+                if (infopages.length < 1) {
+                    debug.issueapi("infopage %s not found", req.params.infopage);
+                    res.render("kbnotfound");
+                } else {
+                    debug.issueapi("successfully retrieved issue");
+                    connection
+                        .select("infopagecomments.id", "infopagecomments.containedtext", "infopagecomments.dateofcreation", "infopagecomments.dateofedit", "users.fullname", "infopagecomments.authorid", "infopagecomments.id")
+                        .from("infopagecomments")
+                        .leftJoin("users", "infopagecomments.authorid", "users.id")
+                        .where({
+                            "infopagecomments.infopageid": req.params.infopage
+                        })
+                        .orderBy("infopagecomments.id", "asc")
+                        .then(function (comments) {
+                            debug.issueapi("successfully retrieved infopage posts");
+                            connection
+                                .select("id", "tagtext")
+                                .from("infopagetags")
+                                .where({
+                                    "infopageid": req.params.infopage
+                                })
+                                .then(function (tags) {
+                                    res.render("kbview", {
+                                        infopage: infopages[0],
+                                        comments: comments,
+                                        tags: tags,
+                                    });
+                                });
+
+                        });
+                }
+            });
+    }
+});
+app.post("/kb/:infopage", function (req, res, next) {
+    if (typeof req.params.infopage !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.infopage))) res.redirect("/");
+    else if (typeof req.body.text !== typeof "") res.status(400).end();
+    else if (req.body.text === "") res.redirect("/");
+    else {
+        connection("infopagecomments")
+            .insert({
+                "containedtext": req.body.text,
+                "authorid": req.session.loginid,
+                "infopageid": req.params.infopage,
+                "dateofcreation": new Date()
+            })
+            .returning("id")
+            .then(function (ids) {
+                res.redirect("/kb/" + req.params.infopage + "#" + ids[0]);
             });
     }
 });

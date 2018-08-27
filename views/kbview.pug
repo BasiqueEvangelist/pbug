@@ -1,0 +1,53 @@
+extends layout.pug
+
+block css
+    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+
+block body
+    .issue-tag
+        .date="Authored by " + infopage.fullname + " on " + infopage.dateofcreation
+        .date="Edited on " + infopage.dateofedit
+    h2.issue-name=infopage.pagename
+    hr
+    .taglist
+        each tag in tags
+            span.tag
+                = "#" + tag.tagtext + " "
+                a(href="/kb/tag/" + tag.id + "/remove") &times; 
+        br
+    if req.user.isadmin || infopage.authorid === req.user.id
+        form(action="/kb/" + infopage.id + "/addtag",method="GET")
+            fieldset
+                legend Add tag
+                input(type="text",name="tagtext",placeholder="Tag name")
+                input(type="submit",value="Add")
+        br
+        form(action="/kb/" + infopage.id + "/changetitle",method="GET")
+            fieldset
+                legend Change title
+                input(type="text",name="newtitle",placeholder="New title")
+                input(type="submit", value="Change")
+    .entry
+        !=parseMarkdown(infopage.containedtext)
+    ul.postlist
+        each comment in comments
+            li.entry(id=comment.id)
+                .username=comment.fullname
+                .date=comment.dateofcreation
+                if comment.dateofedit !== null
+                    .date="Edited on " + comment.dateofedit
+                .underpanel
+                    if req.user.id == comment.authorid
+                        a(href="/kb/post/" + comment.id + "/edit") edit
+                        |  
+                    a(href="/kb/" + infopage.id + "#" + comment.id) permalink
+                    |  
+                    !=parseMarkdown(comment.containedtext)
+        if req.user.id != -1
+            li.entry
+                form(action="/kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
+                    .username=req.user.fullname
+                    .date=new Date()
+                    textarea.submit-text(name="text",placeholder="Comment contents (Markdown)")
+                    br
+                    input.submitpost(type="submit",value="Post",style="float:right")

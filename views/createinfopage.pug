@@ -1,0 +1,10 @@
+extends layout.pug
+
+block body
+    form(action="/kb/create", method="POST",enctype="application/x-www-form-urlencoded")
+        input.title-input(type="text",name="name",placeholder="Title",required)
+        hr
+        br
+        textarea.submit-text(name="text",placeholder="Description",required)
+        br
+        input.submitpost(type="submit",value="Post",style="float:right")
