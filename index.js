@@ -13,7 +13,7 @@ debug.issueapi = require("debug")("pbug:issueapi");
 var marked = require("marked");
 marked.setOptions({
     highlight: function (code) {
-        return require('highlight.js').highlightAuto(code).value;
+        return require("highlight.js").highlightAuto(code).value;
     },
     // sanitize: true,
     headerIds: false,
@@ -412,7 +412,7 @@ app.get("/issue/:issue", function (req, res, next) {
                                                     debug.issueapi("successfully retrieved activities");
                                                     Promise.all(activities.map(function (t) {
                                                         return new Promise(function (resolve, reject) {
-                                                            if (t.data.type == "assign") {
+                                                            if (t.data.type === "assign") {
                                                                 connection
                                                                     .select("fullname")
                                                                     .from("users")
@@ -424,9 +424,9 @@ app.get("/issue/:issue", function (req, res, next) {
                                                                             .where({ id: t.data.newassigneeid })
                                                                             .then(function (newfns) {
                                                                                 var newt = t;
-                                                                                if (oldfns.length == 1)
+                                                                                if (oldfns.length === 1)
                                                                                     newt.oldfn = oldfns[0].fullname;
-                                                                                if (newfns.length == 1)
+                                                                                if (newfns.length === 1)
                                                                                     newt.newfn = newfns[0].fullname;
                                                                                 resolve(newt);
                                                                             });
@@ -435,7 +435,7 @@ app.get("/issue/:issue", function (req, res, next) {
                                                             else {
                                                                 resolve(t);
                                                             }
-                                                        })
+                                                        });
                                                     })).then(function (activities) {
                                                         var mix = posts.concat(activities).sort(function (a, b) {
                                                             var adate = (typeof a.dateofcreation !== "undefined") ? a.dateofcreation : a.dateofoccurance;
