@@ -983,6 +983,64 @@ app.post("/kb/post/:post/edit", function (req, res, next) {
             });
     }
 });
+app.get("/kb/:infopage/edit", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.infopage !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.infopage))) res.redirect("/");
+    else {
+        connection
+            .select("infopages.id", "infopages.containedtext", "infopages.authorid",
+                "infopages.dateofcreation", "infopages.dateofedit", "infopages.pagename",
+                "users.fullname")
+            .from("infopages")
+            .leftJoin("users", "infopages.authorid", "users.id")
+            .where({
+                "infopages.id": req.params.infopage
+            })
+            .then(function (infopages) {
+                if (infopages.length < 1) {
+                    res.redirect("/");
+                } else
+                    res.render("editinfopage", {
+                        infopage: infopages[0]
+                    });
+            });
+    }
+});
+app.post("/kb/:infopage/edit", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.infopage !== typeof "") res.status(400).end();
+    else if (isNaN(Number(req.params.infopage))) res.status(400).end();
+    else if (typeof req.body.newtext !== typeof "") res.status(400).end();
+    else if (req.body.newtext === "") res.redirect("back");
+    else {
+        connection
+            .select("authorid")
+            .from("infopages")
+            .where({
+                "id": req.params.infopage
+            })
+            .then(function (infopages) {
+                if (infopages.length < 1) {
+                    res.redirect("/");
+                } else if (infopages[0].authorid !== req.user.id) {
+                    res.redirect("/");
+                } else {
+                    connection("infopages")
+                        .where({
+                            "id": req.params.infopage
+                        })
+                        .update({
+                            "containedtext": req.body.newtext,
+                            "dateofedit": new Date()
+                        })
+                        .then(function () {
+                            res.redirect("/kb/" + req.params.infopage);
+                        });
+                }
+            });
+    }
+});
 app.get("/kb/:infopage", function (req, res, next) {
     if (typeof req.params.infopage !== typeof "") {
         debug.issueapi("infopage id of incorrect type");

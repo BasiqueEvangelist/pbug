@@ -9,6 +9,9 @@ block body
         .date="Edited on " + infopage.dateofedit
     h2.issue-name=infopage.pagename
     hr
+    .underpanel
+        if req.user.id !== -1
+            a(href="/kb/"+infopage.id+"/edit") edit
     .taglist
         each tag in tags
             span.tag

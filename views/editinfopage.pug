@@ -1,0 +1,12 @@
+extends layout
+block body
+    h2 Editing info page
+    form(action="/kb/" + infopage.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+        .issue-tag
+            .date="Authored by " + infopage.fullname + " on " + infopage.dateofcreation
+            .date="Edited on " + infopage.dateofedit
+        h2.issue-name=infopage.pagename
+        hr
+        .entry
+            textarea.submit-text(name="newtext")=infopage.containedtext
+        input.submitpost(type="submit", value="Repost",style="float:right")
