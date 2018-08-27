@@ -70,14 +70,14 @@ console.log(
         .createTable("infopagecomments", function (tbl) {
             tbl.increments("id");
             tbl.dateTime("dateofcreation").notNullable();
-            tbl.integer("authorid").references("id").inTable('users');
-            tbl.integer("infopageid").references("id").inTable('infopages');
+            tbl.integer("authorid").references("id").inTable("users");
+            tbl.integer("infopageid").references("id").inTable("infopages");
             tbl.dateTime("dateofedit");
             tbl.text("containedtext");
         })
         .createTable("infopagetags", function (tbl) {
             tbl.increments("id");
-            tbl.integer("infopageid").references("id").inTable('infopages');
+            tbl.integer("infopageid").references("id").inTable("infopages");
             tbl.string("tagtext", 64).notNullable();
         })
         .toString());
