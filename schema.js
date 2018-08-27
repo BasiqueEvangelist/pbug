@@ -11,6 +11,9 @@ console.log(
         .dropTableIfExists("issueactivities")
         .dropTableIfExists("issues")
         .dropTableIfExists("projects")
+        .dropTableIfExists("infopagetags")
+        .dropTableIfExists("infopagecomments")
+        .dropTableIfExists("infopages")
         .dropTableIfExists("users")
         .createTable("users", function (tbl) {
             tbl.increments("id");
@@ -54,5 +57,27 @@ console.log(
             tbl.integer("issueid").references("id").inTable("issues").notNullable();
             tbl.integer("authorid").references("id").inTable("users").notNullable();
             tbl.jsonb("data");
+        })
+        .createTable("infopages", function (tbl) {
+            tbl.increments("id");
+            tbl.dateTime("dateofcreation").notNullable();
+            tbl.integer("authorid").references("id").inTable("users").notNullable();
+            tbl.dateTime("dateofedit").notNullable();
+            tbl.integer("editorid").references("id").inTable("users").notNullable();
+            tbl.string("pagename", 100).notNullable();
+            tbl.text("containedtext").notNullable();
+        })
+        .createTable("infopagecomments", function (tbl) {
+            tbl.increments("id");
+            tbl.dateTime("dateofcreation").notNullable();
+            tbl.integer("authorid").references("id").inTable('users');
+            tbl.integer("infopageid").references("id").inTable('infopages');
+            tbl.dateTime("dateofedit");
+            tbl.text("containedtext");
+        })
+        .createTable("infopagetags", function (tbl) {
+            tbl.increments("id");
+            tbl.integer("infopageid").references("id").inTable('infopages');
+            tbl.string("tagtext", 64).notNullable();
         })
         .toString());
