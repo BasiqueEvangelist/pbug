@@ -983,6 +983,32 @@ app.post("/kb/post/:post/edit", function (req, res, next) {
             });
     }
 });
+app.get("/kb/tag/:tag/remove", function (req, res, next) {
+    if (req.user.id === -1) res.redirect("/");
+    else if (typeof req.params.tag !== typeof "") res.redirect("/");
+    else if (isNaN(Number(req.params.tag))) res.redirect("/");
+    else {
+        connection
+            .select("infopageid", "tagtext")
+            .from("infopagetags")
+            .where({
+                "id": req.params.tag
+            })
+            .then(function (tags) {
+                if (tags.length < 1) {
+                    res.redirect("/");
+                } else
+                    connection("infopagetags")
+                        .where({
+                            "id": req.params.tag
+                        })
+                        .del()
+                        .then(function () {
+                            res.redirect("/kb/" + tags[0].infopageid);
+                        });
+            });
+    }
+});
 app.get("/kb/:infopage/edit", function (req, res, next) {
     if (req.user.id === -1) res.redirect("/");
     else if (typeof req.params.infopage !== typeof "") res.redirect("/");
@@ -1038,6 +1064,35 @@ app.post("/kb/:infopage/edit", function (req, res, next) {
                             res.redirect("/kb/" + req.params.infopage);
                         });
                 }
+            });
+    }
+});
+app.get("/kb/:infopage/addtag", function (req, res, next) {
+    if (req.user.id === -1) {
+        debug.issueapi("anonymous user trying to add tag");
+        res.redirect("/");
+    } else if (typeof req.params.infopage !== typeof "") {
+        debug.issueapi("infopage id of incorrect type");
+        res.redirect("/");
+    } else if (isNaN(Number(req.params.infopage))) {
+        debug.issueapi("infopage id is not identifier");
+        res.redirect("/");
+    } else if (typeof req.query.tagtext !== typeof "") {
+        debug.issueapi("tag text of incorrect type");
+        res.redirect("/");
+    } else if (req.query.tagtext === "") {
+        debug.issueapi("tag text empty");
+        res.redirect("back");
+    } else {
+        debug.issueapi("addtag request for infopage %s", req.params.infopage);
+        connection("infopagetags")
+            .insert({
+                "tagtext": req.query.tagtext,
+                "infopageid": req.params.infopage
+            })
+            .then(function () {
+                debug.issueapi("added tag to infopage %s", req.params.infopage);
+                res.redirect("/kb/" + req.params.infopage);
             });
     }
 });
