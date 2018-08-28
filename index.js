@@ -373,7 +373,7 @@ app.get("/issue/:issue", function (req, res, next) {
             .then(function (issues) {
                 if (issues.length < 1) {
                     debug.issueapi("issue %s not found", req.params.issue);
-                    res.render("issuenotfound");
+                    res.status(404).render("404");
                 } else {
                     debug.issueapi("successfully retrieved issue");
                     connection
@@ -1117,7 +1117,7 @@ app.get("/kb/:infopage", function (req, res, next) {
             .then(function (infopages) {
                 if (infopages.length < 1) {
                     debug.issueapi("infopage %s not found", req.params.infopage);
-                    res.render("kbnotfound");
+                    res.status(404).render("404");
                 } else {
                     debug.issueapi("successfully retrieved issue");
                     connection
