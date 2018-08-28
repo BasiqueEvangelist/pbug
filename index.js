@@ -1174,5 +1174,8 @@ app.get("/logout", function (req, res) {
     req.session.loginid = -1;
     res.redirect("/");
 });
+app.use(function (req, res) {
+    res.status(404).render("404");
+});
 app.listen(Number(process.env.PBUG_PORT || process.env.PORT || 8080));
 debug.all("listening on " + Number(process.env.PBUG_PORT || process.env.PORT || 8080));
