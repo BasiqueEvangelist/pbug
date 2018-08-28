@@ -99,10 +99,10 @@ block body
                         span.blue has removed tag #
                         = thing.data.text
                     else if thing.data.type == "status"
-                        span.blue has changed issue status to 
-                        = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
-                        span.blue  from 
+                        span.blue has changed issue status from 
                         = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
+                        span.blue  to 
+                        = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
                     else
                         =JSON.stringify(thing.data)
         if req.user.id != -1
