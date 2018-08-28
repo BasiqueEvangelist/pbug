@@ -127,7 +127,7 @@ app.get("/issues/open", function (req, res, next) {
         .orderBy("issues.id", "desc")
         .then(function (results) {
             debug.issueapi("issues retrieved, sending body");
-            res.render("listissuesopen", {
+            res.render("listissuesgroup", {
                 issues: results
             });
         });
@@ -141,7 +141,7 @@ app.get("/issues/all", function (req, res, next) {
         .orderBy("issues.id", "desc")
         .then(function (results) {
             debug.issueapi("issues retrieved, sending body");
-            res.render("listissuesall", {
+            res.render("listissuesgroup", {
                 issues: results
             });
         });
@@ -159,7 +159,7 @@ app.get("/issues/orphan", function (req, res, next) {
         .orderBy("issues.id", "desc")
         .then(function (results) {
             debug.issueapi("issues retrieved, sending body");
-            res.render("listissuesorphan", {
+            res.render("listissuesgroup", {
                 issues: results
             });
         });
@@ -176,7 +176,7 @@ app.get("/issues/completed", function (req, res, next) {
         .orderBy("issues.id", "desc")
         .then(function (results) {
             debug.issueapi("issues retrieved, sending body");
-            res.render("listissuescompleted", {
+            res.render("listissuesgroup", {
                 issues: results
             });
         });
