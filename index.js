@@ -4,6 +4,7 @@ var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
 var Knex = require("knex");
+var diff = require("diff");
 var errors = require("./errors");
 var debug = {};
 debug.all = require("debug")("pbug*");
@@ -422,6 +423,25 @@ app.get("/issue/:issue/activities", function (req, res, next) {
                                                                         resolve(newt);
                                                                     });
                                                             });
+                                                    }
+                                                    else if (t.data.type === "editpost") {
+                                                        t.oldtext = [];
+                                                        t.newtext = [];
+                                                        diff.diffLines(t.data.from, t.data.to).forEach(function (d) {
+                                                            if (!d.removed && !d.added) {
+                                                                t.oldtext.push([d.value, ""]);
+                                                                t.newtext.push([d.value, ""]);
+                                                            }
+                                                            else if (d.removed) {
+                                                                t.oldtext.push([d.value, "red"]);
+                                                                t.newtext.push([" ", ""]);
+                                                            }
+                                                            else {
+                                                                t.oldtext.push([" ", ""]);
+                                                                t.newtext.push([d.value, "green"]);
+                                                            }
+                                                        });
+                                                        resolve(t);
                                                     }
                                                     else {
                                                         resolve(t);

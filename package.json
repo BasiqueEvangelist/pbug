@@ -5,6 +5,7 @@
         "compression": "^1.7.2",
         "connect-session-knex": "^1.4.0",
         "debug": "^3.1.0",
+        "diff": "^3.5.0",
         "dotenv": "^5.0.1",
         "express": "^4.16.2",
         "express-session": "^1.15.6",

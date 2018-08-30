@@ -330,3 +330,8 @@ label {
 .fright {
 	float: right;
 }
+
+.smallmargin {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}

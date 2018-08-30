@@ -95,17 +95,31 @@ block body
                     span.showable-container
                         a.blue.show-button.underline(href="javascript:void(0)") has posted
                         .showable
-                            .postborder!= parseMarkdown(thing.data.text)
+                            .postborder
+                                pre
+                                    code.smallmargin= thing.data.text
                 else if thing.data.type == "editpost"
                     span.showable-container
                         a.blue.show-button.underline(href="javascript:void(0)") has edited
                         table.showable.hide(style="width:100%")
                             tr
                                 td.postborder.fleft(style="width:48%")
-                                    .beforeedit!= parseMarkdown(thing.data.from)
+                                    pre
+                                        code
+                                            each tv in thing.oldtext
+                                                if tv[1] == ""
+                                                    div.smallmargin=tv[0]
+                                                else if tv[1] == "red"
+                                                    div.smallmargin.beforeedit=tv[0]
                                 br
                                 td.postborder.fright(style="width:48%")
-                                    .afteredit!= parseMarkdown(thing.data.to)
+                                    pre
+                                        code
+                                            each tv in thing.newtext
+                                                if tv[1] == ""
+                                                    div.smallmargin=tv[0]
+                                                else if tv[1] == "green"
+                                                    div.smallmargin.afteredit=tv[0]
                 else
                     =JSON.stringify(thing.data)
     script(src="/static/expandable.js")
