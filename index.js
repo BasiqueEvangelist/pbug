@@ -472,7 +472,19 @@ app.post("/issue/:issue", function (req, res, next) {
             })
             .returning("id")
             .then(function (ids) {
-                res.redirect("/issue/" + req.params.issue + "#" + ids[0]);
+                connection("issueactivities")
+                    .insert({
+                        "authorid": req.session.loginid,
+                        "issueid": req.params.issue,
+                        "dateofoccurance": new Date(),
+                        "data": {
+                            type: "post",
+                            text: req.body.text
+                        }
+                    })
+                    .then(function () {
+                        res.redirect("/issue/" + req.params.issue + "#" + ids[0]);
+                    });
             });
     }
 });
@@ -858,7 +870,7 @@ app.post("/post/:post/edit", function (req, res, next) {
     else if (req.body.newtext === "") res.redirect("back");
     else {
         connection
-            .select("authorid", "issueid")
+            .select("authorid", "issueid", "containedtext")
             .from("issueposts")
             .where({
                 "id": req.params.post
@@ -878,7 +890,20 @@ app.post("/post/:post/edit", function (req, res, next) {
                             "dateofedit": new Date()
                         })
                         .then(function () {
-                            res.redirect("/issue/" + posts[0].issueid + "#" + req.params.post);
+                            connection("issueactivities")
+                                .insert({
+                                    "authorid": req.user.id,
+                                    "issueid": posts[0].issueid,
+                                    "dateofoccurance": new Date(),
+                                    "data": {
+                                        type: "editpost",
+                                        postid: req.params.post,
+                                        from: posts[0].containedtext,
+                                        to: req.body.newtext
+                                    }
+                                }).then(function () {
+                                    res.redirect("/issue/" + posts[0].issueid + "#" + req.params.post);
+                                });
                         });
                 }
             });
