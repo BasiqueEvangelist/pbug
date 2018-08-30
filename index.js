@@ -427,14 +427,20 @@ app.get("/issue/:issue/activities", function (req, res, next) {
                                                     else if (t.data.type === "editpost") {
                                                         t.oldtext = [];
                                                         t.newtext = [];
-                                                        diff.diffLines(t.data.from, t.data.to).forEach(function (d) {
+                                                        var da = diff.diffLines(t.data.from, t.data.to);
+                                                        da.forEach(function (d, i) {
                                                             if (!d.removed && !d.added) {
                                                                 t.oldtext.push([d.value, ""]);
                                                                 t.newtext.push([d.value, ""]);
                                                             }
                                                             else if (d.removed) {
                                                                 t.oldtext.push([d.value, "red"]);
-                                                                t.newtext.push([" ", ""]);
+                                                                if (i === da.length)
+                                                                    t.newtext.push([" ", ""]);
+                                                                else {
+                                                                    if (!da[i + 1].added)
+                                                                        t.newtext.push([" ", ""]);
+                                                                }
                                                             }
                                                             else {
                                                                 t.oldtext.push([" ", ""]);
