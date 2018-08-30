@@ -353,7 +353,96 @@ app.post("/createissue", function (req, res, next) {
             });
     }
 });
-app.get("/issue/:issue", function (req, res, next) {
+app.get("/issue/:issue/activities", function (req, res, next) {
+    if (typeof req.params.issue !== typeof "") {
+        debug.issueapi("issue id of incorrect type");
+        res.redirect("/");
+    } else if (isNaN(Number(req.params.issue))) {
+        debug.issueapi("issue id is not identifier");
+        res.redirect("/");
+    } else {
+        debug.issueapi("issue request for issue %s", req.params.issue);
+        connection
+            .select("issues.id", "issues.issuename", "projects.shortprojectid", "issues.isclosed", "issues.assigneeid", "users.fullname")
+            .from("issues")
+            .leftJoin("projects", "issues.projectid", "projects.id")
+            .leftJoin("users", "issues.assigneeid", "users.id")
+            .where({
+                "issues.id": Number(req.params.issue)
+            })
+            .then(function (issues) {
+                if (issues.length < 1) {
+                    debug.issueapi("issue %s not found", req.params.issue);
+                    res.status(404).render("404");
+                } else {
+                    debug.issueapi("successfully retrieved issue");
+                    connection
+                        .select("tagtext", "id")
+                        .from("issuetags")
+                        .where({
+                            "issueid": req.params.issue
+                        })
+                        .then(function (tags) {
+                            debug.issueapi("successfully retrieved issue tags");
+                            connection
+                                .select("id", "fullname")
+                                .from("users")
+                                .then(function (users) {
+                                    debug.issueapi("successfully retrieved users");
+                                    connection
+                                        .select("issueactivities.id", "dateofoccurance",
+                                            "issueid", "authorid",
+                                            "data", "users.fullname")
+                                        .from("issueactivities")
+                                        .leftJoin("users", "issueactivities.authorid", "users.id")
+                                        .where({
+                                            "issueid": req.params.issue
+                                        })
+                                        .orderBy("id", "asc")
+                                        .then(function (activities) {
+                                            debug.issueapi("successfully retrieved activities");
+                                            Promise.all(activities.map(function (t) {
+                                                return new Promise(function (resolve, reject) {
+                                                    if (t.data.type === "assign") {
+                                                        connection
+                                                            .select("fullname")
+                                                            .from("users")
+                                                            .where({ id: t.data.oldassigneeid })
+                                                            .then(function (oldfns) {
+                                                                connection
+                                                                    .select("fullname")
+                                                                    .from("users")
+                                                                    .where({ id: t.data.newassigneeid })
+                                                                    .then(function (newfns) {
+                                                                        var newt = t;
+                                                                        if (oldfns.length === 1)
+                                                                            newt.oldfn = oldfns[0].fullname;
+                                                                        if (newfns.length === 1)
+                                                                            newt.newfn = newfns[0].fullname;
+                                                                        resolve(newt);
+                                                                    });
+                                                            });
+                                                    }
+                                                    else {
+                                                        resolve(t);
+                                                    }
+                                                });
+                                            })).then(function (activities) {
+                                                res.render("issueviewactivities", {
+                                                    issue: issues[0],
+                                                    things: activities,
+                                                    tags: tags,
+                                                    users: users
+                                                });
+                                            });
+                                        });
+                                });
+                        });
+                };
+            });
+    }
+});
+app.get("/issue/:issue/posts", function (req, res, next) {
     if (typeof req.params.issue !== typeof "") {
         debug.issueapi("issue id of incorrect type");
         res.redirect("/");
@@ -399,63 +488,21 @@ app.get("/issue/:issue", function (req, res, next) {
                                         .from("users")
                                         .then(function (users) {
                                             debug.issueapi("successfully retrieved users");
-                                            connection
-                                                .select("issueactivities.id", "dateofoccurance",
-                                                    "issueid", "authorid",
-                                                    "data", "users.fullname")
-                                                .from("issueactivities")
-                                                .leftJoin("users", "issueactivities.authorid", "users.id")
-                                                .where({
-                                                    "issueid": req.params.issue
-                                                })
-                                                .then(function (activities) {
-                                                    debug.issueapi("successfully retrieved activities");
-                                                    Promise.all(activities.map(function (t) {
-                                                        return new Promise(function (resolve, reject) {
-                                                            if (t.data.type === "assign") {
-                                                                connection
-                                                                    .select("fullname")
-                                                                    .from("users")
-                                                                    .where({ id: t.data.oldassigneeid })
-                                                                    .then(function (oldfns) {
-                                                                        connection
-                                                                            .select("fullname")
-                                                                            .from("users")
-                                                                            .where({ id: t.data.newassigneeid })
-                                                                            .then(function (newfns) {
-                                                                                var newt = t;
-                                                                                if (oldfns.length === 1)
-                                                                                    newt.oldfn = oldfns[0].fullname;
-                                                                                if (newfns.length === 1)
-                                                                                    newt.newfn = newfns[0].fullname;
-                                                                                resolve(newt);
-                                                                            });
-                                                                    });
-                                                            }
-                                                            else {
-                                                                resolve(t);
-                                                            }
-                                                        });
-                                                    })).then(function (activities) {
-                                                        var mix = posts.concat(activities).sort(function (a, b) {
-                                                            var adate = (typeof a.dateofcreation !== "undefined") ? a.dateofcreation : a.dateofoccurance;
-                                                            var bdate = (typeof b.dateofcreation !== "undefined") ? b.dateofcreation : b.dateofoccurance;
-                                                            return adate > bdate ? 1 : (adate < bdate ? -1 : 0);
-                                                        });
-                                                        res.render("issueview", {
-                                                            issue: issues[0],
-                                                            things: mix,
-                                                            tags: tags,
-                                                            users: users
-                                                        });
-                                                    });
-                                                });
+                                            res.render("issueviewposts", {
+                                                issue: issues[0],
+                                                things: posts,
+                                                tags: tags,
+                                                users: users
+                                            });
                                         });
                                 });
                         });
                 };
             });
     }
+});
+app.get("/issue/:issue", function (req, res) {
+    res.redirect("/issue/" + req.params.issue + "/posts");
 });
 app.post("/issue/:issue", function (req, res, next) {
     if (typeof req.params.issue !== typeof "") res.redirect("/");
@@ -483,7 +530,7 @@ app.post("/issue/:issue", function (req, res, next) {
                         }
                     })
                     .then(function () {
-                        res.redirect("/issue/" + req.params.issue + "#" + ids[0]);
+                        res.redirect("/issue/" + req.params.issue + "/posts#" + ids[0]);
                     });
             });
     }
@@ -527,7 +574,7 @@ app.get("/issue/:issue/open", function (req, res, next) {
                                 })
                                 .then(function () {
                                     debug.issueapi("successfully opened issue %s", req.params.issue);
-                                    res.redirect("/issue/" + req.params.issue);
+                                    res.redirect("/issue/" + req.params.issue + "/posts");
                                 });
                         });
                 } else {
@@ -576,7 +623,7 @@ app.get("/issue/:issue/close", function (req, res, next) {
                                 })
                                 .then(function () {
                                     debug.issueapi("successfully closed issue %s", req.params.issue);
-                                    res.redirect("/issue/" + req.params.issue);
+                                    res.redirect("/issue/" + req.params.issue + "/posts");
                                 });
                         });
                 } else {
@@ -670,7 +717,7 @@ app.get("/issue/:issue/addtag", function (req, res, next) {
                     })
                     .then(function () {
                         debug.issueapi("added tag to issue %s", req.params.issue);
-                        res.redirect("/issue/" + req.params.issue);
+                        res.redirect("/issue/" + req.params.issue + "/posts");
                     });
             });
     }
@@ -721,7 +768,7 @@ app.get("/issue/:issue/assign", function (req, res, next) {
                             })
                             .then(function () {
                                 debug.issueapi("changed assignee for issue %s", req.params.issue);
-                                res.redirect("/issue/" + req.params.issue);
+                                res.redirect("/issue/" + req.params.issue + "/posts");
                             });
                     });
             });
@@ -773,7 +820,7 @@ app.get("/issue/:issue/changetitle", function (req, res, next) {
                             })
                             .then(function () {
                                 debug.issueapi("changed title for issue %s", req.params.issue);
-                                res.redirect("/issue/" + req.params.issue);
+                                res.redirect("/issue/" + req.params.issue + "/posts");
                             });
                     });
             });
@@ -832,7 +879,7 @@ app.get("/tag/:tag/remove", function (req, res, next) {
                                     }
                                 })
                                 .then(function () {
-                                    res.redirect("/issue/" + tags[0].issueid);
+                                    res.redirect("/issue/" + tags[0].issueid + "/posts");
                                 });
                         });
             });
@@ -902,7 +949,7 @@ app.post("/post/:post/edit", function (req, res, next) {
                                         to: req.body.newtext
                                     }
                                 }).then(function () {
-                                    res.redirect("/issue/" + posts[0].issueid + "#" + req.params.post);
+                                    res.redirect("/issue/" + posts[0].issueid + "/posts#" + req.params.post);
                                 });
                         });
                 }

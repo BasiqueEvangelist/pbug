@@ -299,3 +299,34 @@ label {
 	width: 1.5em;
 	margin-right: 5px;
 }
+
+.beforeedit {
+	background-color:#ff000080;
+}
+
+.afteredit {
+	background-color:#00ff0080;
+}
+
+.postborder {
+	padding: 5px;
+	border-radius: 5px;
+	border-width: 2px;
+	border-style: solid;
+	border-color: lightgray;
+}
+
+.showable.hide {
+	display: none;
+}
+
+.underline {
+	text-decoration-line: underline;
+}
+
+.fleft {
+	float: left;
+}
+.fright {
+	float: right;
+}
