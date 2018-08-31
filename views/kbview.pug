@@ -16,8 +16,9 @@ block body
         each tag in tags
             span.tag
                 = "#" + tag.tagtext + " "
-                a(href="/kb/tag/" + tag.id + "/remove") &times; 
-        br
+                a(href="/kb/tag/" + tag.id + "/remove") &times;
+        if tags.length > 0 
+            br
     if req.user.isadmin || infopage.authorid === req.user.id
         form(action="/kb/" + infopage.id + "/addtag",method="GET")
             fieldset
