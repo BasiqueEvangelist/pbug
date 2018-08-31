@@ -443,7 +443,12 @@ app.get("/issue/:issue/activities", function (req, res, next) {
                                                                 }
                                                             }
                                                             else {
-                                                                t.oldtext.push([" ", ""]);
+                                                                if (i === 1)
+                                                                    t.oldtext.push([" ", ""]);
+                                                                else {
+                                                                    if (!da[i - 1].removed)
+                                                                        t.oldtext.push([" ", ""]);
+                                                                }
                                                                 t.newtext.push([d.value, "green"]);
                                                             }
                                                         });
