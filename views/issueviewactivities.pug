@@ -111,6 +111,8 @@ block body
                                                     div.smallmargin=tv[0]
                                                 else if tv[1] == "red"
                                                     div.smallmargin.beforeedit=tv[0]
+                                                else if tv[1] == "filler"
+                                                    div.smallmargin.filler=" "
                                 br
                                 td.postborder.fright(style="width:48%")
                                     pre
@@ -120,6 +122,8 @@ block body
                                                     div.smallmargin=tv[0]
                                                 else if tv[1] == "green"
                                                     div.smallmargin.afteredit=tv[0]
+                                                else if tv[1] == "filler"
+                                                    div.smallmargin.filler=" "
                 else
                     =JSON.stringify(thing.data)
     script(src="/static/expandable.js")

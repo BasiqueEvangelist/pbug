@@ -436,18 +436,18 @@ app.get("/issue/:issue/activities", function (req, res, next) {
                                                             else if (d.removed) {
                                                                 t.oldtext.push([d.value, "red"]);
                                                                 if (i === da.length)
-                                                                    t.newtext.push([" ", ""]);
+                                                                    t.newtext.push([" ", "filler"]);
                                                                 else {
                                                                     if (!da[i + 1].added)
-                                                                        t.newtext.push([" ", ""]);
+                                                                        t.newtext.push([" ", "filler"]);
                                                                 }
                                                             }
                                                             else {
-                                                                if (i === 1)
-                                                                    t.oldtext.push([" ", ""]);
+                                                                if (i === 0)
+                                                                    t.oldtext.push([" ", "filler"]);
                                                                 else {
                                                                     if (!da[i - 1].removed)
-                                                                        t.oldtext.push([" ", ""]);
+                                                                        t.oldtext.push([" ", "filler"]);
                                                                 }
                                                                 t.newtext.push([d.value, "green"]);
                                                             }
