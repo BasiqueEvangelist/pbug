@@ -1142,6 +1142,8 @@ app.post("/kb/:infopage/edit", function (req, res, next) {
     else if (isNaN(Number(req.params.infopage))) res.status(400).end();
     else if (typeof req.body.newtext !== typeof "") res.status(400).end();
     else if (req.body.newtext === "") res.redirect("back");
+    else if (typeof req.body.newtitle !== typeof "") res.status(400).end();
+    else if (req.body.newtitle === "") res.redirect("back");
     else {
         connection
             .select("authorid")
@@ -1161,6 +1163,7 @@ app.post("/kb/:infopage/edit", function (req, res, next) {
                         })
                         .update({
                             "containedtext": req.body.newtext,
+                            "pagename": req.body.newtitle,
                             "dateofedit": new Date()
                         })
                         .then(function () {

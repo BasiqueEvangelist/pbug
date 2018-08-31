@@ -24,12 +24,6 @@ block body
                 legend Add tag
                 input(type="text",name="tagtext",placeholder="Tag name")
                 input(type="submit",value="Add")
-        br
-        form(action="/kb/" + infopage.id + "/changetitle",method="GET")
-            fieldset
-                legend Change title
-                input(type="text",name="newtitle",placeholder="New title")
-                input(type="submit", value="Change")
     .entry
         !=parseMarkdown(infopage.containedtext)
     ul.postlist

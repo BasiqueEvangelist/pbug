@@ -5,8 +5,7 @@ block body
         .issue-tag
             .date="Authored by " + infopage.fullname + " on " + infopage.dateofcreation
             .date="Edited on " + infopage.dateofedit
-        h2.issue-name=infopage.pagename
-        hr
+        input.h2.blueunderline.issue-name(type="text",name="newtitle",value=infopage.pagename,style="width:100%")
         .entry
             textarea.submit-text(name="newtext")=infopage.containedtext
         input.submitpost(type="submit", value="Repost",style="float:right")
