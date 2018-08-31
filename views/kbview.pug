@@ -45,7 +45,7 @@ block body
                         |  
                     a(href="/kb/" + infopage.id + "#" + comment.id) permalink
                     |  
-                    !=parseMarkdown(comment.containedtext)
+                !=parseMarkdown(comment.containedtext)
         if req.user.id != -1
             li.entry
                 form(action="/kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
