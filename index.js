@@ -1154,8 +1154,6 @@ app.post("/kb/:infopage/edit", function (req, res, next) {
             .then(function (infopages) {
                 if (infopages.length < 1) {
                     res.redirect("/");
-                } else if (infopages[0].authorid !== req.user.id) {
-                    res.redirect("/");
                 } else {
                     connection("infopages")
                         .where({
