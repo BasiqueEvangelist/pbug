@@ -1,0 +1,8 @@
+extends layout.pug
+block body
+    h2=title
+    ul.issues-list
+        each kb in kbs
+            li
+                a(href="/kb/" + kb.id)
+                    = kb.pagename

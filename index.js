@@ -987,6 +987,21 @@ app.post("/post/:post/edit", function (req, res, next) {
             });
     }
 });
+
+app.get("/kb/list/all", function (req, res, next) {
+    debug.issueapi("showing all kb pages");
+    connection
+        .select("infopages.id", "infopages.pagename")
+        .from("infopages")
+        .orderBy("infopages.id", "desc")
+        .then(function (results) {
+            debug.issueapi("kb pages retrieved, sending body");
+            res.render("listkbs", {
+                kbs: results
+            });
+        });
+});
+
 app.get("/kb/create", function (req, res, next) {
     if (req.session.loginid === -1) res.redirect("/");
     else {
