@@ -1,4 +1,4 @@
-extends layout.pug
+extends ../layout.pug
 
 block css
     link(rel="stylesheet",href="/static/highlightstyles/default.css")
@@ -25,14 +25,14 @@ block body
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
-                a(href="/issue/" + issue.id + "/open") open
+                a(href="/issues/" + issue.id + "/open") open
             else
-                a(href="/issue/" + issue.id + "/close") close
+                a(href="/issues/" + issue.id + "/close") close
             |  
         if req.user.isadmin
-            a(href="/issue/" + issue.id + "/delete/areyousure") delete issue
+            a(href="/issues/" + issue.id + "/delete/areyousure") delete issue
             |  
-        a(href="/issue/" + issue.id + "/posts") show posts
+        a(href="/issues/" + issue.id + "/posts") show posts
         br
     if req.user.id !== -1
         form(action="/issue/" + issue.id + "/assign",method="GET")

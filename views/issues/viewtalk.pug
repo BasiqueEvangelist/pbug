@@ -1,4 +1,4 @@
-extends layout.pug
+extends ../layout.pug
 
 block css
     link(rel="stylesheet",href="/static/highlightstyles/default.css")
@@ -25,17 +25,17 @@ block body
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
-                a(href="/issue/" + issue.id + "/open") open
+                a(href="/issues/" + issue.id + "/open") open
             else
-                a(href="/issue/" + issue.id + "/close") close
-            |  
+                a(href="/issues/" + issue.id + "/close") close
+            |  | 
         if req.user.isadmin
-            a(href="/issue/" + issue.id + "/delete/areyousure") delete issue
-            |  
-        a(href="/issue/" + issue.id + "/activities") show activities
+            a(href="/issues/" + issue.id + "/delete/areyousure") delete issue
+            |  | 
+        a(href="/issues/" + issue.id + "/activity") activity
         br
     if req.user.id !== -1
-        form(action="/issue/" + issue.id + "/assign",method="GET")
+        form(action="/issues/" + issue.id + "/assign",method="GET")
             fieldset
                 legend Assign
                 select(name="userid")
@@ -45,13 +45,13 @@ block body
                 input(type="submit",value="Assign")
         br
     if req.user.isadmin || things[0].authorid === req.user.id
-        form(action="/issue/" + issue.id + "/addtag",method="GET")
+        form(action="/issues/" + issue.id + "/addtag",method="GET")
             fieldset
                 legend Add tag
                 input(type="text",name="tagtext",placeholder="Tag name")
                 input(type="submit",value="Add")
         br
-        form(action="/issue/" + issue.id + "/changetitle",method="GET")
+        form(action="/issues/" + issue.id + "/changetitle",method="GET")
             fieldset
                 legend Change title
                 input(type="text",name="newtitle",placeholder="New title")
@@ -65,14 +65,14 @@ block body
                     .date="Edited on " + thing.dateofedit
                 .underpanel
                     if req.user.id == thing.authorid
-                        a(href="/post/" + thing.id + "/edit") edit
+                        a(href="/issues/post/" + thing.id + "/edit") edit
                         |  
-                    a(href="/issue/" + issue.id + "#" + thing.id) permalink
+                    a(href="/issues/" + issue.id + "#" + thing.id) permalink
                     |  
                 !=parseMarkdown(thing.containedtext)
         if req.user.id != -1
             li.entry
-                form(action="/issue/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
+                form(action="/issues/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Post contents (Markdown)")

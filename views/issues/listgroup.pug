@@ -1,4 +1,4 @@
-extends layout.pug
+extends ../layout.pug
 block body
     h2 List of issues
     a(href="/issues/open") Open
@@ -11,6 +11,6 @@ block body
     ul.issues-list
         each issue in issues
             li
-                a(href="/issue/" + issue.id)
+                a(href="/issues/" + issue.id)
                     .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                     = issue.issuename

@@ -1,10 +1,10 @@
-extends layout.pug
+extends ../layout.pug
 block body
     h2=title
     ul.issues-list
         each issue in issues
             li
-                a(href="/issue/" + issue.id)
+                a(href="/issues/" + issue.id)
                     .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                     = issue.issuename
     if req.user.id !== -1
@@ -12,6 +12,6 @@ block body
         ul.issues-list
             each issue in aissues
                 li
-                    a(href="/issue/" + issue.id)
+                    a(href="/issues/" + issue.id)
                         .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                         = issue.issuename

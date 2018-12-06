@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 block body
     h2 Editing comment
     form(action="/kb/post/" + post.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")

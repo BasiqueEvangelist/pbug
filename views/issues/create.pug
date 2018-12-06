@@ -1,7 +1,7 @@
-extends layout.pug
+extends ../layout.pug
 
 block body
-    form(action="/createissue", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action="/issues/create", method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
         br
