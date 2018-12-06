@@ -192,7 +192,7 @@ module.exports = function (app, connection, debug) {
                 });
         }
     });
-    app.get("/issues/:issue/posts", function (req, res, next) {
+    app.get("/issues/:issue/posts", async function (req, res, next) {
         if (typeof req.params.issue !== typeof "") {
             debug.issueapi("issue id of incorrect type");
             res.redirect("/");
@@ -228,7 +228,7 @@ module.exports = function (app, connection, debug) {
                 .orderBy("issueposts.id", "asc");
 
             debug.issueapi("successfully retrieved issue posts");
-            var tags = connection
+            var tags = await connection
                 .select("tagtext", "id")
                 .from("issuetags")
                 .where({
@@ -236,7 +236,7 @@ module.exports = function (app, connection, debug) {
                 });
 
             debug.issueapi("successfully retrieved issue tags");
-            var users = connection
+            var users = await connection
                 .select("id", "fullname")
                 .from("users");
 
