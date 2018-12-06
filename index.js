@@ -62,10 +62,10 @@ app.use(express.urlencoded({
 app.use("/static/highlightstyles", express.static("node_modules/highlight.js/styles"));
 app.use("/static", express.static("static"));
 app.set("view engine", "pug");
-app.get("/", function (req, res, next) {
+app.get("/", async function (req, res, next) {
     if (req.user.id === -1) {
         debug.issueapi("showing all open issues");
-        connection
+        var results = await connection
             .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
@@ -73,16 +73,14 @@ app.get("/", function (req, res, next) {
                 "issues.isclosed": false
             })
             .orderBy("issues.id", "desc")
-            .then(function (results) {
-                debug.issueapi("issues retrieved, sending body");
-                res.render("issues/listall", {
-                    issues: results,
-                    title: "List of open issues"
-                });
-            });
+        debug.issueapi("issues retrieved, sending body");
+        res.render("issues/listall", {
+            issues: results,
+            title: "List of open issues"
+        });
     } else {
         debug.issueapi("showing all open issues assigned to %s", req.user.username);
-        connection
+        var results = await connection
             .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
@@ -90,35 +88,31 @@ app.get("/", function (req, res, next) {
                 "issues.isclosed": false,
                 "issues.assigneeid": req.user.id
             })
+            .orderBy("issues.id", "desc");
+        debug.issueapi("retrieving issues authored by user");
+        var aresults = await connection
+            .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+            .from("issues")
+            .leftJoin("projects", "issues.projectid", "projects.id")
+            .where({
+                "issues.isclosed": false,
+                "issues.authorid": req.user.id
+            })
             .orderBy("issues.id", "desc")
-            .then(function (results) {
-                debug.issueapi("retrieving issues authored by user");
-                connection
-                    .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
-                    .from("issues")
-                    .leftJoin("projects", "issues.projectid", "projects.id")
-                    .where({
-                        "issues.isclosed": false,
-                        "issues.authorid": req.user.id
-                    })
-                    .orderBy("issues.id", "desc")
-                    .then(function (aresults) {
-                        debug.issueapi("issues retrieved, sending body");
-                        res.render("issues/listall", {
-                            issues: results,
-                            aissues: aresults,
-                            title: "List of open issues assigned to you"
-                        });
-                    });
-            });
+        debug.issueapi("issues retrieved, sending body");
+        res.render("issues/listall", {
+            issues: results,
+            aissues: aresults,
+            title: "List of open issues assigned to you"
+        });
     }
 });
-app.get("/issues", function (req, res) {
+app.get("/issues", async function (req, res) {
     res.redirect("/issues/open");
 });
-app.get("/issues/open", function (req, res, next) {
+app.get("/issues/open", async function (req, res, next) {
     debug.issueapi("showing all open issues");
-    connection
+    var results = await connection
         .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
@@ -126,30 +120,26 @@ app.get("/issues/open", function (req, res, next) {
             "issues.isclosed": false
         })
         .orderBy("issues.id", "desc")
-        .then(function (results) {
-            debug.issueapi("issues retrieved, sending body");
-            res.render("issues/listgroup", {
-                issues: results
-            });
-        });
+    debug.issueapi("issues retrieved, sending body");
+    res.render("issues/listgroup", {
+        issues: results
+    });
 });
-app.get("/issues/all", function (req, res, next) {
+app.get("/issues/all", async function (req, res, next) {
     debug.issueapi("showing all issues");
-    connection
+    var results = await connection
         .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
         .orderBy("issues.id", "desc")
-        .then(function (results) {
-            debug.issueapi("issues retrieved, sending body");
-            res.render("issues/listgroup", {
-                issues: results
-            });
-        });
+    debug.issueapi("issues retrieved, sending body");
+    res.render("issues/listgroup", {
+        issues: results
+    });
 });
-app.get("/issues/orphan", function (req, res, next) {
+app.get("/issues/orphan", async function (req, res, next) {
     debug.issueapi("showing all orphan issues");
-    connection
+    var results = await connection
         .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
@@ -158,16 +148,14 @@ app.get("/issues/orphan", function (req, res, next) {
             "issues.assigneeid": null
         })
         .orderBy("issues.id", "desc")
-        .then(function (results) {
-            debug.issueapi("issues retrieved, sending body");
-            res.render("issues/listgroup", {
-                issues: results
-            });
-        });
+    debug.issueapi("issues retrieved, sending body");
+    res.render("issues/listgroup", {
+        issues: results
+    });
 });
-app.get("/issues/completed", function (req, res, next) {
+app.get("/issues/completed", async function (req, res, next) {
     debug.issueapi("showing all completed issues");
-    connection
+    var results = await connection
         .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
         .from("issues")
         .leftJoin("projects", "issues.projectid", "projects.id")
@@ -175,22 +163,20 @@ app.get("/issues/completed", function (req, res, next) {
             "issues.isclosed": true
         })
         .orderBy("issues.id", "desc")
-        .then(function (results) {
-            debug.issueapi("issues retrieved, sending body");
-            res.render("issues/listgroup", {
-                issues: results
-            });
-        });
+    debug.issueapi("issues retrieved, sending body");
+    res.render("issues/listgroup", {
+        issues: results
+    });
 });
-app.get("/login", function (req, res) {
+app.get("/login", async function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");
     else res.render("login");
 });
-app.get("/register", function (req, res) {
+app.get("/register", async function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");
     else res.render("register");
 });
-app.post("/login", function (req, res, next) {
+app.post("/login", async function (req, res, next) {
     if (req.session.loginid !== -1) {
         debug.userapi("login only for anonymous users");
         res.redirect("/");
@@ -202,32 +188,31 @@ app.post("/login", function (req, res, next) {
         res.redirect("/login?error=" + 1);
     } else {
         debug.userapi("login request as %s:%s", req.body.username, req.body.password);
-        connection
+        var users = await connection
             .select("id", "passwordsalt", "passwordhash", "isadministrator", "fullname", "username")
             .from("users")
             .where({
                 "username": req.body.username
-            }).then(function (users) {
-                if (users.length < 1) {
-                    debug.userapi("user %s not found", req.body.username);
-                    res.redirect("/login?error=" + 3);
-                    return;
-                }
-                if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
-                    debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
-                    req.session.loginid = users[0].id;
-                    req.session.loginadmin = users[0].isadministrator;
-                    req.session.loginfullname = users[0].fullname;
-                    req.session.loginusername = users[0].username;
-                    res.redirect("/");
-                } else {
-                    debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
-                    res.redirect("/login?error=" + 4);
-                }
             });
+        if (users.length < 1) {
+            debug.userapi("user %s not found", req.body.username);
+            res.redirect("/login?error=" + 3);
+            return;
+        }
+        if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
+            debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
+            req.session.loginid = users[0].id;
+            req.session.loginadmin = users[0].isadministrator;
+            req.session.loginfullname = users[0].fullname;
+            req.session.loginusername = users[0].username;
+            res.redirect("/");
+        } else {
+            debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
+            res.redirect("/login?error=" + 4);
+        }
     }
 });
-app.post("/register", function (req, res, next) {
+app.post("/register", async function (req, res, next) {
     if (req.session.loginid !== -1) {
         debug.userapi("registration only for anonymous users");
         res.redirect("/");
@@ -242,116 +227,102 @@ app.post("/register", function (req, res, next) {
         res.redirect("/register?error=" + 1);
     } else {
         debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
-        connection
+        var users = await connection
             .select("id")
             .from("users")
             .where({
                 "username": req.body.username
             })
-            .then(function (users) {
-                if (users.length > 0) {
-                    debug.userapi("user %s already exists", req.body.username);
-                    res.redirect("/register?error=" + 5);
-                    return;
-                }
-                var salt = Math.floor(Math.random() * 100000);
-                debug.userapi("generated salt %s for %s", salt, req.body.username);
-                var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
-                debug.userapi("generated apikey %s for %s", apikey, req.body.username);
-                var hash = sha512(req.body.password + salt).toString("hex");
-                connection("users")
-                    .returning("id")
-                    .insert({
-                        "username": req.body.username,
-                        "fullname": req.body.name,
-                        "passwordhash": hash,
-                        "passwordsalt": salt,
-                        "apikey": apikey
-                    })
-                    .then(function (results) {
-                        debug.userapi("created user %s", req.body.username);
-                        req.session.loginid = results[0];
-                        req.session.loginadmin = false;
-                        req.session.loginfullname = req.body.name;
-                        req.session.loginusername = req.body.username;
-                        res.redirect("/");
-                    });
-            });
+        if (users.length > 0) {
+            debug.userapi("user %s already exists", req.body.username);
+            res.redirect("/register?error=" + 5);
+            return;
+        }
+        var salt = Math.floor(Math.random() * 100000);
+        debug.userapi("generated salt %s for %s", salt, req.body.username);
+        var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
+        debug.userapi("generated apikey %s for %s", apikey, req.body.username);
+        var hash = sha512(req.body.password + salt).toString("hex");
+        var userid = (await connection("users")
+            .returning("id")
+            .insert({
+                "username": req.body.username,
+                "fullname": req.body.name,
+                "passwordhash": hash,
+                "passwordsalt": salt,
+                "apikey": apikey
+            }))[0];
+        debug.userapi("created user %s", req.body.username);
+        req.session.loginid = userid;
+        req.session.loginadmin = false;
+        req.session.loginfullname = req.body.name;
+        req.session.loginusername = req.body.username;
+        res.redirect("/");
     }
 });
-app.post("/checkusername", function (req, res) {
-    connection
+app.post("/checkusername", async function (req, res) {
+    var resu = await connection
         .select("id")
         .from("users")
         .where({
             "username": req.body.username
         })
-        .then(function (resu) {
-            if (resu.length !== 1) {
-                res.send("Username available");
-            } else {
-                res.send("Username taken");
-            }
-        });
+    if (resu.length !== 1) {
+        res.send("Username available");
+    } else {
+        res.send("Username taken");
+    }
 });
 
-app.get("/createproject", function (req, res, next) {
+app.get("/createproject", async function (req, res, next) {
     if (!req.user.isadmin) res.redirect("/");
     else res.render("createproject");
 });
-app.post("/createproject", function (req, res, next) {
+app.post("/createproject", async function (req, res, next) {
     if (!req.user.isadmin) res.redirect("/");
     else if (typeof req.body.name !== typeof "string") res.status(400).end();
     else if (typeof req.body.shortprojectid !== typeof "string") res.status(400).end();
     else if (req.body.shortprojectid.length > 3 || req.body.shortprojectid === 0) res.status(400).end();
     else {
-        connection("projects")
+        await connection("projects")
             .insert({
                 "projectname": req.body.name,
                 "authorid": req.session.loginid,
                 "shortprojectid": req.body.shortprojectid
             })
-            .then(function () {
-                res.redirect("/");
-            });
+        res.redirect("/");
     }
 });
-app.get("/tag/:tag/remove", function (req, res, next) {
+app.get("/tag/:tag/remove", async function (req, res, next) {
     if (req.user.id === -1) res.redirect("/");
     else if (typeof req.params.tag !== typeof "") res.redirect("/");
     else if (isNaN(Number(req.params.tag))) res.redirect("/");
     else {
-        connection
+        var tags = await connection
             .select("issueid", "tagtext")
             .from("issuetags")
             .where({
                 "id": req.params.tag
             })
-            .then(function (tags) {
-                if (tags.length < 1) {
-                    res.redirect("/");
-                } else
-                    connection("issuetags")
-                        .where({
-                            "id": req.params.tag
-                        })
-                        .del()
-                        .then(function () {
-                            connection("issueactivities")
-                                .insert({
-                                    "dateofoccurance": new Date(),
-                                    "issueid": tags[0].issueid,
-                                    "authorid": req.user.id,
-                                    "data": {
-                                        type: "deltag",
-                                        text: tags[0].tagtext
-                                    }
-                                })
-                                .then(function () {
-                                    res.redirect("/issues/" + tags[0].issueid + "/posts");
-                                });
-                        });
-            });
+        if (tags.length < 1) {
+            res.redirect("/");
+        } else
+            await connection("issuetags")
+                .where({
+                    "id": req.params.tag
+                })
+                .del()
+        await connection("issueactivities")
+            .insert({
+                "dateofoccurance": new Date(),
+                "issueid": tags[0].issueid,
+                "authorid": req.user.id,
+                "data": {
+                    type: "deltag",
+                    text: tags[0].tagtext
+                }
+            })
+        res.redirect("/issues/" + tags[0].issueid + "/posts");
     }
 });
 
@@ -359,7 +330,7 @@ app.get("/tag/:tag/remove", function (req, res, next) {
 require("./kb.js")(app, connection, debug);
 require("./issues.js")(app, connection, debug);
 
-app.get("/logout", function (req, res) {
+app.get("/logout", async function (req, res) {
     if (req.session.loginid !== -1)
         debug.userapi("logging out %s", req.user.username);
     req.session.loginid = -1;
