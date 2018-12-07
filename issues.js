@@ -174,7 +174,7 @@ module.exports = function (app, connection, debug) {
 
             debug.issueapi("issue request for issue %s", req.params.issue);
             var issues = await connection
-                .select("issues.*", "users.fullname")
+                .select("issues.*", "users.fullname", "projects.shortprojectid")
                 .from("issues")
                 .leftJoin("projects", "issues.projectid", "projects.id")
                 .leftJoin("users", "issues.assigneeid", "users.id")

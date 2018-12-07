@@ -18,9 +18,10 @@ block body
     h2.issue-name=issue.issuename
     hr
     .taglist
-        each tag in issue.issuetags.split(",")
-            span.tag
-                = "#" + tag + " "
+        if issue.issuetags.length > 1
+            each tag in issue.issuetags.split(",")
+                span.tag
+                    = "#" + tag + " "
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed

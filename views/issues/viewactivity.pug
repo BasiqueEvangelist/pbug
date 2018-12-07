@@ -119,14 +119,16 @@ block body
                                                     div.smallmargin.filler=" "
                         span.blue and changed tags from 
                         span.taglist
-                            each tag in thing.data.from.tags.split(",")
-                                span.tag
-                                    = "#" + tag + " "
+                            if issue.issuetags.length > 1
+                                each tag in thing.data.from.tags.split(",")
+                                    span.tag
+                                        = "#" + tag + " "
                         span.blue  to 
                         span.taglist
-                            each tag in thing.data.to.tags.split(",")
-                                span.tag
-                                    = "#" + tag + " "
+                            if issue.issuetags.length > 1
+                                each tag in thing.data.to.tags.split(",")
+                                    span.tag
+                                        = "#" + tag + " "
 
 
                 else
