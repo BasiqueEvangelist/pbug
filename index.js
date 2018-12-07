@@ -4,7 +4,6 @@ var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
 var Knex = require("knex");
-var diff = require("diff");
 var errors = require("./errors");
 var debug = {};
 debug.all = require("debug")("pbug*");

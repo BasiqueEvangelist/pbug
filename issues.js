@@ -1,3 +1,4 @@
+var diff = require("diff");
 module.exports = function (app, connection, debug) {
 
     const insertActivity = function (issueid, userid, data) {
@@ -75,8 +76,8 @@ module.exports = function (app, connection, debug) {
             res.redirect("/");
         } else {
             debug.issueapi("issue request for issue %s", req.params.issue);
-            var issues = awaitconnection
-                .select("issues.id", "issues.issuename", "projects.shortprojectid", "issues.isclosed", "issues.assigneeid", "users.fullname")
+            var issues = await connection
+                .select("issues.id", "issues.issuename", "projects.shortprojectid", "issues.isclosed", "issues.assigneeid", "issues.issuetags", "users.fullname")
                 .from("issues")
                 .leftJoin("projects", "issues.projectid", "projects.id")
                 .leftJoin("users", "issues.assigneeid", "users.id")
@@ -88,18 +89,11 @@ module.exports = function (app, connection, debug) {
                 res.status(404).render("404");
             } else {
                 debug.issueapi("successfully retrieved issue");
-                var tags = await connection
-                    .select("tagtext", "id")
-                    .from("issuetags")
-                    .where({
-                        "issueid": req.params.issue
-                    });
-                debug.issueapi("successfully retrieved issue tags");
-                var users = connection
+                var users = await connection
                     .select("id", "fullname")
                     .from("users");
                 debug.issueapi("successfully retrieved users");
-                var activities = connection
+                var activities = await connection
                     .select("issueactivities.id", "dateofoccurance",
                         "issueid", "authorid",
                         "data", "users.fullname")
@@ -130,7 +124,7 @@ module.exports = function (app, connection, debug) {
                     else if (t.data.type === "editpost") {
                         t.oldtext = [];
                         t.newtext = [];
-                        var da = diff.diffLines(t.data.from, t.data.to);
+                        var da = diff.diffLines(t.data.from.text, t.data.to.text);
                         da.forEach(function (d, i) {
                             if (!d.removed && !d.added) {
                                 t.oldtext.push([d.value, ""]);
@@ -164,7 +158,6 @@ module.exports = function (app, connection, debug) {
                 res.render("issues/viewactivity", {
                     issue: issues[0],
                     things: pactivities,
-                    tags: tags,
                     users: users
                 });
             }
@@ -206,14 +199,6 @@ module.exports = function (app, connection, debug) {
                 .orderBy("issueposts.id", "asc");
 
             debug.issueapi("successfully retrieved issue posts");
-            var tags = await connection
-                .select("tagtext", "id")
-                .from("issuetags")
-                .where({
-                    "issueid": req.params.issue
-                });
-
-            debug.issueapi("successfully retrieved issue tags");
             var users = await connection
                 .select("id", "fullname")
                 .from("users");
@@ -222,7 +207,6 @@ module.exports = function (app, connection, debug) {
             res.render("issues/viewtalk", {
                 issue: issues[0],
                 things: posts,
-                tags: tags,
                 users: users
             });
         }
@@ -362,12 +346,6 @@ module.exports = function (app, connection, debug) {
                 })
                 .del()
             debug.issueapi("deleted all posts in issue %s", req.params.issue);
-            await connection("issuetags")
-                .where({
-                    "issueid": req.params.issue
-                })
-                .del();
-            debug.issueapi("deleted all tags in issue %s", req.params.issue);
             await connection("issueactivities")
                 .where({
                     "issueid": req.params.issue
@@ -383,44 +361,6 @@ module.exports = function (app, connection, debug) {
             res.redirect("/issues");
         }
     });
-    app.get("/issues/:issue/addtag", async function (req, res, next) {
-        if (req.user.id === -1) {
-            debug.issueapi("anonymous user trying to add tag");
-            res.redirect("/");
-        } else if (typeof req.params.issue !== typeof "") {
-            debug.issueapi("issue id of incorrect type");
-            res.redirect("/");
-        } else if (isNaN(Number(req.params.issue))) {
-            debug.issueapi("issue id is not identifier");
-            res.redirect("/");
-        } else if (typeof req.query.tagtext !== typeof "") {
-            debug.issueapi("tag text of incorrect type");
-            res.redirect("/");
-        } else if (req.query.tagtext === "") {
-            debug.issueapi("tag text empty");
-            res.redirect("back");
-        } else {
-            debug.issueapi("addtag request for issue %s", req.params.issue);
-            await connection("issuetags")
-                .insert({
-                    "tagtext": req.query.tagtext,
-                    "issueid": req.params.issue
-                });
-            await connection("issueactivities")
-                .insert({
-                    "dateofoccurance": new Date(),
-                    "issueid": req.params.issue,
-                    "authorid": req.user.id,
-                    "data": {
-                        type: "addtag",
-                        text: req.query.tagtext
-                    }
-                });
-            debug.issueapi("added tag to issue %s", req.params.issue);
-            res.redirect("/issues/" + req.params.issue + "/posts");
-        }
-    });
-
     app.get("/issues/:issue/assign", async function (req, res, next) {
         if (req.user.id === -1) {
             debug.issueapi("anonymous user trying to assign");
@@ -513,7 +453,7 @@ module.exports = function (app, connection, debug) {
         else if (isNaN(Number(req.params.post))) res.redirect("/");
         else {
             var posts = await connection
-                .select("issueposts.id", "issueposts.containedtext", "issueposts.authorid", "issueposts.dateofcreation", "issueposts.dateofedit", "users.fullname")
+                .select("issueposts.*", "users.fullname")
                 .from("issueposts")
                 .leftJoin("users", "issueposts.authorid", "users.id")
                 .where({
@@ -523,10 +463,35 @@ module.exports = function (app, connection, debug) {
                 res.redirect("/");
             else if (posts[0].authorid !== req.user.id)
                 res.redirect("/");
-            else
-                res.render("issues/editpost", {
-                    post: posts[0]
-                });
+            else {
+                console.log(await connection
+                    .select("issueposts.id")
+                    .from("issueposts")
+                    .where({
+                        "issueposts.issueid": posts[0].issueid
+                    })
+                    .first())
+                var isfirst = (await connection
+                    .select("issueposts.id")
+                    .from("issueposts")
+                    .where({
+                        "issueposts.issueid": posts[0].issueid
+                    })
+                    .first()).id == Number(req.params.post);
+                if (isfirst)
+                    res.render("issues/editpost", {
+                        post: posts[0],
+                        tags: (await connection.select("issues.issuetags")
+                            .from("issues")
+                            .where({
+                                "id": posts[0].issueid
+                            }))[0].issuetags
+                    });
+                else
+                    res.render("issues/editpost", {
+                        post: posts[0]
+                    });
+            }
         }
     });
 
@@ -543,6 +508,12 @@ module.exports = function (app, connection, debug) {
                 .where({
                     "id": req.params.post
                 });
+            var tags = (await connection
+                .select("issuetags")
+                .from("issues")
+                .where({
+                    "id": posts[0].issueid
+                }))[0].issuetags
             if (posts.length < 1) {
                 res.redirect("/");
             } else if (posts[0].authorid !== req.user.id) {
@@ -554,7 +525,15 @@ module.exports = function (app, connection, debug) {
                     })
                     .update({
                         "containedtext": req.body.newtext,
+                        // "issuetags": req.body.newtags,
                         "dateofedit": new Date()
+                    });
+                await connection("issues")
+                    .where({
+                        "id": posts[0].issueid
+                    })
+                    .update({
+                        "issuetags": req.body.newtags
                     });
                 await connection("issueactivities")
                     .insert({
@@ -564,8 +543,15 @@ module.exports = function (app, connection, debug) {
                         "data": {
                             type: "editpost",
                             postid: req.params.post,
-                            from: posts[0].containedtext,
-                            to: req.body.newtext
+                            from: {
+                                text: posts[0].containedtext,
+                                tags: tags
+                            },
+                            to: {
+                                text: req.body.newtext,
+                                tags: req.body.newtags
+                            }
+
                         }
                     });
                 res.redirect("/issues/" + posts[0].issueid + "/posts#" + req.params.post);

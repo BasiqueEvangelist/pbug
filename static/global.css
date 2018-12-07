@@ -184,7 +184,7 @@ div.underpanel {
 
 span.tag a,
 span.tag {
-	background-color: white;
+	/* background-color: white; */
 	color: gray;
 }
 

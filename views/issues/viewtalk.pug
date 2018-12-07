@@ -1,6 +1,6 @@
 extends ../layout.pug
 
-block css
+append css
     link(rel="stylesheet",href="/static/highlightstyles/default.css")
 
 block body
@@ -18,10 +18,9 @@ block body
     h2.issue-name=issue.issuename
     hr
     .taglist
-        each tag in tags
+        each tag in issue.issuetags.split(",")
             span.tag
-                = "#" + tag.tagtext + " "
-                a(href="/tag/" + tag.id + "/remove") &times; 
+                = "#" + tag + " "
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed

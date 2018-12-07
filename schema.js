@@ -11,7 +11,7 @@ console.log(
         .dropTableIfExists("issueactivities")
         .dropTableIfExists("issues")
         .dropTableIfExists("projects")
-        .dropTableIfExists("infopagetags")
+
         .dropTableIfExists("infopagecomments")
         .dropTableIfExists("infopages")
         .dropTableIfExists("users")
@@ -33,6 +33,7 @@ console.log(
         .createTable("issues", function (tbl) {
             tbl.increments("id");
             tbl.string("issuename", 100).notNullable();
+            tbl.text("issuetags").notNullable().defaultTo("");
             tbl.integer("authorid").references("id").inTable("users");
             tbl.integer("projectid").references("id").inTable("projects").notNullable();
             tbl.boolean("isclosed").defaultTo(false);
@@ -45,11 +46,6 @@ console.log(
             tbl.text("containedtext").notNullable();
             tbl.dateTime("dateofcreation").notNullable();
             tbl.dateTime("dateofedit");
-        })
-        .createTable("issuetags", function (tbl) {
-            tbl.increments("id");
-            tbl.integer("issueid").references("id").inTable("issues").notNullable();
-            tbl.string("tagtext", 64).notNullable();
         })
         .createTable("issueactivities", function (tbl) {
             tbl.increments("id");

@@ -5,8 +5,8 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         title PBug
-        link(rel="stylesheet",href="/static/global.css")
         block css
+            link(rel="stylesheet",href="/static/global.css")
     body
         header.flex-container
             .inner-element
@@ -34,5 +34,6 @@ html(lang="en")
                             a(href="/logout") Log out
                         |  | 
         .page-main
-            script(src="https://code.jquery.com/jquery-3.3.1.min.js")
             block body
+            block scripts
+                script(src="https://code.jquery.com/jquery-3.3.1.min.js")

@@ -1,6 +1,6 @@
 extends ../layout.pug
 
-block css
+append css
     link(rel="stylesheet",href="/static/highlightstyles/default.css")
 
 block body
@@ -18,10 +18,9 @@ block body
     h2.issue-name=issue.issuename
     hr
     .taglist
-        each tag in tags
+        each tag in issue.issuetags.split(",")
             span.tag
-                = "#" + tag.tagtext + " "
-                a(href="/tag/" + tag.id + "/remove") &times; 
+                = "#" + tag + " "
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
@@ -80,12 +79,6 @@ block body
                     else if (thing.data.newassigneeid === -1 && thing.data.oldassigneeid !== -1)
                         span.blue has unassigned 
                         span.username=thing.oldfn
-                else if thing.data.type == "addtag"
-                    span.blue has added tag #
-                    = thing.data.text
-                else if thing.data.type == "deltag"
-                    span.blue has removed tag #
-                    = thing.data.text
                 else if thing.data.type == "status"
                     span.blue has changed issue status from 
                     = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
@@ -124,6 +117,19 @@ block body
                                                     div.smallmargin.afteredit=tv[0]
                                                 else if tv[1] == "filler"
                                                     div.smallmargin.filler=" "
+                        span.blue and changed tags from 
+                        span.taglist
+                            each tag in thing.data.from.tags.split(",")
+                                span.tag
+                                    = "#" + tag + " "
+                        span.blue  to 
+                        span.taglist
+                            each tag in thing.data.to.tags.split(",")
+                                span.tag
+                                    = "#" + tag + " "
+
+
                 else
                     =JSON.stringify(thing.data)
+append scripts
     script(src="/static/expandable.js")

@@ -5,7 +5,23 @@ block body
         .entry
             .username=post.fullname
             .date=post.dateofcreation
+            //- form(action="/issues/" + issue.id + "/addtag",method="GET")
+            //- fieldset
+            //-     legend Add tag
+            //-     input(type="text",name="tagtext",placeholder="Tag name")
+            //-     input(type="submit",value="Add")
             if post.dateofedit !== null
                 .date="Edited on " + post.dateofedit
+            if typeof tags !== "undefined"
+                input.taglist(type="text",name="newtags",id="taglist",value=tags,onkeypress="return event.keyCode != 13;")
             textarea.submit-text(name="newtext")=post.containedtext
         input.submitpost(type="submit", value="Repost",style="float:right")
+append css
+    link(rel="stylesheet",href="/static/jquery.tag-editor.css")
+append scripts
+    script(src="/static/jquery.tag-editor.min.js")
+    script.
+        $("#taglist").tagEditor();
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
