@@ -15,7 +15,7 @@ html(lang="en")
                         a(href="/",style="display:inline-block")
                             .helper
                                 img.logo(src="/static/PB.svg",width="32",height="32")
-                            |  Home
+                            | 
                         |  | 
                         a(href="/issues") Issues
                         |  | 
@@ -25,11 +25,11 @@ html(lang="en")
                             a(href="/register") Register
                         else
                             if req.user.isadmin
-                                a(href="/createproject") Create Project
+                                a(href="/createproject") New Project
                                 |  | 
-                            a(href="/issues/create") Create Issue
+                            a(href="/issues/create") New Issue
                             |  | 
-                            a(href="/kb/create") Create Info Page
+                            a(href="/kb/create") New Info Page
                             |  | 
                             a(href="/logout") Log out
                         |  | 
