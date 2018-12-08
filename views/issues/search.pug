@@ -11,4 +11,11 @@ block body
                     a(href="/issues/" + result.id)
                         .issue-tag= "[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
                         = result.issuename
+        .pagination
+            - var i = 1;
+            -console.log(pagecol)
+            while i <= pagecol
+                a(href="/issues/search?q="+encodeURIComponent(query)+"&page="+i.toString())=i
+                |  
+                -i++
             

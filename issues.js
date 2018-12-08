@@ -1,4 +1,5 @@
 var diff = require("diff");
+var PAGELEN = 5;
 module.exports = function (app, connection, debug) {
 
     const insertActivity = function (issueid, userid, data) {
@@ -12,6 +13,7 @@ module.exports = function (app, connection, debug) {
     };
     app.get("/issues/search", async function (req, res, next) {
         var query = (typeof req.query.q == "undefined") ? "" : req.query.q;
+        var page = (typeof req.query.page == "undefined") ? 0 : (req.query.page - 1);
         var builder = connection
             .select("issues.*", "projects.shortprojectid", "assignees.username", "authors.username")
             .from("issues")
@@ -59,10 +61,14 @@ module.exports = function (app, connection, debug) {
             }
         });
         builder = builder.orderBy("issues.id", orderDesc ? "DESC" : "ASC");
+        var results = await builder;
+        var reslen = results.length;
+        results = results.slice(page * PAGELEN, (page + 1) * PAGELEN);
         res.render("issues/search",
             {
-                query: req.query.q,
-                results: await builder
+                query: query,
+                results: results,
+                pagecol: Math.ceil(reslen / PAGELEN)
             });
     })
     app.get("/issues/create", async function (req, res, next) {
