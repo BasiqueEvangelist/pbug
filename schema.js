@@ -11,9 +11,9 @@ console.log(
         .dropTableIfExists("issueactivities")
         .dropTableIfExists("issues")
         .dropTableIfExists("projects")
-
         .dropTableIfExists("infopagecomments")
         .dropTableIfExists("infopages")
+        .dropTableIfExists("files")
         .dropTableIfExists("users")
         .createTable("users", function (tbl) {
             tbl.increments("id");
@@ -75,5 +75,11 @@ console.log(
             tbl.increments("id");
             tbl.integer("infopageid").references("id").inTable("infopages");
             tbl.string("tagtext", 64).notNullable();
+        })
+        .createTable("files", function (tbl) {
+            tbl.increments("id");
+            tbl.string("filename", 128).notNullable().unique();
+            tbl.integer("authorid").references("id").inTable("users");
+            tbl.string("uid", 128).notNullable().unique();
         })
         .toString());

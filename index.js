@@ -267,7 +267,7 @@ app.get("/tag/:tag/remove", async function (req, res, next) {
     }
 });
 
-
+require("./files.js")(app, connection, debug);
 require("./kb.js")(app, connection, debug);
 require("./issues.js")(app, connection, debug);
 

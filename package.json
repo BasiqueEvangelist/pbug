@@ -3,6 +3,7 @@
     "private": true,
     "dependencies": {
         "compression": "^1.7.2",
+        "connect-busboy": "0.0.2",
         "connect-session-knex": "^1.4.0",
         "debug": "^3.1.0",
         "diff": "^3.5.0",
