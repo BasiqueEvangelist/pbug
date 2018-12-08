@@ -14,56 +14,61 @@ module.exports = function (app, connection, debug) {
     app.get("/issues/search", async function (req, res, next) {
         var query = (typeof req.query.q == "undefined") ? "" : req.query.q;
         var page = (typeof req.query.page == "undefined") ? 0 : (req.query.page - 1);
-        var builder = connection
+        function buildfrom(q, order) {
+            var builder = connection
+                .from("issues")
+                .leftJoin("projects", "issues.projectid", "projects.id")
+                .leftJoin("users AS assignees", "issues.assigneeid", "assignees.id")
+                .leftJoin("users AS authors", "issues.authorid", "authors.id");
+            var orderDesc = true;
+            q.split(" ").forEach(function (d) {
+                if (d.length == 0) { return; }
+                else if (d[0] == "#") {
+                    builder = builder.where(function (bld) {
+                        bld.where("issues.issuetags", "ilike", d.slice(1) + "%")
+                            .orWhere("issues.issuetags", "ilike", "%" + d.slice(1) + "%")
+                            .orWhere("issues.issuetags", "ilike", "%" + d.slice(1));
+                    });
+                }
+                else if (d.startsWith("status:")) {
+                    var status = d.slice("status:");
+                    if (status.match(/close/gi)) {
+                        builder = builder.where("issues.isclosed", true)
+                    }
+                    else if (status.match(/open/gi)) {
+                        builder = builder.where("issues.isclosed", false)
+                    }
+                }
+                else if (d.startsWith("project:")) {
+                    var projectCode = d.slice("project:".length);
+                    builder = builder.where("projects.shortprojectid", "ilike", projectCode);
+                }
+                else if (d.startsWith("assignee:")) {
+                    var assigneeName = d.slice("assignee:".length);
+                    builder = builder.where("assignees.username", "ilike", assigneeName);
+                }
+                else if (d.startsWith("author:")) {
+                    var authorName = d.slice("author:".length);
+                    builder = builder.where("authors.username", "ilike", authorName);
+                }
+                else if (d.startsWith("order:")) {
+                    var order = d.slice("order:".length);
+                    if (order.match(/asc/gi))
+                        orderDesc = false;
+                }
+                else {
+                    builder = builder.where("issues.issuename", "ilike", "%" + d + "%");
+                }
+            });
+            if (order)
+                builder = builder.orderBy("issues.id", orderDesc ? "DESC" : "ASC");
+            return builder;
+        }
+        var reslen = (await buildfrom(query, false).count("*"))[0].count;
+        var results = await buildfrom(query, true)
             .select("issues.*", "projects.shortprojectid", "assignees.username", "authors.username")
-            .from("issues")
-            .leftJoin("projects", "issues.projectid", "projects.id")
-            .leftJoin("users AS assignees", "issues.assigneeid", "assignees.id")
-            .leftJoin("users AS authors", "issues.authorid", "authors.id");
-        var orderDesc = true;
-        query.split(" ").forEach(function (d) {
-            if (d.length == 0) { return; }
-            else if (d[0] == "#") {
-                builder = builder.where(function (bld) {
-                    bld.where("issues.issuetags", "ilike", d.slice(1) + "%")
-                        .orWhere("issues.issuetags", "ilike", "%" + d.slice(1) + "%")
-                        .orWhere("issues.issuetags", "ilike", "%" + d.slice(1));
-                });
-            }
-            else if (d.startsWith("status:")) {
-                var status = d.slice("status:");
-                if (status.match(/close/gi)) {
-                    builder = builder.where("issues.isclosed", true)
-                }
-                else if (status.match(/open/gi)) {
-                    builder = builder.where("issues.isclosed", false)
-                }
-            }
-            else if (d.startsWith("project:")) {
-                var projectCode = d.slice("project:".length);
-                builder = builder.where("projects.shortprojectid", "ilike", projectCode);
-            }
-            else if (d.startsWith("assignee:")) {
-                var assigneeName = d.slice("assignee:".length);
-                builder = builder.where("assignees.username", "ilike", assigneeName);
-            }
-            else if (d.startsWith("author:")) {
-                var authorName = d.slice("author:".length);
-                builder = builder.where("authors.username", "ilike", authorName);
-            }
-            else if (d.startsWith("order:")) {
-                var order = d.slice("order:".length);
-                if (order.match(/asc/gi))
-                    orderDesc = false;
-            }
-            else {
-                builder = builder.where("issues.issuename", "ilike", "%" + d + "%");
-            }
-        });
-        builder = builder.orderBy("issues.id", orderDesc ? "DESC" : "ASC");
-        var results = await builder;
-        var reslen = results.length;
-        results = results.slice(page * PAGELEN, (page + 1) * PAGELEN);
+            .offset(Math.max(((page) * PAGELEN) - 1, 0))
+            .limit(PAGELEN);
         res.render("issues/search",
             {
                 query: query,

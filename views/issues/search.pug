@@ -13,7 +13,6 @@ block body
                         = result.issuename
         .pagination
             - var i = 1;
-            -console.log(pagecol)
             while i <= pagecol
                 a(href="/issues/search?q="+encodeURIComponent(query)+"&page="+i.toString())=i
                 |  
