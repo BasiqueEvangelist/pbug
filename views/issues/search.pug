@@ -1,0 +1,13 @@
+extends ../layout.pug
+block body
+    form(action="/issues/search", method="GET")
+        input(type="text",placeholder="Search",name="q",value=query)
+        input(type="submit",value="Search")
+    if typeof results !== "undefined"
+        ul.issues-list
+            each result in results
+                li
+                    a(href="/issues/" + result.id)
+                        .issue-tag= "[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
+                        = result.issuename
+            

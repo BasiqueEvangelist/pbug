@@ -107,65 +107,7 @@ app.get("/", async function (req, res, next) {
     }
 });
 app.get("/issues", async function (req, res) {
-    res.redirect("/issues/open");
-});
-app.get("/issues/open", async function (req, res, next) {
-    debug.issueapi("showing all open issues");
-    var results = await connection
-        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
-        .from("issues")
-        .leftJoin("projects", "issues.projectid", "projects.id")
-        .where({
-            "issues.isclosed": false
-        })
-        .orderBy("issues.id", "desc")
-    debug.issueapi("issues retrieved, sending body");
-    res.render("issues/listgroup", {
-        issues: results
-    });
-});
-app.get("/issues/all", async function (req, res, next) {
-    debug.issueapi("showing all issues");
-    var results = await connection
-        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
-        .from("issues")
-        .leftJoin("projects", "issues.projectid", "projects.id")
-        .orderBy("issues.id", "desc")
-    debug.issueapi("issues retrieved, sending body");
-    res.render("issues/listgroup", {
-        issues: results
-    });
-});
-app.get("/issues/orphan", async function (req, res, next) {
-    debug.issueapi("showing all orphan issues");
-    var results = await connection
-        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
-        .from("issues")
-        .leftJoin("projects", "issues.projectid", "projects.id")
-        .where({
-            "issues.isclosed": false,
-            "issues.assigneeid": null
-        })
-        .orderBy("issues.id", "desc")
-    debug.issueapi("issues retrieved, sending body");
-    res.render("issues/listgroup", {
-        issues: results
-    });
-});
-app.get("/issues/completed", async function (req, res, next) {
-    debug.issueapi("showing all completed issues");
-    var results = await connection
-        .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
-        .from("issues")
-        .leftJoin("projects", "issues.projectid", "projects.id")
-        .where({
-            "issues.isclosed": true
-        })
-        .orderBy("issues.id", "desc")
-    debug.issueapi("issues retrieved, sending body");
-    res.render("issues/listgroup", {
-        issues: results
-    });
+    res.redirect("/issues/search");
 });
 app.get("/login", async function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");

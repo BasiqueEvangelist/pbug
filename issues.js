@@ -10,7 +10,39 @@ module.exports = function (app, connection, debug) {
                 "data": data
             });
     };
-
+    app.get("/issues/search", async function (req, res, next) {
+        if (typeof req.query.q == "undefined") {
+            res.render("issues/search", { query: "" });
+        }
+        else {
+            var builder = connection
+                .select("issues.*", "projects.shortprojectid")
+                .from("issues")
+                .leftJoin("projects", "issues.projectid", "projects.id");
+            req.query.q.split(" ").forEach(function (d) {
+                if (d.length == 0) { return; }
+                else if (d[0] == "#") {
+                    builder = builder.where(function (bld) {
+                        bld.where("issues.issuetags", "ilike", d.slice(1) + "%")
+                            .orWhere("issues.issuetags", "ilike", "%" + d.slice(1) + "%")
+                            .orWhere("issues.issuetags", "ilike", "%" + d.slice(1));
+                    });
+                }
+                else if (d[0] === "!") {
+                    if (d === "!closed") {
+                        builder = builder.where("issues.isclosed", true)
+                    }
+                    else if (d === "!open" || d == "!opened") {
+                        builder = builder.where("issues.isclosed", false)
+                    }
+                }
+                else {
+                    builder = builder.where("issues.issuename", "ilike", "%" + d + "%");
+                }
+            });
+            res.render("issues/search", { results: await builder, query: req.query.q });
+        }
+    })
     app.get("/issues/create", async function (req, res, next) {
         if (req.session.loginid === -1) {
             res.redirect("/");
