@@ -1,5 +1,5 @@
 var diff = require("diff");
-var PAGELEN = 5;
+var PAGELEN = 20;
 module.exports = function (app, connection, debug) {
 
     const insertActivity = function (issueid, userid, data) {
