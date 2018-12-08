@@ -87,7 +87,8 @@ app.get("/", async function (req, res, next) {
                 "issues.isclosed": false,
                 "issues.assigneeid": req.user.id
             })
-            .orderBy("issues.id", "desc");
+            .orderBy("issues.id", "desc")
+            .limit(50);
         debug.issueapi("retrieving issues authored by user");
         var aresults = await connection
             .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
@@ -98,6 +99,7 @@ app.get("/", async function (req, res, next) {
                 "issues.authorid": req.user.id
             })
             .orderBy("issues.id", "desc")
+            .limit(50);
         debug.issueapi("issues retrieved, sending body");
         res.render("issues/listall", {
             issues: results,
