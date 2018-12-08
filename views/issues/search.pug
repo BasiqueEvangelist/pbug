@@ -1,8 +1,9 @@
 extends ../layout.pug
 block body
-    form(action="/issues/search", method="GET")
-        input(type="text",placeholder="Search",name="q",value=query)
-        input(type="submit",value="Search")
+    .searchbox
+        form(action="/issues/search", method="GET")
+            input(type="text",placeholder="Search...",name="q",value=query,class="search")
+            input(type="submit",value="Search",class="submit-search")
     if typeof results !== "undefined"
         ul.issues-list
             each result in results

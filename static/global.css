@@ -168,6 +168,39 @@ input.title-input {
 	font-size: 1.5em;
 }
 
+.searchbox
+{
+	margin-left:auto;
+	margin-right:auto;
+	width: 80%;
+	overflow:auto;
+	height: auto;
+	display: block;
+}
+
+.search {
+	resize: vertical;
+	float: left;
+	height: auto;
+	width: calc(100% - 36px);
+	border-color: #059;
+	border-style: solid;
+	border-width: 0 0 2px 0;
+	background: none;
+	font-size: 1.5em;
+}
+
+input.submit-search {
+	float: right;
+	background:url(/static/magnifying_glass.png) no-repeat;
+	background-size: contain;
+    cursor:pointer;
+	border: none;
+	width: 32px;
+	height:32px;
+	font-size: 0px;
+}
+
 input.submitpost {
 	background-color: #059;
 	color: white;
