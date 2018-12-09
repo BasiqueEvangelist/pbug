@@ -1,16 +1,18 @@
 extends ../layout.pug
 block body
     .searchbox
-        form(action="/issues/search", method="GET")
+        form(action="/files/search", method="GET")
             input(type="text",placeholder="Search...",name="q",value=query,class="search")
             input(type="submit",value="Search",class="submit-search")
     if typeof results !== "undefined"
-        ul.issues-list
+        ul.files-list
             each result in results
                 li
-                    a(href="/issues/" + result.id)
-                        .issue-tag= "[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
-                        = result.issuename
+                    a(href="/files/download/"+result.uid)
+                        =result.filename
+                        |  (Author: 
+                        =result.username
+                        | )
         .pagination
             a(href=paginate.href(true)) Previous
             |  

@@ -1,0 +1,6 @@
+{
+    "logo": "static/PB.svg",
+    "include": [
+        "./config-secret.json"
+    ]
+}
