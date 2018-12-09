@@ -1,6 +1,6 @@
 var diff = require("diff");
 var paginate = require("express-paginate");
-module.exports = function (app, connection, debug) {
+module.exports = function (app, connection, debug, config) {
     const insertActivity = function (issueid, userid, data) {
         return connection("issueactivities")
             .insert({

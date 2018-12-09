@@ -1,4 +1,4 @@
-module.exports = function (app, connection, debug) {
+module.exports = function (app, connection, debug, config) {
 
     app.get("/kb/list/all", async function (req, res, next) {
         debug.issueapi("showing all kb pages");

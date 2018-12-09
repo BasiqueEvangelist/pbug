@@ -2,7 +2,7 @@ var connect_busboy = require("connect-busboy");
 var fs = require("fs");
 var crypto = require("crypto");
 var paginate = require("express-paginate");
-module.exports = function (app, connection, debug) {
+module.exports = function (app, connection, debug, config) {
     if (!fs.existsSync("./files/")) {
         fs.mkdirSync("./files");
     }

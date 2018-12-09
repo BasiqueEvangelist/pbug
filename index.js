@@ -3,7 +3,6 @@ var express = require("express");
 var session = require("express-session");
 var sha512 = require("sha512");
 var compression = require("compression");
-var Knex = require("knex");
 var errors = require("./errors");
 var debug = {};
 debug.all = require("debug")("pbug*");
@@ -20,15 +19,8 @@ marked.setOptions({
     gfm: true
 });
 debug.all("starting pbug");
-var connection = new Knex({
-    client: process.env.DB_TYPE,
-    connection: {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_DB
-    }
-});
+var connection = require("./knexfile.js");
+var config = require("./config")();
 var KnexStore = require("connect-session-knex")(session);
 var app = express();
 // app.use(compression());
@@ -52,6 +44,7 @@ app.use(function (req, res, next) {
     req.user.fullname = req.session.loginfullname;
     req.user.username = req.session.loginusername;
     res.locals.req = req;
+    res.locals.config = config;
     res.locals.errors = errors;
     next();
 });
@@ -61,6 +54,9 @@ app.use(express.urlencoded({
 app.use("/static/highlightstyles", express.static("node_modules/highlight.js/styles"));
 app.use("/static", express.static("static"));
 app.set("view engine", "pug");
+app.get("/logo", function (req, res, next) {
+    res.sendFile(config.logo, { root: process.cwd() });
+})
 app.get("/", async function (req, res, next) {
     if (req.user.id === -1) {
         debug.issueapi("showing all open issues");
@@ -128,10 +124,10 @@ app.post("/createproject", async function (req, res, next) {
     }
 });
 
-require("./users.js")(app, connection, debug);
-require("./files.js")(app, connection, debug);
-require("./kb.js")(app, connection, debug);
-require("./issues.js")(app, connection, debug);
+require("./users.js")(app, connection, debug, config);
+require("./files.js")(app, connection, debug, config);
+require("./kb.js")(app, connection, debug, config);
+require("./issues.js")(app, connection, debug, config);
 
 app.use(function (req, res) {
     res.status(404).render("404");

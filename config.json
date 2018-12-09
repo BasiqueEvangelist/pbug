@@ -1,0 +1,10 @@
+{
+    "database": {
+        "type": "",
+        "host": "",
+        "user": "",
+        "password": "",
+        "db": ""
+    },
+    "logo": "static/PB.svg"
+}
