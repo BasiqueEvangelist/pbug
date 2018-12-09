@@ -20,9 +20,9 @@ html(lang="en")
                         a(href="/issues") Issues
                         |  | 
                         if req.user.id == -1
-                            a(href="/login") Login
+                            a(href="/login?"+qs.stringify({redirect:req.path})) Login
                             |  | 
-                            a(href="/register") Register
+                            a(href="/register?"+qs.stringify({redirect:req.path})) Register
                         else
                             if req.user.isadmin
                                 a(href="/createproject") New Project
@@ -31,7 +31,7 @@ html(lang="en")
                             |  | 
                             a(href="/kb/create") New Info Page
                             |  | 
-                            a(href="/logout") Log out
+                            a(href="/logout?"+qs.stringify({redirect:req.path})) Log out
                         |  | 
         .page-main
             block body

@@ -5,7 +5,7 @@ block body
         fieldset
             legend Error
             = errors[Number(req.query.error)]
-    form(action="/login",method="POST",type="application/x-www-form-urlencoded",style="text-align:center; margin-top: 100px")
+    form(action="/login?"+qs.stringify(req.query),method="POST",type="application/x-www-form-urlencoded",style="text-align:center; margin-top: 100px")
         input.h2.blueunderline(type="text",name="username",placeholder="Username",required)
         br
         br
@@ -17,4 +17,4 @@ block body
         br
         span(style="color:#05b")
             | Don't have an account? 
-            a(href="/register") Register
+            a(href="/register?"+qs.stringify(req.query)) Register

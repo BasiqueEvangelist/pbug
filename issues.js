@@ -1,5 +1,6 @@
 var diff = require("diff");
 var paginate = require("express-paginate");
+var { requiresLogin } = require("./common");
 module.exports = function (app, connection, debug, config) {
     const insertActivity = function (issueid, userid, data) {
         return connection("issueactivities")
@@ -78,11 +79,7 @@ module.exports = function (app, connection, debug, config) {
                 pages: paginate.getArrayPages(req)(5, pagec, req.query.page)
             });
     })
-    app.get("/issues/create", async function (req, res, next) {
-        if (req.session.loginid === -1) {
-            res.redirect("/");
-            return;
-        }
+    app.get("/issues/create", requiresLogin, async function (req, res, next) {
         res.render("issues/create", {
             projects: await connection
                 .select("id", "projectname")
@@ -90,11 +87,8 @@ module.exports = function (app, connection, debug, config) {
         });
     });
 
-    app.post("/issues/create", async function (req, res, next) {
-        if (req.session.loginid === -1) {
-            debug.issueapi("unprivileged user tried to create issue");
-            res.redirect("/");
-        } else if (typeof req.body.name !== typeof "string") {
+    app.post("/issues/create", requiresLogin, async function (req, res, next) {
+        if (typeof req.body.name !== typeof "string") {
             debug.issueapi("issue name of incorrect type");
             res.status(400).end();
         } else if (req.body.name === "") {
@@ -428,11 +422,8 @@ module.exports = function (app, connection, debug, config) {
             res.redirect("/issues");
         }
     });
-    app.get("/issues/:issue/assign", async function (req, res, next) {
-        if (req.user.id === -1) {
-            debug.issueapi("anonymous user trying to assign");
-            res.redirect("/");
-        } else if (typeof req.params.issue !== typeof "") {
+    app.get("/issues/:issue/assign", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.issue !== typeof "") {
             debug.issueapi("issue id of incorrect type");
             res.redirect("/");
         } else if (isNaN(Number(req.params.issue))) {
@@ -475,11 +466,8 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.get("/issues/:issue/changetitle", async function (req, res, next) {
-        if (req.user.id === -1) {
-            debug.issueapi("anonymous user trying to change title");
-            res.redirect("/");
-        } else if (typeof req.params.issue !== typeof "") {
+    app.get("/issues/:issue/changetitle", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.issue !== typeof "") {
             debug.issueapi("issue id of incorrect type");
             res.redirect("/");
         } else if (isNaN(Number(req.params.issue))) {
@@ -514,9 +502,8 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.get("/issues/post/:post/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.post !== typeof "") res.redirect("/");
+    app.get("/issues/post/:post/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.post !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.post))) res.redirect("/");
         else {
             var posts = await connection
@@ -562,9 +549,8 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.post("/issues/post/:post/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.post !== typeof "") res.status(400).end();
+    app.post("/issues/post/:post/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.post !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.post))) res.status(400).end();
         else if (typeof req.body.newtext !== typeof "") res.status(400).end();
         else if (req.body.newtext === "") res.redirect("back");

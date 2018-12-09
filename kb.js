@@ -1,3 +1,4 @@
+var { requiresLogin } = require("./common")
 module.exports = function (app, connection, debug, config) {
 
     app.get("/kb/list/all", async function (req, res, next) {
@@ -12,18 +13,12 @@ module.exports = function (app, connection, debug, config) {
         });
     });
 
-    app.get("/kb/create", async function (req, res, next) {
-        if (req.session.loginid === -1) res.redirect("/");
-        else {
-            res.render("kb/create");
-        };
+    app.get("/kb/create", requiresLogin, async function (req, res, next) {
+        res.render("kb/create");
     });
 
-    app.post("/kb/create", async function (req, res, next) {
-        if (req.session.loginid === -1) {
-            debug.issueapi("unprivileged user tried to create info page");
-            res.redirect("/");
-        } else if (typeof req.body.name !== typeof "string") {
+    app.post("/kb/create", requiresLogin, async function (req, res, next) {
+        if (typeof req.body.name !== typeof "string") {
             debug.issueapi("info page name of incorrect type");
             res.status(400).end();
         } else if (req.body.name === "") {
@@ -53,8 +48,7 @@ module.exports = function (app, connection, debug, config) {
     });
 
     app.get("/kb/post/:post/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.post !== typeof "") res.redirect("/");
+        if (typeof req.params.post !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.post))) res.redirect("/");
         else {
             var posts = await connection
@@ -75,9 +69,8 @@ module.exports = function (app, connection, debug, config) {
                 });
         }
     });
-    app.post("/kb/post/:post/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.post !== typeof "") res.status(400).end();
+    app.post("/kb/post/:post/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.post !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.post))) res.status(400).end();
         else if (typeof req.body.newtext !== typeof "") res.status(400).end();
         else if (req.body.newtext === "") res.redirect("back");
@@ -106,9 +99,8 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.get("/kb/tag/:tag/remove", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.tag !== typeof "") res.redirect("/");
+    app.get("/kb/tag/:tag/remove", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.tag !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.tag))) res.redirect("/");
         else {
             var tags = await connection
@@ -129,9 +121,8 @@ module.exports = function (app, connection, debug, config) {
             }
         }
     });
-    app.get("/kb/:infopage/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.infopage !== typeof "") res.redirect("/");
+    app.get("/kb/:infopage/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.infopage !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.infopage))) res.redirect("/");
         else {
             var infopages = await connection
@@ -151,9 +142,8 @@ module.exports = function (app, connection, debug, config) {
                 });
         }
     });
-    app.post("/kb/:infopage/edit", async function (req, res, next) {
-        if (req.user.id === -1) res.redirect("/");
-        else if (typeof req.params.infopage !== typeof "") res.status(400).end();
+    app.post("/kb/:infopage/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.infopage !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.infopage))) res.status(400).end();
         else if (typeof req.body.newtext !== typeof "") res.status(400).end();
         else if (req.body.newtext === "") res.redirect("back");
@@ -182,11 +172,8 @@ module.exports = function (app, connection, debug, config) {
             }
         }
     });
-    app.get("/kb/:infopage/addtag", async function (req, res, next) {
-        if (req.user.id === -1) {
-            debug.issueapi("anonymous user trying to add tag");
-            res.redirect("/");
-        } else if (typeof req.params.infopage !== typeof "") {
+    app.get("/kb/:infopage/addtag", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.infopage !== typeof "") {
             debug.issueapi("infopage id of incorrect type");
             res.redirect("/");
         } else if (isNaN(Number(req.params.infopage))) {

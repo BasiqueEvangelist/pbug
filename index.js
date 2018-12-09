@@ -4,6 +4,7 @@ var session = require("express-session");
 var compression = require("compression");
 var errors = require("./errors");
 var debug = {};
+var qs = require("qs");
 debug.all = require("debug")("pbug*");
 debug.request = require("debug")("pbug:request");
 debug.userapi = require("debug")("pbug:userapi");
@@ -45,6 +46,7 @@ app.use(function (req, res, next) {
     res.locals.req = req;
     res.locals.config = config;
     res.locals.errors = errors;
+    res.locals.qs = qs;
     next();
 });
 app.use(express.urlencoded({
