@@ -56,7 +56,7 @@ block body
                 .date=thing.dateofcreation
                 if thing.dateofedit !== null
                     .date="Edited on " + thing.dateofedit
-                .underpanel
+                .comment-underpanel
                     if req.user.id == thing.authorid
                         a(href="/issues/post/" + thing.id + "/edit") edit
                         |  
