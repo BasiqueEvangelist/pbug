@@ -1,5 +1,5 @@
 var diff = require("diff");
-var PAGELEN = 20;
+var paginate = require("express-paginate");
 module.exports = function (app, connection, debug) {
 
     const insertActivity = function (issueid, userid, data) {
@@ -11,9 +11,8 @@ module.exports = function (app, connection, debug) {
                 "data": data
             });
     };
-    app.get("/issues/search", async function (req, res, next) {
+    app.get("/issues/search", paginate.middleware(), async function (req, res, next) {
         var query = (typeof req.query.q == "undefined") ? "" : req.query.q;
-        var page = (typeof req.query.page == "undefined") ? 0 : (req.query.page - 1);
         function buildfrom(q, order) {
             var builder = connection
                 .from("issues")
@@ -67,13 +66,14 @@ module.exports = function (app, connection, debug) {
         var reslen = (await buildfrom(query, false).count("*"))[0].count;
         var results = await buildfrom(query, true)
             .select("issues.*", "projects.shortprojectid", "assignees.username", "authors.username")
-            .offset(Math.max(((page) * PAGELEN) - 1, 0))
-            .limit(PAGELEN);
+            .offset(req.skip)
+            .limit(req.query.limit);
+        var pagec = Math.ceil(reslen / req.query.limit);
         res.render("issues/search",
             {
                 query: query,
                 results: results,
-                pagecol: Math.ceil(reslen / PAGELEN)
+                pages: paginate.getArrayPages(req)(5, pagec, req.query.page)
             });
     })
     app.get("/issues/create", async function (req, res, next) {

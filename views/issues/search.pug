@@ -12,9 +12,13 @@ block body
                         .issue-tag= "[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
                         = result.issuename
         .pagination
-            - var i = 1;
-            while i <= pagecol
-                a(href="/issues/search?q="+encodeURIComponent(query)+"&page="+i.toString())=i
+            a(href=paginate.href(true)) Previous
+            |  
+            each page in pages
+                if req.query.page === page.number
+                    =page.number
+                else
+                    a(href=page.url)=page.number
                 |  
-                -i++
+            a(href=paginate.href(false)) Next
             
