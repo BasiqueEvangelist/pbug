@@ -105,26 +105,8 @@ app.get("/", async function (req, res, next) {
         });
     }
 });
-app.get("/createproject", async function (req, res, next) {
-    if (!req.user.isadmin) res.redirect("/");
-    else res.render("createproject");
-});
-app.post("/createproject", async function (req, res, next) {
-    if (!req.user.isadmin) res.redirect("/");
-    else if (typeof req.body.name !== typeof "string") res.status(400).end();
-    else if (typeof req.body.shortprojectid !== typeof "string") res.status(400).end();
-    else if (req.body.shortprojectid.length > 3 || req.body.shortprojectid === 0) res.status(400).end();
-    else {
-        await connection("projects")
-            .insert({
-                "projectname": req.body.name,
-                "authorid": req.session.loginid,
-                "shortprojectid": req.body.shortprojectid
-            })
-        res.redirect("/");
-    }
-});
 
+require("./admin.js")(app, connection, debug, config);
 require("./users.js")(app, connection, debug, config);
 require("./files.js")(app, connection, debug, config);
 require("./kb.js")(app, connection, debug, config);

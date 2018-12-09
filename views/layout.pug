@@ -25,9 +25,6 @@ html(lang="en")
                                 |  | 
                                 a(href="/register?"+qs.stringify({redirect:req.path})) Register
                         else
-                            if req.user.isadmin
-                                a(href="/createproject") New Project
-                                |  | 
                             a(href="/issues/create") New Issue
                             |  | 
                             a(href="/kb/create") New Info Page
