@@ -9,7 +9,12 @@ module.exports = function () {
             "password": "",
             "db": ""
         },
-        "logo": "static/PB.svg",
+        "login": {
+            "allowregistration": true
+        },
+        "design": {
+            "logo": "static/PB.svg",
+        },
         "port": 8080,
         "extends": "default",
         "include": []

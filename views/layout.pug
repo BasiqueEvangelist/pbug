@@ -21,8 +21,9 @@ html(lang="en")
                         |  | 
                         if req.user.id == -1
                             a(href="/login?"+qs.stringify({redirect:req.path})) Login
-                            |  | 
-                            a(href="/register?"+qs.stringify({redirect:req.path})) Register
+                            if config.login.allowregistration
+                                |  | 
+                                a(href="/register?"+qs.stringify({redirect:req.path})) Register
                         else
                             if req.user.isadmin
                                 a(href="/createproject") New Project

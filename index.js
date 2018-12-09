@@ -56,7 +56,7 @@ app.use("/static/highlightstyles", express.static("node_modules/highlight.js/sty
 app.use("/static", express.static("static"));
 app.set("view engine", "pug");
 app.get("/logo", function (req, res, next) {
-    res.sendFile(config.logo, { root: process.cwd() });
+    res.sendFile(config.design.logo, { root: process.cwd() });
 })
 app.get("/", async function (req, res, next) {
     if (req.user.id === -1) {

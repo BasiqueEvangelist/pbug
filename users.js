@@ -7,6 +7,7 @@ module.exports = function (app, connection, debug, config) {
     });
     app.get("/register", async function (req, res) {
         if (req.session.loginid !== -1) res.redirect("/");
+        else if (!config.login.allowregistration) res.redirect("/");
         else res.render("register");
     });
     app.post("/login", async function (req, res, next) {
@@ -49,6 +50,9 @@ module.exports = function (app, connection, debug, config) {
     app.post("/register", async function (req, res, next) {
         if (req.session.loginid !== -1) {
             debug.userapi("registration only for anonymous users");
+            res.redirect("/");
+        } else if (!config.login.allowregistration) {
+            debug.userapi("registration disallowed")
             res.redirect("/");
         } else if (typeof req.body.username !== typeof "string") {
             debug.userapi("username of incorrect type");
