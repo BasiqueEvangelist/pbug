@@ -18,4 +18,11 @@ module.exports = function (app, connection, debug, config) {
             res.redirect("/");
         }
     });
+    app.get("/admin/users", requiresAdministrator, async function (req, res, next) {
+        res.render("admin/viewusers", {
+            users: await connection
+                .select("users.*")
+                .from("users")
+        })
+    });
 };
