@@ -1,10 +1,6 @@
 {
-    "database": {
-        "type": "",
-        "host": "",
-        "user": "",
-        "password": "",
-        "db": ""
-    },
-    "logo": "static/PB.svg"
+    "logo": "static/PB.svg",
+    "include": [
+        "./config-secret.json"
+    ]
 }
