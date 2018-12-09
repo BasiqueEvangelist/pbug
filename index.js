@@ -108,9 +108,6 @@ app.get("/", async function (req, res, next) {
         });
     }
 });
-app.get("/issues", async function (req, res) {
-    res.redirect("/issues/search");
-});
 app.get("/login", async function (req, res) {
     if (req.session.loginid !== -1) res.redirect("/");
     else res.render("login");

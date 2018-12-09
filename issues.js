@@ -1,7 +1,6 @@
 var diff = require("diff");
 var paginate = require("express-paginate");
 module.exports = function (app, connection, debug) {
-
     const insertActivity = function (issueid, userid, data) {
         return connection("issueactivities")
             .insert({
@@ -11,6 +10,9 @@ module.exports = function (app, connection, debug) {
                 "data": data
             });
     };
+    app.get("/issues", async function (req, res) {
+        res.redirect("/issues/search");
+    });
     app.get("/issues/search", paginate.middleware(), async function (req, res, next) {
         var query = (typeof req.query.q == "undefined") ? "" : req.query.q;
         function buildfrom(q, order) {

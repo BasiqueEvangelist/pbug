@@ -1,0 +1,26 @@
+extends ../layout.pug
+block body
+    .searchbox
+        form(action="/files/search", method="GET")
+            input(type="text",placeholder="Search...",name="q",value=query,class="search")
+            input(type="submit",value="Search",class="submit-search")
+    if typeof results !== "undefined"
+        ul.files-list
+            each result in results
+                li
+                    a(href="/files/download/"+result.uid)
+                        =result.filename
+                        |  (Author: 
+                        =result.username
+                        | )
+        .pagination
+            a(href=paginate.href(true)) Previous
+            |  
+            each page in pages
+                if req.query.page === page.number
+                    =page.number
+                else
+                    a(href=page.url)=page.number
+                |  
+            a(href=paginate.href(false)) Next
+            
