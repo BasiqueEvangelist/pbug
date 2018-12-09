@@ -2,6 +2,9 @@ var connect_busboy = require("connect-busboy");
 var fs = require("fs");
 var crypto = require("crypto");
 module.exports = function (app, connection, debug) {
+    if (!fs.existsSync("./files/")) {
+        fs.mkdirSync("./files");
+    }
     app.get("/files/upload", async function (req, res, next) {
         if (req.user.id === -1) res.redirect("/");
         res.render("files/upload");
