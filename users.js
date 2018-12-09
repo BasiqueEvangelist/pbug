@@ -1,3 +1,4 @@
+var sha512 = require("sha512");
 module.exports = function (app, connection, debug, config) {
     app.get("/login", async function (req, res) {
         if (req.session.loginid !== -1) res.redirect("/");

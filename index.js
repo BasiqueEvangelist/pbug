@@ -1,7 +1,6 @@
 require("dotenv").config();
 var express = require("express");
 var session = require("express-session");
-var sha512 = require("sha512");
 var compression = require("compression");
 var errors = require("./errors");
 var debug = {};
