@@ -20,7 +20,7 @@ block body
                 .date=comment.dateofcreation
                 if comment.dateofedit !== null
                     .date="Edited on " + comment.dateofedit
-                .underpanel
+                .comment-underpanel
                     if req.user.id == comment.authorid
                         a(href="/kb/post/" + comment.id + "/edit") edit
                         |  
