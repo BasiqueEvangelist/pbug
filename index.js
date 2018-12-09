@@ -233,38 +233,6 @@ app.post("/createproject", async function (req, res, next) {
         res.redirect("/");
     }
 });
-app.get("/tag/:tag/remove", async function (req, res, next) {
-    if (req.user.id === -1) res.redirect("/");
-    else if (typeof req.params.tag !== typeof "") res.redirect("/");
-    else if (isNaN(Number(req.params.tag))) res.redirect("/");
-    else {
-        var tags = await connection
-            .select("issueid", "tagtext")
-            .from("issuetags")
-            .where({
-                "id": req.params.tag
-            })
-        if (tags.length < 1) {
-            res.redirect("/");
-        } else
-            await connection("issuetags")
-                .where({
-                    "id": req.params.tag
-                })
-                .del()
-        await connection("issueactivities")
-            .insert({
-                "dateofoccurance": new Date(),
-                "issueid": tags[0].issueid,
-                "authorid": req.user.id,
-                "data": {
-                    type: "deltag",
-                    text: tags[0].tagtext
-                }
-            })
-        res.redirect("/issues/" + tags[0].issueid + "/posts");
-    }
-});
 
 require("./files.js")(app, connection, debug);
 require("./kb.js")(app, connection, debug);
