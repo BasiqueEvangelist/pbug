@@ -113,7 +113,7 @@ require("./kb.js")(app, connection, debug, config);
 require("./issues.js")(app, connection, debug, config);
 
 app.use(function (req, res) {
-    res.status(404).render("404");
+    res.status(404).render("errors/404");
 });
 app.listen(Number(process.env.PBUG_PORT || process.env.PORT || 8080));
 debug.all("listening on " + Number(process.env.PBUG_PORT || process.env.PORT || 8080));

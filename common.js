@@ -22,7 +22,7 @@ exports.requiresAdministrator = function (req, res, next) {
         if ((req.method === "GET" || req.method === "HEAD") && req.user.id === -1)
             res.redirect("/login?" + qs.stringify({ redirect: req.path }));
         else if (req.method === "GET" || req.method === "HEAD")
-            res.status(403).render("403admin");
+            res.status(403).render("errors/403admin");
         else
             res.status(403).json({
                 error: {
