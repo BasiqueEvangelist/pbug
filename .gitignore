@@ -61,3 +61,5 @@ typings/
 .next
 
 /files/
+
+config-secret.json
