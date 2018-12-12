@@ -112,18 +112,12 @@ module.exports = function (app, connection, debug, config) {
                 .insert({
                     "issuename": req.body.name,
                     "projectid": Number(req.body.projectid),
-                    "authorid": req.user.id
+                    "authorid": req.user.id,
+                    "description": req.body.firsttext,
+                    "dateofcreation": new Date()
                 })
                 .returning("id"))[0];
             debug.issueapi("successfully created issue");
-            await connection("issueposts")
-                .insert({
-                    "issueid": id,
-                    "authorid": req.session.loginid,
-                    "containedtext": req.body.firsttext,
-                    "dateofcreation": new Date()
-                })
-            debug.issueapi("successfully created first post");
             res.redirect("/issues/" + id);
         }
     });
