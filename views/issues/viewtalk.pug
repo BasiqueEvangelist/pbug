@@ -43,6 +43,7 @@ block body
                     each user in users
                         option(value=user.id)=user.fullname
                 input(type="submit",value="Assign")
+    p!=parseMarkdown(issue.description)
     ul.postlist
         each thing in things
             li.entry(id=thing.id)

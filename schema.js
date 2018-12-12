@@ -38,6 +38,7 @@ console.log(
             tbl.integer("projectid").references("id").inTable("projects").notNullable();
             tbl.boolean("isclosed").defaultTo(false);
             tbl.integer("assigneeid").references("id").inTable("users");
+            tbl.text("description").notNullable();
         })
         .createTable("issueposts", function (tbl) {
             tbl.increments("id");
