@@ -536,6 +536,13 @@ module.exports = function (app, connection, debug, config) {
             } else if (posts[0].authorid !== req.user.id) {
                 res.redirect("/");
             } else {
+                var isfirst = (await connection
+                    .select("issueposts.id")
+                    .from("issueposts")
+                    .where({
+                        "issueposts.issueid": posts[0].issueid
+                    })
+                    .first()).id == Number(req.params.post);
                 await connection("issueposts")
                     .where({
                         "id": req.params.post
@@ -544,14 +551,20 @@ module.exports = function (app, connection, debug, config) {
                         "containedtext": req.body.newtext,
                         "dateofedit": new Date()
                     });
-                await connection("issues")
-                    .where({
-                        "id": posts[0].issueid
-                    })
-                    .update({
-                        "issuetags": req.body.newtags,
-                        "issuename": req.body.newtitle
-                    });
+                if (isfirst) {
+                    await connection("issues")
+                        .where({
+                            "id": posts[0].issueid
+                        })
+                        .update({
+                            "issuetags": req.body.newtags,
+                            "issuename": req.body.newtitle
+                        });
+                }
+                else {
+                    req.params.newtags = issue.issuetags;
+                    req.params.newtitle = issue.issuename;
+                }
                 await connection("issueactivities")
                     .insert({
                         "authorid": req.user.id,
