@@ -43,12 +43,6 @@ block body
                     each user in users
                         option(value=user.id)=user.fullname
                 input(type="submit",value="Assign")
-    if req.user.isadmin || things[0].authorid === req.user.id
-        form(action="/issues/" + issue.id + "/changetitle",method="GET")
-            fieldset
-                legend Change title
-                input(type="text",name="newtitle",placeholder="New title")
-                input(type="submit", value="Change")
     ul.postlist
         each thing in things
             li.entry(id=thing.id)

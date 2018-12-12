@@ -466,42 +466,6 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.get("/issues/:issue/changetitle", requiresLogin, async function (req, res, next) {
-        if (typeof req.params.issue !== typeof "") {
-            debug.issueapi("issue id of incorrect type");
-            res.redirect("/");
-        } else if (isNaN(Number(req.params.issue))) {
-            debug.issueapi("issue id is not identifier");
-            res.redirect("/");
-        } else if (typeof req.query.newtitle !== typeof "") {
-            debug.issueapi("new title of incorrect type");
-            res.redirect("/");
-        } else if (req.query.newtitle === "") {
-            debug.issueapi("new title empty");
-            res.redirect("back");
-        } else {
-            debug.issueapi("changetitle request for issue %s", req.params.issue);
-
-            var issues = await connection
-                .select("issuename")
-                .from("issues")
-                .where({ "id": req.params.issue });
-
-            await connection("issues")
-                .where({ "id": req.params.issue })
-                .update({ "issuename": req.query.newtitle });
-
-            await insertActivity(req.params.issue, req.user.id, {
-                type: "changetitle",
-                newtitle: req.query.newtitle,
-                oldtitle: issues[0].issuename
-            });
-
-            debug.issueapi("changed title for issue %s", req.params.issue);
-            res.redirect("/issues/" + req.params.issue + "/posts");
-        }
-    });
-
     app.get("/issues/post/:post/edit", requiresLogin, async function (req, res, next) {
         if (typeof req.params.post !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.post))) res.redirect("/");
@@ -535,11 +499,11 @@ module.exports = function (app, connection, debug, config) {
                 if (isfirst)
                     res.render("issues/editpost", {
                         post: posts[0],
-                        tags: (await connection.select("issues.issuetags")
+                        issue: (await connection.select("issues.*")
                             .from("issues")
                             .where({
                                 "id": posts[0].issueid
-                            }))[0].issuetags
+                            }))[0]
                     });
                 else
                     res.render("issues/editpost", {
@@ -561,12 +525,12 @@ module.exports = function (app, connection, debug, config) {
                 .where({
                     "id": req.params.post
                 });
-            var tags = (await connection
-                .select("issuetags")
+            var issue = (await connection
+                .select("issues.*")
                 .from("issues")
                 .where({
                     "id": posts[0].issueid
-                }))[0].issuetags
+                }))[0];
             if (posts.length < 1) {
                 res.redirect("/");
             } else if (posts[0].authorid !== req.user.id) {
@@ -578,7 +542,6 @@ module.exports = function (app, connection, debug, config) {
                     })
                     .update({
                         "containedtext": req.body.newtext,
-                        // "issuetags": req.body.newtags,
                         "dateofedit": new Date()
                     });
                 await connection("issues")
@@ -586,7 +549,8 @@ module.exports = function (app, connection, debug, config) {
                         "id": posts[0].issueid
                     })
                     .update({
-                        "issuetags": req.body.newtags
+                        "issuetags": req.body.newtags,
+                        "issuename": req.body.newtitle
                     });
                 await connection("issueactivities")
                     .insert({
@@ -598,11 +562,13 @@ module.exports = function (app, connection, debug, config) {
                             postid: req.params.post,
                             from: {
                                 text: posts[0].containedtext,
-                                tags: tags
+                                tags: issue.issuetags,
+                                title: issue.issuename
                             },
                             to: {
                                 text: req.body.newtext,
-                                tags: req.body.newtags
+                                tags: req.body.newtags,
+                                title: req.body.newtitle
                             }
 
                         }

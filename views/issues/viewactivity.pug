@@ -42,25 +42,13 @@ block body
                     each user in users
                         option(value=user.id)=user.fullname
                 input(type="submit",value="Assign")
-    if req.user.isadmin || things[0].authorid === req.user.id
-        form(action="/issue/" + issue.id + "/changetitle",method="GET")
-            fieldset
-                legend Change title
-                input(type="text",name="newtitle",placeholder="New title")
-                input(type="submit", value="Change")
     ul.postlist
         each thing in things
             li.entry
                 .date=thing.dateofoccurance
                 span.username=thing.fullname
                 |  
-                if thing.data.type == "changetitle"
-                    span.blue has changed the title from "
-                    = thing.data.oldtitle
-                    span.blue " to "
-                    = thing.data.newtitle
-                    span.blue "
-                else if thing.data.type == "assign"
+                if thing.data.type == "assign"
                     if (thing.data.oldassigneeid === -1 && thing.data.newassigneeid !== -1)
                         span.blue has assigned 
                         span.username=thing.newfn
@@ -86,45 +74,56 @@ block body
                                     code.smallmargin= thing.data.text
                 else if thing.data.type == "editpost"
                     span.showable-container
-                        a.blue.show-button.underline(href="javascript:void(0)") has edited
-                        table.showable.hide(style="width:100%")
-                            tr
-                                td.postborder.fleft(style="width:48%")
-                                    pre
-                                        code
-                                            each tv in thing.oldtext
-                                                if tv[1] == ""
-                                                    div.smallmargin=tv[0]
-                                                else if tv[1] == "red"
-                                                    div.smallmargin.beforeedit=tv[0]
-                                                else if tv[1] == "filler"
-                                                    div.smallmargin.filler=" "
-                                br
-                                td.postborder.fright(style="width:48%")
-                                    pre
-                                        code
-                                            each tv in thing.newtext
-                                                if tv[1] == ""
-                                                    div.smallmargin=tv[0]
-                                                else if tv[1] == "green"
-                                                    div.smallmargin.afteredit=tv[0]
-                                                else if tv[1] == "filler"
-                                                    div.smallmargin.filler=" "
-                        span.blue and changed tags from 
-                        span.taglist
-                            if issue.issuetags.length > 1
-                                each tag in thing.data.from.tags.split(",")
-                                    span.tag
-                                        = "#" + tag + " "
-                        span.blue  to 
-                        span.taglist
-                            if issue.issuetags.length > 1
-                                each tag in thing.data.to.tags.split(",")
-                                    span.tag
-                                        = "#" + tag + " "
+                        if thing.data.from.text !== thing.data.to.text
+                            a.blue.show-button.underline(href="javascript:void(0)") has edited
+                            table.showable.hide(style="width:100%")
+                                tr
+                                    td.postborder.fleft(style="width:48%")
+                                        pre
+                                            code
+                                                each tv in thing.oldtext
+                                                    if tv[1] == ""
+                                                        div.smallmargin=tv[0]
+                                                    else if tv[1] == "red"
+                                                        div.smallmargin.beforeedit=tv[0]
+                                                    else if tv[1] == "filler"
+                                                        div.smallmargin.filler=" "
+                                    br
+                                    td.postborder.fright(style="width:48%")
+                                        pre
+                                            code
+                                                each tv in thing.newtext
+                                                    if tv[1] == ""
+                                                        div.smallmargin=tv[0]
+                                                    else if tv[1] == "green"
+                                                        div.smallmargin.afteredit=tv[0]
+                                                    else if tv[1] == "filler"
+                                                        div.smallmargin.filler=" "
+                            if thing.data.from.tags !== thing.data.to.tags
+                                span.blue  and 
+                        if thing.data.from.tags !== thing.data.to.tags
+                            span.blue changed tags from 
+                            span.taglist
+                                if issue.issuetags.length > 1
+                                    each tag in thing.data.from.tags.split(",")
+                                        span.tag
+                                            = "#" + tag + " "
+                            span.blue  to 
+                            span.taglist
+                                if issue.issuetags.length > 1
+                                    each tag in thing.data.to.tags.split(",")
+                                        span.tag
+                                            = "#" + tag + " "
+                            if thing.data.from.title !== thing.data.to.title
+                                span.blue  and 
+                        if thing.data.from.title !== thing.data.to.title
+                            span.blue changed title from 
+                            = thing.data.from.title
+                            span.blue  to 
+                            = thing.data.to.title
 
 
                 else
                     =JSON.stringify(thing.data)
-append scripts
+ append scripts
     script(src="/static/expandable.js")

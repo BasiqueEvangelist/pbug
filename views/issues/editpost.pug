@@ -2,6 +2,9 @@ extends ../layout
 block body
     h2 Editing post
     form(action="/issues/post/" + post.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+        if typeof issue !== "undefined"
+            input.h2.blueunderline.issue-name(type="text",value=issue.issuename,name="newtitle")
+            input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")
         .entry
             .username=post.fullname
             .date=post.dateofcreation
@@ -12,8 +15,6 @@ block body
             //-     input(type="submit",value="Add")
             if post.dateofedit !== null
                 .date="Edited on " + post.dateofedit
-            if typeof tags !== "undefined"
-                input.taglist(type="text",name="newtags",id="taglist",value=tags,onkeypress="return event.keyCode != 13;")
             textarea.submit-text(name="newtext")=post.containedtext
         input.submitpost(type="submit", value="Repost",style="float:right")
 append css
