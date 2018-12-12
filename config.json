@@ -1,6 +1,15 @@
 {
-    "logo": "static/PB.svg",
-    "include": [
+    "login": 
+	{
+		"allowregistration": true
+	},
+	"design":
+	{
+		"logo": "static/PB.svg"
+	},
+	"port": 8080,
+    "include":
+	[
         "./config-secret.json"
     ]
 }
