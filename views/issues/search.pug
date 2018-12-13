@@ -9,7 +9,11 @@ block body
             | /
             a(onclick="addthing('status:closed',['status:open'])" href="javascript:void(0)") closed
             |  | 
-            a(onclick="addthing('assignee:me',[])" href="javascript:void(0)") assigned to me
+            | assigned to 
+            a(onclick="addthing('assignee:me',['assignee:none'])" href="javascript:void(0)") me
+            | /
+            a(onclick="addthing('assignee:none',['assignee:me'])" href="javascript:void(0)") nobody
+
             |  | 
             a(onclick="addthing('author:me',[])" href="javascript:void(0)") created by me
             |  | 

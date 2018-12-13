@@ -50,7 +50,7 @@ module.exports = function (app, connection, debug, config) {
                     if (assigneeName === "me" && req.user.id !== -1)
                         builder = builder.where("assignees.id", req.user.id);
                     else if (assigneeName === "none")
-                        builder = builder.where("issues.assigneeid", -1);
+                        builder = builder.where("issues.assigneeid", null);
                     else
                         builder = builder.where("assignees.username", "ilike", assigneeName);
                 }
