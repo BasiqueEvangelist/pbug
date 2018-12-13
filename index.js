@@ -43,6 +43,7 @@ app.use(function (req, res, next) {
     req.user.isadmin = req.session.loginadmin;
     req.user.fullname = req.session.loginfullname;
     req.user.username = req.session.loginusername;
+    req.user.role = req.session.loginrole;
     res.locals.req = req;
     res.locals.config = config;
     res.locals.errors = errors;

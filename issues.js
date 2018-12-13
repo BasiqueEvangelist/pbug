@@ -1,6 +1,6 @@
 var diff = require("diff");
 var paginate = require("express-paginate");
-var { requiresLogin } = require("./common");
+var { requiresLogin, requiresPermission } = require("./common");
 module.exports = function (app, connection, debug, config) {
     const insertActivity = function (issueid, userid, data) {
         return connection("issueactivities")
@@ -269,7 +269,7 @@ module.exports = function (app, connection, debug, config) {
     app.get("/issues/:issue", async function (req, res) {
         res.redirect("/issues/" + req.params.issue + "/posts");
     });
-    app.post("/issues/:issue", async function (req, res, next) {
+    app.post("/issues/:issue", requiresPermission("pbug.createissue"), async function (req, res, next) {
         if (typeof req.params.issue !== typeof "") res.redirect("/");
         else if (isNaN(Number(req.params.issue))) res.redirect("/");
         else if (typeof req.body.text !== typeof "") res.status(400).end();

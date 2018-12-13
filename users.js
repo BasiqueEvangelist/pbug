@@ -24,7 +24,7 @@ module.exports = function (app, connection, debug, config) {
             var redirect = typeof req.query.redirect === "undefined" ? "/" : req.query.redirect;
             debug.userapi("login request as %s:%s", req.body.username, req.body.password);
             var users = await connection
-                .select("id", "passwordsalt", "passwordhash", "isadministrator", "fullname", "username")
+                .select("users.*")
                 .from("users")
                 .where({
                     "username": req.body.username
@@ -40,6 +40,7 @@ module.exports = function (app, connection, debug, config) {
                 req.session.loginadmin = users[0].isadministrator;
                 req.session.loginfullname = users[0].fullname;
                 req.session.loginusername = users[0].username;
+                req.session.loginrole = users[0].roleid;
                 res.redirect(redirect);
             } else {
                 debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
@@ -96,6 +97,7 @@ module.exports = function (app, connection, debug, config) {
             req.session.loginadmin = false;
             req.session.loginfullname = req.body.name;
             req.session.loginusername = req.body.username;
+            req.session.loginrole = null;
             res.redirect(redirect);
         }
     });

@@ -14,6 +14,7 @@ console.log(
         .dropTableIfExists("infopagecomments")
         .dropTableIfExists("infopages")
         .dropTableIfExists("files")
+        .dropTableIfExists("roles")
         .dropTableIfExists("users")
         .createTable("users", function (tbl) {
             tbl.increments("id");
@@ -22,7 +23,13 @@ console.log(
             tbl.boolean("isadministrator").defaultTo(false);
             tbl.string("passwordhash", 128);
             tbl.integer("passwordsalt").notNullable();
+            tbl.integer("roleid").references("id").inTable("roles");
             tbl.string("apikey", 128).notNullable().unique();
+        })
+        .createTable("roles", function (tbl) {
+            tbl.increments("id");
+            tbl.string("name", 100).notNullable().unique();
+            tbl.text("permissions");
         })
         .createTable("projects", function (tbl) {
             tbl.increments("id");
