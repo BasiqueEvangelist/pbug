@@ -39,6 +39,7 @@ console.log(
             tbl.boolean("isclosed").defaultTo(false);
             tbl.integer("assigneeid").references("id").inTable("users");
             tbl.text("description").notNullable();
+            tbl.dateTime("dateofcreation").notNullable();
         })
         .createTable("issueposts", function (tbl) {
             tbl.increments("id");
