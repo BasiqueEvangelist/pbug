@@ -13,9 +13,9 @@ block body
             |  | 
             a(onclick="addthing('author:me')" href="javascript:void(0)") created by me
             |  | 
-            a(onclick="addthing('order:asc')" href="javascript:void(0)") ascending
-            | /
-            a(onclick="addthing('order:desc')" href="javascript:void(0)") descending
+            a(onclick="addthing('order:asc')" href="javascript:void(0)") ⇧
+            |  / 
+            a(onclick="addthing('order:desc')" href="javascript:void(0)") ⇩
     if typeof results !== "undefined"
         ul.issues-list
             each result in results
@@ -36,7 +36,7 @@ block body
                         = result.issuename
         .pagination
             if req.query.page !== 1
-                a(href=paginate.href(true)) Previous
+                a(href=paginate.href(true)) ←
             |  
             each page in pages
                 if req.query.page === page.number
@@ -45,7 +45,7 @@ block body
                     a(href=page.url)=page.number
                 |  
             if req.query.page !== pagec
-                a(href=paginate.href(false)) Next
+                a(href=paginate.href(false)) →
 append scripts
     script.
         function addthing(thing) {
