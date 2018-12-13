@@ -22,7 +22,7 @@ module.exports = function (app, connection, debug, config) {
             res.redirect("/login?" + qs.stringify(Object.assign(req.query, { error: 1 })));
         } else {
             var redirect = typeof req.query.redirect === "undefined" ? "/" : req.query.redirect;
-            debug.userapi("login request as %s:%s", req.body.username, req.body.password);
+            debug.userapi("login request as %s", req.body.username);
             var users = await connection
                 .select("users.*")
                 .from("users")
@@ -35,7 +35,7 @@ module.exports = function (app, connection, debug, config) {
                 return;
             }
             if (sha512(req.body.password + users[0].passwordsalt).toString("hex") === users[0].passwordhash) {
-                debug.userapi("logged in as %s with password %s", req.body.username, req.body.password);
+                debug.userapi("logged in as %s", req.body.username);
                 req.session.loginid = users[0].id;
                 req.session.loginadmin = users[0].isadministrator;
                 req.session.loginfullname = users[0].fullname;
@@ -43,7 +43,6 @@ module.exports = function (app, connection, debug, config) {
                 req.session.loginrole = users[0].roleid;
                 res.redirect(redirect);
             } else {
-                debug.userapi("incorrect password for %s: %s (%s, expected %s)", req.body.username, req.body.password, sha512(req.body.password + users[0].passwordsalt).toString("hex"), users[0].passwordhash);
                 res.redirect("/login?" + qs.stringify(Object.assign(req.query, { error: 4 })));
             }
         }
@@ -66,7 +65,7 @@ module.exports = function (app, connection, debug, config) {
             res.redirect("/register?" + qs.stringify(Object.assign(req.query, { error: 1 })));
         } else {
             var redirect = typeof req.query.redirect == "undefined" ? "/" : req.query.redirect;
-            debug.userapi("registration request for %s:%s", req.body.username, req.body.password);
+            debug.userapi("registration request for %s", req.body.username);
             var users = await connection
                 .select("id")
                 .from("users")
@@ -79,7 +78,7 @@ module.exports = function (app, connection, debug, config) {
                 return;
             }
             var salt = Math.floor(Math.random() * 100000);
-            debug.userapi("generated salt %s for %s", salt, req.body.username);
+            debug.userapi("generated salt for %s", req.body.username);
             var apikey = sha512(Math.floor(Math.random() * 1000000).toString()).toString("hex");
             debug.userapi("generated apikey %s for %s", apikey, req.body.username);
             var hash = sha512(req.body.password + salt).toString("hex");
