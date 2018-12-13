@@ -72,6 +72,7 @@ app.get("/", async function (req, res, next) {
             })
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
+            .leftJoin("users", "issues.assigneeid", "users.id")
             .where({
                 "issues.isclosed": false
             })
