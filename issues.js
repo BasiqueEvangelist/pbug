@@ -588,7 +588,13 @@ module.exports = function (app, connection, debug, config) {
                 res.redirect("/");
             else {
                 res.render("issues/editissue", {
-                    issue: issues[0]
+                    issue: issues[0],
+                    projects: await connection
+                        .select("id", "projectname")
+                        .from("projects"),
+                    users: await connection
+                        .select("id", "fullname")
+                        .from("users")
                 });
             }
         }
@@ -596,7 +602,9 @@ module.exports = function (app, connection, debug, config) {
     app.post("/issues/:issue/edit", requiresLogin, async function (req, res, next) {
         if (typeof req.params.issue !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.issue))) res.status(400).end();
-        else if (typeof req.body.newtext !== typeof "") res.status(400).end();
+        else if (isNaN(Number(req.body.newassigneeid))) res.status(400).end();
+        else if (isNaN(Number(req.body.newprojectid))) res.status(400).end();
+        else if (typeof req.body.newdesc !== typeof "") res.status(400).end();
         else if (typeof req.body.newtitle !== typeof "") res.status(400).end();
         else if (typeof req.body.newtags !== typeof "") res.status(400).end();
         else {
@@ -617,9 +625,11 @@ module.exports = function (app, connection, debug, config) {
                         "id": req.params.issue
                     })
                     .update({
-                        "description": req.body.newtext,
+                        "description": req.body.newdesc,
                         "issuename": req.body.newtitle,
                         "issuetags": req.body.newtags,
+                        "assigneeid": req.body.newassigneeid,
+                        "projectid": req.body.newprojectid,
                         // "dateofedit": new Date()
                     });
                 await connection("issueactivities")

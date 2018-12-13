@@ -1,12 +1,25 @@
 extends ../layout
+
 block body
-    h2 Editing issue
-    form(action="/issues/" + issue.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
-        input.h2.blueunderline.issue-name(type="text",value=issue.issuename,name="newtitle")
+    form(action="/issues/" + issue.id + "/edit", method="POST",enctype="application/x-www-form-urlencoded")
+        input.title-input(type="text",value=issue.issuename,name="newtitle",required)
+        hr
         input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")
-        .entry
-            textarea.submit-text(name="newtext")=issue.containedtext
-        input.submitpost(type="submit", value="Repost",style="float:right")
+        br
+        textarea.submit-text(name="newdesc",placeholder="Description",required)=issue.description
+        br
+        label(for="projectchooser") Project: 
+        select.blueunderline#projectchooser(name="newprojectid",required)
+            each project in projects
+                option(value=project.id.toString())= project.projectname
+        |  
+        label(for="assigneechooser") Assignee: 
+        select.blueunderline#assigneechooser(name="newassigneeid")
+                    option(value="-1") Unassign
+                    each user in users
+                        option(value=user.id)=user.fullname
+        br
+        input.submitpost(type="submit",value="Repost",style="float:right")
 append css
     link(rel="stylesheet",href="/static/jquery.tag-editor.css")
 append scripts
