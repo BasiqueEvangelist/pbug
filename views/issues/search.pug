@@ -5,17 +5,17 @@ block body
             input#searchbox(type="text",placeholder="Search...",name="q",value=query,class="search")
             input(type="submit",value="Search",class="submit-search")
         .links
-            a(onclick="addthing('status:open')" href="javascript:void(0)") open
+            a(onclick="addthing('status:open',['status:closed'])" href="javascript:void(0)") open
             | /
-            a(onclick="addthing('status:closed')" href="javascript:void(0)") closed
+            a(onclick="addthing('status:closed',['status:open'])" href="javascript:void(0)") closed
             |  | 
-            a(onclick="addthing('assignee:me')" href="javascript:void(0)") assigned to me
+            a(onclick="addthing('assignee:me',[])" href="javascript:void(0)") assigned to me
             |  | 
-            a(onclick="addthing('author:me')" href="javascript:void(0)") created by me
+            a(onclick="addthing('author:me',[])" href="javascript:void(0)") created by me
             |  | 
-            a(onclick="addthing('order:asc')" href="javascript:void(0)") ⇧
+            a(onclick="addthing('order:asc',['order:desc'])" href="javascript:void(0)") ⇧
             |  / 
-            a(onclick="addthing('order:desc')" href="javascript:void(0)") ⇩
+            a(onclick="addthing('order:desc',['order:asc'])" href="javascript:void(0)") ⇩
     if typeof results !== "undefined"
         ul.issues-list
             each result in results
@@ -48,8 +48,14 @@ block body
                 a(href=paginate.href(false)) →
 append scripts
     script.
-        function addthing(thing) {
+        function addthing(thing,repl) {
             if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
                 $("#searchbox").val($("#searchbox").val() + " " + thing);
             }
         }
