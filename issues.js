@@ -47,8 +47,10 @@ module.exports = function (app, connection, debug, config) {
                 }
                 else if (d.startsWith("assignee:")) {
                     var assigneeName = d.slice("assignee:".length);
-                    if (assigneeName == "me" && req.user.id !== -1)
+                    if (assigneeName === "me" && req.user.id !== -1)
                         builder = builder.where("assignees.id", req.user.id);
+                    else if (assigneeName === "none")
+                        builder = builder.where("issues.assigneeid", -1);
                     else
                         builder = builder.where("assignees.username", "ilike", assigneeName);
                 }
