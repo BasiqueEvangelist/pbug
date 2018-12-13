@@ -147,6 +147,26 @@ block body
                             = thing.data.from.title
                             span.blue  to 
                             = thing.data.to.title
+                else if thing.data.type == "createissue"
+                    span.showable-container
+                        a.blue.show-button.underline(href="javascript:void(0)") has created issue with description
+                        table.showable.hide(style="width:100%")
+                            tr
+                                td.postborder
+                                    pre
+                                        code
+                                            each tv in thing.data.text.split("\n")
+                                                div.smallmargin=tv
+                        |  
+                        if thing.data.tags !== ""
+                            span.blue and with tags 
+                            span.taglist
+                                if issue.issuetags.length > 1
+                                    each tag in thing.data.tags.split(",")
+                                        span.tag
+                                            = "#" + tag + " "
+                        span.blue  and with title 
+                        = thing.data.title
                 else
                     =JSON.stringify(thing.data)
 append scripts

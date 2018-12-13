@@ -145,6 +145,18 @@ module.exports = function (app, connection, debug, config) {
                     "assigneeid": req.body.assigneeid === "-1" ? null : Number(req.body.assigneeid)
                 })
                 .returning("id"))[0];
+            await connection("issueactivities")
+                .insert({
+                    "dateofoccurance": new Date(),
+                    "issueid": id,
+                    "authorid": req.user.id,
+                    "data": {
+                        type: "createissue",
+                        text: req.body.firsttext,
+                        tags: req.body.tags,
+                        title: req.body.name
+                    }
+                });
             debug.issueapi("successfully created issue");
             res.redirect("/issues/" + id);
         }
