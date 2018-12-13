@@ -4,6 +4,7 @@ block body
     form(action="/issues/create", method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
+        input.taglist(type="text",name="tags",id="taglist",onkeypress="return event.keyCode != 13;")
         br
         textarea.submit-text(name="firsttext",placeholder="Description",required)
         br
@@ -11,5 +12,20 @@ block body
         select.blueunderline#projectchooser(name="projectid",required)
             each project in projects
                 option(value=project.id.toString())= project.projectname
+        |  
+        label(for="assigneechooser") Assignee: 
+        select.blueunderline#assigneechooser(name="assigneeid")
+                    option(value="-1") Unassign
+                    each user in users
+                        option(value=user.id)=user.fullname
         br
         input.submitpost(type="submit",value="Post",style="float:right")
+append css
+    link(rel="stylesheet",href="/static/jquery.tag-editor.css")
+append scripts
+    script(src="/static/jquery.tag-editor.min.js")
+    script.
+        $("#taglist").tagEditor();
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });

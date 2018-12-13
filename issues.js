@@ -97,7 +97,10 @@ module.exports = function (app, connection, debug, config) {
         res.render("issues/create", {
             projects: await connection
                 .select("id", "projectname")
-                .from("projects")
+                .from("projects"),
+            users: await connection
+                .select("id", "fullname")
+                .from("users")
         });
     });
 
@@ -120,6 +123,18 @@ module.exports = function (app, connection, debug, config) {
         } else if (isNaN(Number(req.body.projectid))) {
             debug.issueapi("issue project is not an identifier");
             res.status(400).end();
+        } else if (typeof req.body.tags !== typeof "string") {
+            debug.issueapi("issue tags of incorrect type");
+            res.status(400).end();
+        } else if (req.body.tags === "") {
+            debug.issueapi("issue tags is not an identifier");
+            res.status(400).end();
+        } else if (typeof req.body.assigneeid !== typeof "string") {
+            debug.issueapi("issue assignee id of incorrect type");
+            res.status(400).end();
+        } else if (isNaN(Number(req.body.assigneeid))) {
+            debug.issueapi("issue assignee id is not an identifier");
+            res.status(400).end();
         } else {
             debug.issueapi("%s is creating issue", req.user.username);
             var id = (await connection("issues")
@@ -128,7 +143,9 @@ module.exports = function (app, connection, debug, config) {
                     "projectid": Number(req.body.projectid),
                     "authorid": req.user.id,
                     "description": req.body.firsttext,
-                    "dateofcreation": new Date()
+                    "dateofcreation": new Date(),
+                    "issuetags": req.body.tags,
+                    "assigneeid": req.body.assigneeid
                 })
                 .returning("id"))[0];
             debug.issueapi("successfully created issue");
