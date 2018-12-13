@@ -29,20 +29,20 @@ module.exports = function () {
         dbg("loading config %s", path);
         var userconf = JSON.parse(fs.readFileSync(path));
         if (typeof userconf.extends === "undefined") {
-            userconf.extends = "default";
+            userconf.extends = "none";
         }
-        if (userconf.extends !== "default") {
-            dbg("config has superconfig %s", userconf.extends);
-            var nprevs = prevs;
-            nprevs.push(path);
-            userconf = Object.assign(getuserconf(userconf.extends, nprevs), userconf);
-        }
-        else if (userconf.extends === "default") {
+        if (userconf.extends === "default") {
             dbg("config has default superconfig");
             userconf = Object.assign(JSON.parse(defaultconf), userconf);
         }
         else if (userconf.extends === "none") {
             dbg("config has no superconfig");
+        }
+        else {
+            dbg("config has superconfig %s", userconf.extends);
+            var nprevs = prevs;
+            nprevs.push(path);
+            userconf = Object.assign(getuserconf(userconf.extends, nprevs), userconf);
         }
         if (typeof userconf.include === "undefined") {
             userconf.include = [];
