@@ -38,18 +38,19 @@ block body
                             else
                                 span.assigneetext="Assignee: " + result.assigneename
                         = result.issuename
-        .pagination
-            if req.query.page !== 1
-                a(href=paginate.href(true)) ←
-            |  
-            each page in pages
-                if req.query.page === page.number
-                    =page.number
-                else
-                    a(href=page.url)=page.number
+        if pagec>1
+            .pagination
+                if req.query.page !== 1
+                    a(href=paginate.href(true)) ←
                 |  
-            if req.query.page !== pagec
-                a(href=paginate.href(false)) →
+                each page in pages
+                    if req.query.page === page.number
+                        =page.number
+                    else
+                        a(href=page.url)=page.number
+                    |  
+                if req.query.page < pagec
+                    a(href=paginate.href(false)) →
 append scripts
     script.
         function addthing(thing,repl) {
