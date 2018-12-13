@@ -29,6 +29,9 @@ block body
             else
                 a(href="/issues/" + issue.id + "/close") close
             |  | 
+            if req.user.id == issue.authorid
+                a(href="/issues/" + issue.id + "/edit") edit
+                |  | 
         if req.user.isadmin
             a(href="/issues/" + issue.id + "/delete/areyousure") delete issue
             |  | 

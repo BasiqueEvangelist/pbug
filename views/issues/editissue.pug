@@ -1,0 +1,18 @@
+extends ../layout
+block body
+    h2 Editing issue
+    form(action="/issues/" + issue.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+        input.h2.blueunderline.issue-name(type="text",value=issue.issuename,name="newtitle")
+        input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")
+        .entry
+            textarea.submit-text(name="newtext")=issue.containedtext
+        input.submitpost(type="submit", value="Repost",style="float:right")
+append css
+    link(rel="stylesheet",href="/static/jquery.tag-editor.css")
+append scripts
+    script(src="/static/jquery.tag-editor.min.js")
+    script.
+        $("#taglist").tagEditor();
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });

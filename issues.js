@@ -476,33 +476,9 @@ module.exports = function (app, connection, debug, config) {
             else if (posts[0].authorid !== req.user.id)
                 res.redirect("/");
             else {
-                console.log(await connection
-                    .select("issueposts.id")
-                    .from("issueposts")
-                    .where({
-                        "issueposts.issueid": posts[0].issueid
-                    })
-                    .first())
-                var isfirst = (await connection
-                    .select("issueposts.id")
-                    .from("issueposts")
-                    .where({
-                        "issueposts.issueid": posts[0].issueid
-                    })
-                    .first()).id == Number(req.params.post);
-                if (isfirst)
-                    res.render("issues/editpost", {
-                        post: posts[0],
-                        issue: (await connection.select("issues.*")
-                            .from("issues")
-                            .where({
-                                "id": posts[0].issueid
-                            }))[0]
-                    });
-                else
-                    res.render("issues/editpost", {
-                        post: posts[0]
-                    });
+                res.render("issues/editpost", {
+                    post: posts[0]
+                });
             }
         }
     });
@@ -519,24 +495,11 @@ module.exports = function (app, connection, debug, config) {
                 .where({
                     "id": req.params.post
                 });
-            var issue = (await connection
-                .select("issues.*")
-                .from("issues")
-                .where({
-                    "id": posts[0].issueid
-                }))[0];
             if (posts.length < 1) {
                 res.redirect("/");
             } else if (posts[0].authorid !== req.user.id) {
                 res.redirect("/");
             } else {
-                var isfirst = (await connection
-                    .select("issueposts.id")
-                    .from("issueposts")
-                    .where({
-                        "issueposts.issueid": posts[0].issueid
-                    })
-                    .first()).id == Number(req.params.post);
                 await connection("issueposts")
                     .where({
                         "id": req.params.post
@@ -545,20 +508,6 @@ module.exports = function (app, connection, debug, config) {
                         "containedtext": req.body.newtext,
                         "dateofedit": new Date()
                     });
-                if (isfirst) {
-                    await connection("issues")
-                        .where({
-                            "id": posts[0].issueid
-                        })
-                        .update({
-                            "issuetags": req.body.newtags,
-                            "issuename": req.body.newtitle
-                        });
-                }
-                else {
-                    req.params.newtags = issue.issuetags;
-                    req.params.newtitle = issue.issuename;
-                }
                 await connection("issueactivities")
                     .insert({
                         "authorid": req.user.id,
@@ -569,8 +518,80 @@ module.exports = function (app, connection, debug, config) {
                             postid: req.params.post,
                             from: {
                                 text: posts[0].containedtext,
-                                tags: issue.issuetags,
-                                title: issue.issuename
+                            },
+                            to: {
+                                text: req.body.newtext,
+                            }
+
+                        }
+                    });
+                res.redirect("/issues/" + posts[0].issueid + "/posts#" + req.params.post);
+            }
+        }
+    });
+    app.get("/issues/:issue/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.issue !== typeof "") res.redirect("/");
+        else if (isNaN(Number(req.params.issue))) res.redirect("/");
+        else {
+            var issues = await connection
+                .select("issues.*", "users.fullname")
+                .from("issues")
+                .leftJoin("users", "issues.authorid", "users.id")
+                .where({
+                    "issues.id": req.params.issue
+                });
+            if (issues.length < 1)
+                res.redirect("/");
+            else if (issues[0].authorid !== req.user.id)
+                res.redirect("/");
+            else {
+                res.render("issues/editissue", {
+                    issue: issues[0]
+                });
+            }
+        }
+    });
+    app.post("/issues/:issue/edit", requiresLogin, async function (req, res, next) {
+        if (typeof req.params.issue !== typeof "") res.status(400).end();
+        else if (isNaN(Number(req.params.issue))) res.status(400).end();
+        else if (typeof req.body.newtext !== typeof "") res.status(400).end();
+        else if (typeof req.body.newtitle !== typeof "") res.status(400).end();
+        else if (typeof req.body.newtags !== typeof "") res.status(400).end();
+        else {
+            var issues = await connection
+                .select("issues.*", "users.fullname")
+                .leftJoin("users", "issues.authorid", "users.id")
+                .from("issues")
+                .where({
+                    "issues.id": req.params.issue
+                });
+            if (issues.length < 1) {
+                res.redirect("/");
+            } else if (issues[0].authorid !== req.user.id) {
+                res.redirect("/");
+            } else {
+                await connection("issues")
+                    .where({
+                        "id": req.params.issue
+                    })
+                    .update({
+                        "description": req.body.newtext,
+                        "issuename": req.body.newtitle,
+                        "issuetags": req.body.newtags,
+                        // "dateofedit": new Date()
+                    });
+                await connection("issueactivities")
+                    .insert({
+                        "authorid": req.user.id,
+                        "issueid": req.params.issue,
+                        "dateofoccurance": new Date(),
+                        "data": {
+                            type: "editissue",
+                            issueid: req.params.issue,
+                            from: {
+                                text: issues[0].description,
+                                tags: issues[0].issuetags,
+                                title: issues[0].issuename
                             },
                             to: {
                                 text: req.body.newtext,
@@ -580,9 +601,8 @@ module.exports = function (app, connection, debug, config) {
 
                         }
                     });
-                res.redirect("/issues/" + posts[0].issueid + "/posts#" + req.params.post);
+                res.redirect("/issues/" + req.params.issue + "/posts");
             }
         }
     });
-
 }
