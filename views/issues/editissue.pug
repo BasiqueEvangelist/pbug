@@ -25,7 +25,7 @@ append css
 append scripts
     script(src="/static/jquery.tag-editor.min.js")
     script.
-        $("#taglist").tagEditor();
+        $("#taglist").tagEditor(placeholder:"Issue tags");
         $(document).on("keypress", ".tag-editor", function(event) {
             return event.keyCode != 13;
         });
