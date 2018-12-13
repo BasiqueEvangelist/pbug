@@ -68,7 +68,12 @@ module.exports = function (app, connection, debug, config) {
         }
         var reslen = (await buildfrom(query, false).count("*"))[0].count;
         var results = await buildfrom(query, true)
-            .select("issues.*", "projects.shortprojectid", "assignees.username", "authors.username")
+            .select({
+                "shortprojectid": "projects.shortprojectid",
+                "assigneename": "assignees.username",
+                "authorname": "authors.username"
+            })
+            .select("issues.*")
             .offset(req.skip)
             .limit(req.query.limit);
         var pagec = Math.ceil(reslen / req.query.limit);

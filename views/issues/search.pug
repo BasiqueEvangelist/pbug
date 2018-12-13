@@ -9,7 +9,18 @@ block body
             each result in results
                 li
                     a(href="/issues/" + result.id)
-                        .issue-tag= "[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
+                        .issue-tag
+                            ="[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
+                            | (
+                            if result.isclosed
+                                span.issue-closed-marker Closed
+                            else
+                                span.issue-opened-marker Open
+                            | ) 
+                            if result.assigneeid === null
+                                span.assigneetext No assignee
+                            else
+                                span.assigneetext="Assignee: " + result.assigneename
                         = result.issuename
         .pagination
             a(href=paginate.href(true)) Previous
