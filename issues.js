@@ -81,7 +81,8 @@ module.exports = function (app, connection, debug, config) {
             {
                 query: query,
                 results: results,
-                pages: paginate.getArrayPages(req)(5, pagec, req.query.page)
+                pages: paginate.getArrayPages(req)(5, pagec, req.query.page),
+                pagec: Math.ceil(reslen / req.query.limit)
             });
     })
     app.get("/issues/create", requiresLogin, async function (req, res, next) {

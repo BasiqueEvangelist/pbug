@@ -23,7 +23,8 @@ block body
                                 span.assigneetext="Assignee: " + result.assigneename
                         = result.issuename
         .pagination
-            a(href=paginate.href(true)) Previous
+            if req.query.page !== 1
+                a(href=paginate.href(true)) Previous
             |  
             each page in pages
                 if req.query.page === page.number
@@ -31,5 +32,6 @@ block body
                 else
                     a(href=page.url)=page.number
                 |  
-            a(href=paginate.href(false)) Next
+            if req.query.page !== pagec
+                a(href=paginate.href(false)) Next
             
