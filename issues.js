@@ -126,9 +126,6 @@ module.exports = function (app, connection, debug, config) {
         } else if (typeof req.body.tags !== typeof "string") {
             debug.issueapi("issue tags of incorrect type");
             res.status(400).end();
-        } else if (req.body.tags === "") {
-            debug.issueapi("issue tags is not an identifier");
-            res.status(400).end();
         } else if (typeof req.body.assigneeid !== typeof "string") {
             debug.issueapi("issue assignee id of incorrect type");
             res.status(400).end();
@@ -145,7 +142,7 @@ module.exports = function (app, connection, debug, config) {
                     "description": req.body.firsttext,
                     "dateofcreation": new Date(),
                     "issuetags": req.body.tags,
-                    "assigneeid": req.body.assigneeid
+                    "assigneeid": req.body.assigneeid === "-1" ? null : Number(req.body.assigneeid)
                 })
                 .returning("id"))[0];
             debug.issueapi("successfully created issue");
