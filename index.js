@@ -63,7 +63,13 @@ app.get("/", async function (req, res, next) {
     if (req.user.id === -1) {
         debug.issueapi("showing all open issues");
         var results = await connection
-            .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+            .select({
+                "id": "issues.id",
+                "issuename": "issues.issuename",
+                "isclosed": "issues.isclosed",
+                "shortprojectid": "projects.shortprojectid",
+                "assigneename": "users.fullname"
+            })
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
             .where({
@@ -78,9 +84,16 @@ app.get("/", async function (req, res, next) {
     } else {
         debug.issueapi("showing all open issues assigned to %s", req.user.username);
         var results = await connection
-            .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+            .select({
+                "id": "issues.id",
+                "issuename": "issues.issuename",
+                "isclosed": "issues.isclosed",
+                "shortprojectid": "projects.shortprojectid",
+                "assigneename": "users.fullname"
+            })
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
+            .leftJoin("users", "issues.assigneeid", "users.id")
             .where({
                 "issues.isclosed": false,
                 "issues.assigneeid": req.user.id
@@ -89,9 +102,16 @@ app.get("/", async function (req, res, next) {
             .limit(50);
         debug.issueapi("retrieving issues authored by user");
         var aresults = await connection
-            .select("issues.id", "issues.issuename", "issues.isclosed", "projects.shortprojectid")
+            .select({
+                "id": "issues.id",
+                "issuename": "issues.issuename",
+                "isclosed": "issues.isclosed",
+                "shortprojectid": "projects.shortprojectid",
+                "assigneename": "users.fullname"
+            })
             .from("issues")
             .leftJoin("projects", "issues.projectid", "projects.id")
+            .leftJoin("users", "issues.assigneeid", "users.id")
             .where({
                 "issues.isclosed": false,
                 "issues.authorid": req.user.id

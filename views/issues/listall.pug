@@ -5,7 +5,18 @@ block body
         each issue in issues
             li
                 a(href="/issues/" + issue.id)
-                    .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                    .issue-tag
+                            ="[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                            | (
+                            if issue.isclosed
+                                span.issue-closed-marker Closed
+                            else
+                                span.issue-opened-marker Open
+                            | ) 
+                            if issue.assigneeid === null
+                                span.assigneetext No assignee
+                            else
+                                span.assigneetext="Assignee: " + issue.assigneename
                     = issue.issuename
     if req.user.id !== -1
         h2 Open issues authored by you
@@ -13,5 +24,16 @@ block body
             each issue in aissues
                 li
                     a(href="/issues/" + issue.id)
-                        .issue-tag= "[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                        .issue-tag
+                            ="[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
+                            | (
+                            if issue.isclosed
+                                span.issue-closed-marker Closed
+                            else
+                                span.issue-opened-marker Open
+                            | ) 
+                            if issue.assigneeid === null
+                                span.assigneetext No assignee
+                            else
+                                span.assigneetext="Assignee: " + issue.assigneename
                         = issue.issuename
