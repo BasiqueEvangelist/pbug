@@ -47,11 +47,17 @@ module.exports = function (app, connection, debug, config) {
                 }
                 else if (d.startsWith("assignee:")) {
                     var assigneeName = d.slice("assignee:".length);
-                    builder = builder.where("assignees.username", "ilike", assigneeName);
+                    if (assigneeName == "me" && req.user.id !== -1)
+                        builder = builder.where("assignees.id", req.user.id);
+                    else
+                        builder = builder.where("assignees.username", "ilike", assigneeName);
                 }
                 else if (d.startsWith("author:")) {
                     var authorName = d.slice("author:".length);
-                    builder = builder.where("authors.username", "ilike", authorName);
+                    if (authorName == "me" && req.user.id !== -1)
+                        builder = builder.where("authors.id", req.user.id);
+                    else
+                        builder = builder.where("authors.username", "ilike", authorName);
                 }
                 else if (d.startsWith("order:")) {
                     var order = d.slice("order:".length);
