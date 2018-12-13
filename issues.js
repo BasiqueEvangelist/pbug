@@ -204,18 +204,20 @@ module.exports = function (app, connection, debug, config) {
                             newt.newfn = newfns[0].fullname;
                         return newt;
                     }
-                    else if (t.data.type === "editpost") {
+                    else if (t.data.type === "editpost" || t.data.type === "editissue") {
                         t.oldtext = [];
                         t.newtext = [];
                         var da = diff.diffLines(t.data.from.text, t.data.to.text);
                         da.forEach(function (d, i) {
+                            if (typeof d.added === typeof undefined) d.added = false;
+                            if (typeof d.removed === typeof undefined) d.removed = false;
                             if (!d.removed && !d.added) {
                                 t.oldtext.push([d.value, ""]);
                                 t.newtext.push([d.value, ""]);
                             }
                             else if (d.removed) {
                                 t.oldtext.push([d.value, "red"]);
-                                if (i === da.length)
+                                if (i === da.length - 1)
                                     t.newtext.push([" ", "filler"]);
                                 else {
                                     if (!da[i + 1].added)

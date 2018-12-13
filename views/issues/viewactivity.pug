@@ -74,8 +74,34 @@ block body
                                     code.smallmargin= thing.data.text
                 else if thing.data.type == "editpost"
                     span.showable-container
+                        a.blue.show-button.underline(href="javascript:void(0)") has edited
+                        table.showable.hide(style="width:100%")
+                            tr
+                                td.postborder.fleft(style="width:48%")
+                                    pre
+                                        code
+                                            each tv in thing.oldtext
+                                                if tv[1] == ""
+                                                    div.smallmargin=tv[0]
+                                                else if tv[1] == "red"
+                                                    div.smallmargin.beforeedit=tv[0]
+                                                else if tv[1] == "filler"
+                                                    div.smallmargin.filler=" "
+                                br
+                                td.postborder.fright(style="width:48%")
+                                    pre
+                                        code
+                                            each tv in thing.newtext
+                                                if tv[1] == ""
+                                                    div.smallmargin=tv[0]
+                                                else if tv[1] == "green"
+                                                    div.smallmargin.afteredit=tv[0]
+                                                else if tv[1] == "filler"
+                                                    div.smallmargin.filler=" "
+                else if thing.data.type == "editissue"
+                    span.showable-container
                         if thing.data.from.text !== thing.data.to.text
-                            a.blue.show-button.underline(href="javascript:void(0)") has edited
+                            a.blue.show-button.underline(href="javascript:void(0)") has edited description
                             table.showable.hide(style="width:100%")
                                 tr
                                     td.postborder.fleft(style="width:48%")
@@ -121,9 +147,7 @@ block body
                             = thing.data.from.title
                             span.blue  to 
                             = thing.data.to.title
-
-
                 else
                     =JSON.stringify(thing.data)
- append scripts
+append scripts
     script(src="/static/expandable.js")
