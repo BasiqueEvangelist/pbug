@@ -137,5 +137,6 @@ require("./issues.js")(app, connection, debug, config);
 app.use(function (req, res) {
     res.status(404).render("errors/404");
 });
+setInterval(require("./gc.js"), 5 * 1000);
 app.listen(Number(process.env.PBUG_PORT || process.env.PORT || 8080));
 debug.all("listening on " + Number(process.env.PBUG_PORT || process.env.PORT || 8080));
