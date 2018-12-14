@@ -1,5 +1,9 @@
 var qs = require("qs");
 var connection = require("./knexfile");
+var connect_busboy = require("connect-busboy");
+var fs = require("fs");
+var crypto = require("crypto");
+var permissions = require("./permissions");
 
 exports.requiresLogin = function (req, res, next) {
     if (req.user.id === -1) {
@@ -37,8 +41,6 @@ exports.requiresAdministrator = function (req, res, next) {
         next();
 };
 
-var permissions = require("./permissions");
-
 exports.requiresPermission = function (perm, env, defaultv) {
     return [exports.requiresLogin, async function (req, res, next) {
         var pass = true;
@@ -68,9 +70,6 @@ exports.requiresPermission = function (perm, env, defaultv) {
             next();
     }];
 };
-var connect_busboy = require("connect-busboy");
-var fs = require("fs");
-var crypto = require("crypto");
 
 exports.catchFiles = function () {
     return [exports.requiresLogin, connect_busboy({}), async function (req, res, next) {
