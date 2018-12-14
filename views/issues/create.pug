@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block body
-    form(action="/issues/create", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action="/issues/create", method="POST",enctype="multipart/form-data")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
         input.taglist(type="text",name="tags",id="taglist",onkeypress="return event.keyCode != 13;")

@@ -75,7 +75,7 @@ exports.catchFiles = function () {
     return [exports.requiresLogin, connect_busboy({}), async function (req, res, next) {
         if (req.method === "POST" && req.get("content-type").startsWith("multipart/form-data")) {
             req.files = {};
-            req.fields = {};
+            req.body = {};
             var proms = [];
             function addprom(p) {
                 return function () {
@@ -94,10 +94,9 @@ exports.catchFiles = function () {
                 req.files[fieldname] = fileid;
             }));
             req.busboy.on('field', addprom(async function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
-                req.fields[fieldname] = val;
+                req.body[fieldname] = val;
             }));
             req.busboy.on('finish', async function () {
-                console.log(proms);
                 await Promise.all(proms);
                 next();
             });

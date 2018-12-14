@@ -1,7 +1,7 @@
 extends ../layout
 
 block body
-    form(action="/issues/" + issue.id + "/edit", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action="/issues/" + issue.id + "/edit", method="POST",enctype="multipart/form-data")
         input.title-input(type="text",value=issue.issuename,name="newtitle",required)
         hr
         input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")

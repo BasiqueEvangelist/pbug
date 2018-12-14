@@ -528,8 +528,8 @@ module.exports = function (app, connection, debug, config) {
     app.post("/issues/post/:post/edit", catchFiles(), async function (req, res, next) {
         if (typeof req.params.post !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.post))) res.status(400).end();
-        else if (typeof req.fields.newtext !== typeof "") res.status(400).end();
-        else if (req.fields.newtext === "") res.redirect("back");
+        else if (typeof req.body.newtext !== typeof "") res.status(400).end();
+        else if (req.body.newtext === "") res.redirect("back");
         else {
             var posts = await connection
                 .select("authorid", "issueid", "containedtext")
@@ -547,7 +547,7 @@ module.exports = function (app, connection, debug, config) {
                         "id": req.params.post
                     })
                     .update({
-                        "containedtext": req.fields.newtext,
+                        "containedtext": req.body.newtext,
                         "dateofedit": new Date()
                     });
                 await connection("issueactivities")
@@ -562,7 +562,7 @@ module.exports = function (app, connection, debug, config) {
                                 text: posts[0].containedtext,
                             },
                             to: {
-                                text: req.fields.newtext,
+                                text: req.body.newtext,
                             }
 
                         }
