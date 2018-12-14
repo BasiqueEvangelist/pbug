@@ -628,7 +628,7 @@ module.exports = function (app, connection, debug, config) {
                         "description": req.body.newdesc,
                         "issuename": req.body.newtitle,
                         "issuetags": req.body.newtags,
-                        "assigneeid": req.body.newassigneeid,
+                        "assigneeid": req.body.assigneeid === "-1" ? null : Number(req.body.assigneeid),
                         "projectid": req.body.newprojectid,
                         // "dateofedit": new Date()
                     });
