@@ -68,3 +68,36 @@ exports.requiresPermission = function (perm, env, defaultv) {
             next();
     }];
 };
+var connect_busboy = require("connect-busboy");
+var fs = require("fs");
+var crypto = require("crypto");
+
+exports.catchFiles = function () {
+    return [exports.requiresLogin, connect_busboy({}), async function (req, res, next) {
+        if (req.method === "POST" && req.get("content-type").startsWith("multipart/form-data")) {
+            req.files = [];
+            req.fields = {};
+            req.busboy.on('file', async function (fieldname, file, filename, encoding, mimetype) {
+                var fileid = require('crypto').randomBytes(48).toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
+                file.pipe(fs.createWriteStream("files/" + fileid));
+                await connection("files")
+                    .insert({
+                        "filename": filename,
+                        "authorid": req.user.id,
+                        "uid": fileid
+                    });
+                req.files.push(fileid);
+            });
+            req.busboy.on('field', function (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+                req.fields[fieldname] = val;
+            });
+            req.busboy.on('finish', function () {
+                next();
+            });
+            req.pipe(req.busboy);
+        }
+        else {
+            next();
+        }
+    }];
+};
