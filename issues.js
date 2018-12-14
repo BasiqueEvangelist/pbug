@@ -1,6 +1,6 @@
 var diff = require("diff");
 var paginate = require("express-paginate");
-var { requiresLogin, requiresPermission } = require("./common");
+var { requiresLogin, requiresPermission, catchFiles } = require("./common");
 module.exports = function (app, connection, debug, config) {
     const insertActivity = function (issueid, userid, data) {
         return connection("issueactivities")
@@ -104,7 +104,7 @@ module.exports = function (app, connection, debug, config) {
         });
     });
 
-    app.post("/issues/create", requiresLogin, async function (req, res, next) {
+    app.post("/issues/create", catchFiles(), async function (req, res, next) {
         if (typeof req.body.name !== typeof "string") {
             debug.issueapi("issue name of incorrect type");
             res.status(400).end();
@@ -525,11 +525,11 @@ module.exports = function (app, connection, debug, config) {
         }
     });
 
-    app.post("/issues/post/:post/edit", requiresLogin, async function (req, res, next) {
+    app.post("/issues/post/:post/edit", catchFiles(), async function (req, res, next) {
         if (typeof req.params.post !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.post))) res.status(400).end();
-        else if (typeof req.body.newtext !== typeof "") res.status(400).end();
-        else if (req.body.newtext === "") res.redirect("back");
+        else if (typeof req.fields.newtext !== typeof "") res.status(400).end();
+        else if (req.fields.newtext === "") res.redirect("back");
         else {
             var posts = await connection
                 .select("authorid", "issueid", "containedtext")
@@ -547,7 +547,7 @@ module.exports = function (app, connection, debug, config) {
                         "id": req.params.post
                     })
                     .update({
-                        "containedtext": req.body.newtext,
+                        "containedtext": req.fields.newtext,
                         "dateofedit": new Date()
                     });
                 await connection("issueactivities")
@@ -562,7 +562,7 @@ module.exports = function (app, connection, debug, config) {
                                 text: posts[0].containedtext,
                             },
                             to: {
-                                text: req.body.newtext,
+                                text: req.fields.newtext,
                             }
 
                         }
@@ -599,7 +599,7 @@ module.exports = function (app, connection, debug, config) {
             }
         }
     });
-    app.post("/issues/:issue/edit", requiresLogin, async function (req, res, next) {
+    app.post("/issues/:issue/edit", catchFiles(), async function (req, res, next) {
         if (typeof req.params.issue !== typeof "") res.status(400).end();
         else if (isNaN(Number(req.params.issue))) res.status(400).end();
         else if (isNaN(Number(req.body.newassigneeid))) res.status(400).end();
