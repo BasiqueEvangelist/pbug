@@ -2,7 +2,7 @@ extends ../layout
 
 block body
     h2 Editing info page
-    form(action="/kb/" + infopage.id + "/edit",method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"kb/" + infopage.id +"/edit",method="POST",enctype="application/x-www-form-urlencoded")
         input.h2.blueunderline.issue-name(type="text",name="newtitle",value=infopage.pagename,style="width:100%")
         .entry
             textarea.submit-text(name="newtext")=infopage.containedtext

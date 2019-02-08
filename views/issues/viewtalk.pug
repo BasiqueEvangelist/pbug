@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 append css
-    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+    link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
 
 block body
     .issue-tag
@@ -25,17 +25,17 @@ block body
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
-                a(href="/issues/" + issue.id + "/open") open
+                a(href=vroot+"issues/" + issue.id +"/open") open
             else
-                a(href="/issues/" + issue.id + "/close") close
+                a(href=vroot+"issues/" + issue.id + "/close") close
             |  | 
             if req.user.id == issue.authorid
-                a(href="/issues/" + issue.id + "/edit") edit
+                a(href=vroot+"issues/" + issue.id + "/edit") edit
                 |  | 
         if req.user.isadmin
-            a(href="/issues/" + issue.id + "/delete/areyousure") delete issue
+            a(href=vroot+"issues/" + issue.id + "/delete/areyousure") delete issue
             |  | 
-        a(href="/issues/" + issue.id + "/activity") activity
+        a(href=vroot+"issues/" + issue.id + "/activity") activity
         br
     p!=parseMarkdown(issue.description)
     ul.postlist
@@ -47,14 +47,14 @@ block body
                     .date="Edited on " + thing.dateofedit
                 .comment-underpanel
                     if req.user.id == thing.authorid
-                        a(href="/issues/post/" + thing.id + "/edit") edit
+                        a(href=vroot+"issues/post/" + thing.id +"/edit") edit
                         |  
-                    a(href="/issues/" + issue.id + "#" + thing.id) permalink
+                    a(href=vroot+"issues/" + issue.id + "#" + thing.id) permalink
                     |  
                 !=parseMarkdown(thing.containedtext)
         if req.user.id != -1
             li.entry
-                form(action="/issues/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
+                form(action=vroot+"issues/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Post contents (Markdown)")

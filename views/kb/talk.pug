@@ -1,17 +1,17 @@
 extends ../layout.pug
 
 append css
-    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+    link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
 
 block body
     h2.issue-name=infopage.pagename
     .underpanel
-        a(href="/kb/"+infopage.id) view
+        a(href=vroot+"kb/"+infopage.id) view
         =" | "
-        a(href="/kb/"+infopage.id+"/talk") talk
+        a(href=vroot+"kb/"+infopage.id+"/talk") talk
         if req.user.id !== -1
             =" | "
-            a(href="/kb/"+infopage.id+"/edit") edit
+            a(href=vroot+"kb/"+infopage.id+"/edit") edit
     hr
     ul.postlist
         each comment in comments
@@ -22,14 +22,14 @@ block body
                     .date="Edited on " + comment.dateofedit
                 .comment-underpanel
                     if req.user.id == comment.authorid
-                        a(href="/kb/post/" + comment.id + "/edit") edit
+                        a(href=vroot+"kb/post/" + comment.id +"/edit") edit
                         |  
-                    a(href="/kb/" + infopage.id + "#" + comment.id) permalink
+                    a(href=vroot+"kb/" + infopage.id + "#" + comment.id) permalink
                     |  
                 !=parseMarkdown(comment.containedtext)
         if req.user.id != -1
             li.entry
-                form(action="/kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
+                form(action=vroot+"kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Comment contents (Markdown)")

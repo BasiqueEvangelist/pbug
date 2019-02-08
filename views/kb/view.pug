@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 append css
-    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+    link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
 
 block body
     .issue-tag
@@ -10,21 +10,21 @@ block body
     h2.issue-name=infopage.pagename
     hr
     .underpanel
-        a(href="/kb/"+infopage.id) view
+        a(href=vroot+"kb/"+infopage.id) view
         =" | "
-        a(href="/kb/"+infopage.id+"/talk") talk
+        a(href=vroot+"kb/"+infopage.id+"/talk") talk
         if req.user.id !== -1
             =" | "
-            a(href="/kb/"+infopage.id+"/edit") edit
+            a(href=vroot+"kb/"+infopage.id+"/edit") edit
     .taglist
         each tag in tags
             span.tag
                 = "#" + tag.tagtext + " "
-                a(href="/kb/tag/" + tag.id + "/remove") &times;
+                a(href=vroot+"kb/tag/" + tag.id + "/remove") &times;
         if tags.length > 0 
             br
     if req.user.isadmin || infopage.authorid === req.user.id
-        form(action="/kb/" + infopage.id + "/addtag",method="GET")
+        form(action=vroot+"kb/" + infopage.id +"/addtag",method="GET")
             fieldset
                 legend Add tag
                 input(type="text",name="tagtext",placeholder="Tag name")

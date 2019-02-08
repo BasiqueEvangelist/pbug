@@ -5,7 +5,7 @@ block body
         fieldset
             legend Error
             = errors[Number(req.query.error)]
-    form.register-grid(action="/admin/invites/create",method="POST",type="application/x-www-form-urlencoded")
+    form.register-grid(action=vroot+"admin/invites/create",method="POST",type="application/x-www-form-urlencoded")
         img#fnresult.icon.valcol.namerow
         input.h2.blueunderline.fieldcol.namerow#fntb(type="text",name="name",placeholder="Full name of invited user")
         br
@@ -14,6 +14,7 @@ block body
         br
         input.h2.submitpost.fieldcol.buttonrow(type="submit",value="Create",style="margin-top:10px; justify-self: center;")
 append scripts
+    script= "var vroot = " + vroot + ";"
     script.
         $(function() {
             var timer = 0;
@@ -21,12 +22,12 @@ append scripts
                 clearTimeout(timer);
                 var v = $(this).val()
                 timer = setTimeout(function() {
-                    $.post("/checkusername", {username:v},function(res) {
+                    $.post(vroot+"checkusername", {username:v},function(res) {
                         if (res === "Username available" && v !== "") {
-                            $("#uresult").attr("src","/static/tick.png");
+                            $("#uresult").attr("src",vroot+"static/tick.png");
                         }
                         else {
-                            $("#uresult").attr("src","/static/cross.png");
+                            $("#uresult").attr("src",vroot+"static/cross.png");
                         }
                     });
                 },500);
@@ -34,17 +35,17 @@ append scripts
             $("#utb").keyup();
             $("#fntb").keyup(function() {
                 if ($(this).val() !== "") {
-                    $("#fnresult").attr("src","/static/tick.png");
+                    $("#fnresult").attr("src",vroot+"static/tick.png");
                 }
                 else {
-                    $("#fnresult").attr("src","/static/cross.png");
+                    $("#fnresult").attr("src",vroot+"static/cross.png");
                 }
             });
             $("#fntb").keyup();
             $("form").submit(function() {
-                if ($("#uresult").attr("src") == "/static/cross.png")
+                if ($("#uresult").attr("src") == vroot+"static/cross.png")
                     return false;
-                if ($("#fnresult").attr("src") == "/static/cross.png")
+                if ($("#fnresult").attr("src") == vroot+"static/cross.png")
                     return false;
                 return true;
             });

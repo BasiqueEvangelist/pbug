@@ -1,7 +1,7 @@
 extends ../layout.pug
 block body
     .searchbox
-        form(action="/issues/search", method="GET")
+        form(action=vroot+"issues/search", method="GET")
             input#searchbox(type="text",placeholder="Search...",name="q",value=query,class="search")
             input(type="submit",value="Search",class="submit-search")
         .links
@@ -24,7 +24,7 @@ block body
         ul.issues-list
             each result in results
                 li
-                    a(href="/issues/" + result.id)
+                    a(href=vroot+"issues/" + result.id)
                         .issue-tag
                             ="[" + result.shortprojectid + "-" + ("0000" + result.id).slice(-4) + "] "
                             | (

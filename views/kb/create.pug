@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block body
-    form(action="/kb/create", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"kb/create", method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
         br

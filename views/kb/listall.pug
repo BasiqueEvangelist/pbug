@@ -4,5 +4,5 @@ block body
     ul.issues-list
         each kb in kbs
             li
-                a(href="/kb/" + kb.id)
+                a(href=vroot+"kb/" + kb.id)
                     = kb.pagename

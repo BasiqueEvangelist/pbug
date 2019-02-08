@@ -6,29 +6,29 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         title PBug
         block css
-            link(rel="stylesheet",href="/static/global.css")
+            link(rel="stylesheet",href=vroot+"static/global.css")
     body
         header.flex-container
             .inner-element
                 .helper
                     nav
-                        a(href="/",style="display:inline-block")
+                        a(href=vroot+"",style="display:inline-block")
                             .helper
-                                img.logo(src="/logo",width="32",height="32")
+                                img.logo(src=vroot+"logo",width="32",height="32")
                             | 
                         |  | 
-                        a(href="/issues") Issues
+                        a(href=vroot+"issues") Issues
                         |  | 
                         if req.user.id == -1
-                            a(href="/login?"+qs.stringify({redirect:req.path})) Login
+                            a(href=vroot+"login?"+qs.stringify({redirect:req.path})) Login
                             |  | 
-                            a(href="/register?"+qs.stringify({redirect:req.path})) Register
+                            a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
                         else
-                            a(href="/issues/create") New Issue
+                            a(href=vroot+"issues/create") New Issue
                             |  | 
-                            a(href="/kb/create") New Info Page
+                            a(href=vroot+"kb/create") New Info Page
                             |  | 
-                            a(href="/logout?"+qs.stringify({redirect:req.path})) Log out
+                            a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out
                         |  | 
         .page-main
             block body

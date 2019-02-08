@@ -5,7 +5,7 @@ block body
         fieldset
             legend Error
             = errors[Number(req.query.error)]
-    form.register-grid(action="/useinvite?"+qs.stringify(req.query),method="POST",type="application/x-www-form-urlencoded")
+    form.register-grid(action=vroot+"useinvite?"+qs.stringify(req.query),method="POST",type="application/x-www-form-urlencoded")
         img#iiresult.icon.valcol.inviteidrow
         input.h2.blueunderline.fieldcol.inviteid#iitb(type="text",name="inviteid",placeholder="Invite ID",autocomplete="off")
         div.infocol.namerow
@@ -27,12 +27,12 @@ append scripts
                 clearTimeout(timer);
                 var v = $(this).val()
                 timer = setTimeout(function() {
-                    $.post("/checkinvite", {inviteid:v},function(res) {
+                    $.post(vroot+"checkinvite", {inviteid:v},function(res) {
                         if (res === "Invite exists" && v !== "") {
-                            $("#iiresult").attr("src","/static/tick.png");
+                            $("#iiresult").attr("src",vroot+"static/tick.png");
                         }
                         else {
-                            $("#iiuresult").attr("src","/static/cross.png");
+                            $("#iiuresult").attr("src",vroot+"static/cross.png");
                         }
                     });
                 },500);
@@ -40,19 +40,19 @@ append scripts
             $("#iib").keyup();
             $("#ptb").keyup(function() {
                 if ($(this).val().length >= 6) {
-                    $("#presult").attr("src","/static/tick.png");
+                    $("#presult").attr("src",vroot+"static/tick.png");
                 }
                 else {
-                    $("#presult").attr("src","/static/cross.png");
+                    $("#presult").attr("src",vroot+"static/cross.png");
                 }
             });
             $("#ptb").keyup();
             $("form").submit(function() {
-                if ($("#uresult").attr("src") == "/static/cross.png")
+                if ($("#uresult").attr("src") == vroot+"static/cross.png")
                     return false;
-                if ($("#fnresult").attr("src") == "/static/cross.png")
+                if ($("#fnresult").attr("src") == vroot+"static/cross.png")
                     return false;
-                if ($("#presult").attr("src") == "/static/cross.png")
+                if ($("#presult").attr("src") == vroot+"static/cross.png")
                     return false;
                 return true;
             });

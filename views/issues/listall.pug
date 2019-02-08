@@ -4,7 +4,7 @@ block body
     ul.issues-list
         each issue in issues
             li
-                a(href="/issues/" + issue.id)
+                a(href=vroot+"issues/" + issue.id)
                     .issue-tag
                             ="[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                             | (
@@ -23,7 +23,7 @@ block body
         ul.issues-list
             each issue in aissues
                 li
-                    a(href="/issues/" + issue.id)
+                    a(href=vroot+"issues/" + issue.id)
                         .issue-tag
                             ="[" + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4) + "] "
                             | (

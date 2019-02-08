@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 append css
-    link(rel="stylesheet",href="/static/highlightstyles/default.css")
+    link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
 
 block body
     .issue-tag
@@ -24,17 +24,17 @@ block body
     .underpanel
         if req.user.isadmin || issue.assigneeid === req.user.id
             if issue.isclosed
-                a(href="/issues/" + issue.id + "/open") open
+                a(href=vroot+"issues/" + issue.id +"/open") open
             else
-                a(href="/issues/" + issue.id + "/close") close
+                a(href=vroot+"issues/" + issue.id +"/close") close
             |  
         if req.user.isadmin
-            a(href="/issues/" + issue.id + "/delete/areyousure") delete issue
+            a(href=vroot+"issues/" + issue.id +"/delete/areyousure") delete issue
             |  
-        a(href="/issues/" + issue.id + "/posts") show posts
+        a(href=vroot+"issues/" + issue.id +"/posts") show posts
         br
     if req.user.id !== -1
-        form(action="/issue/" + issue.id + "/assign",method="GET")
+        form(action=vroot+"issue/" + issue.id +"/assign",method="GET")
             fieldset
                 legend Assign
                 select(name="userid")
@@ -170,4 +170,4 @@ block body
                 else
                     =JSON.stringify(thing.data)
 append scripts
-    script(src="/static/expandable.js")
+    script(src=vroot+"static/expandable.js")

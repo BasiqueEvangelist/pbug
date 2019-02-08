@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block body
-    form(action="/issues/create", method="POST",enctype="multipart/form-data")
+    form(action=vroot+"issues/create", method="POST",enctype="multipart/form-data")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
         input.taglist(type="text",name="tags",id="taglist",onkeypress="return event.keyCode != 13;")
@@ -23,9 +23,9 @@ block body
         br
         input.submitpost(type="submit",value="Post",style="float:right")
 append css
-    link(rel="stylesheet",href="/static/jquery.tag-editor.css")
+    link(rel="stylesheet",href=vroot+"static/jquery.tag-editor.css")
 append scripts
-    script(src="/static/jquery.tag-editor.min.js")
+    script(src=vroot+"static/jquery.tag-editor.min.js")
     script.
         $("#taglist").tagEditor({placeholder:"Issue tags"});
         $(document).on("keypress", ".tag-editor", function(event) {

@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block body
-    form(action="/createproject", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"createproject", method="POST",enctype="application/x-www-form-urlencoded")
         input(type="text",name="name",placeholder="Name of project")
         br
         input(type="text",name="shortprojectid",placeholder="Short project id (max 3 chars)", maxlength="3")

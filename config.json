@@ -1,15 +1,13 @@
 {
-    "login": 
-	{
+	"login": {
 		"allowregistration": true
 	},
-	"design":
-	{
+	"design": {
 		"logo": "static/PB.svg"
 	},
 	"port": 8080,
-    "include":
-	[
-        "./config-secret.json"
-    ]
+	"include": [
+		"./config-secret.json"
+	],
+	"virtual-root": "/"
 }
