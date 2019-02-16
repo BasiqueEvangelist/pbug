@@ -4,6 +4,6 @@ block body
     ul.issues-list
         each invite in invites
             li
-                = invite.fullname + " (" + invite.username + ") " + invite.uid
+                = invite.uid
                 a(href=vroot+"admin/invites/"+invite.uid+"/remove",style="display:inline")
                     img(src=vroot+"static/cross.png",height=20,width=20)

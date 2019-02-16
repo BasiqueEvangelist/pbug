@@ -94,8 +94,6 @@ console.log(
         })
         .createTable("invites", function (tbl) {
             tbl.increments("id");
-            tbl.string("username", 64).notNullable().unique();
-            tbl.string("fullname", 100).notNullable();
             tbl.string("uid", 128).notNullable().unique();
         })
         .toString());

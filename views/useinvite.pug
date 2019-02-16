@@ -7,9 +7,23 @@ block body
             = errors[Number(req.query.error)]
     form.register-grid(action=vroot+"useinvite?"+qs.stringify(req.query),method="POST",type="application/x-www-form-urlencoded")
         img#iiresult.icon.valcol.inviteidrow
-        input.h2.blueunderline.fieldcol.inviteid#iitb(type="text",name="inviteid",placeholder="Invite ID",autocomplete="off")
-        div.infocol.namerow
+        input.h2.blueunderline.fieldcol.inviteidrow#iitb(type="text",name="inviteid",placeholder="Invite ID",autocomplete="off")
+        div.infocol.inviteidrow
             | Invite ID supplied by admin.
+        br
+        img#fnresult.icon.valcol.namerow
+        input.h2.blueunderline.fieldcol.namerow#fntb(type="text",name="name",placeholder="Full name")
+        div.infocol.namerow
+            | Used to sign your posts.
+            br 
+            |  You can change it later.
+        br
+        img#uresult.icon.valcol.loginrow
+        input.h2.blueunderline.fieldcol.loginrow#usernametb(type="text",name="username",placeholder="Username")
+        div.infocol.loginrow
+            | Used for signing in and in the 
+            br
+            | address of your user page
         br
         img#presult.icon.valcol.passrow
         input.h2.blueunderline.fieldcol.passrow#ptb(type="password",name="password",placeholder="Password",autocomplete="off")
@@ -32,12 +46,36 @@ append scripts
                             $("#iiresult").attr("src",vroot+"static/tick.png");
                         }
                         else {
-                            $("#iiuresult").attr("src",vroot+"static/cross.png");
+                            $("#iiresult").attr("src",vroot+"static/cross.png");
                         }
                     });
                 },500);
             });
             $("#iib").keyup();
+            $("#usernametb").keyup(function() {
+                clearTimeout(timer);
+                var v = $(this).val()
+                timer = setTimeout(function() {
+                    $.post(vroot+"checkusername", {username:v},function(res) {
+                        if (res === "Username available" && v !== "") {
+                            $("#uresult").attr("src",vroot+"static/tick.png");
+                        }
+                        else {
+                            $("#uresult").attr("src",vroot+"static/cross.png");
+                        }
+                    });
+                },500);
+            });
+            $("#utb").keyup();
+            $("#fntb").keyup(function() {
+                if ($(this).val() !== "") {
+                    $("#fnresult").attr("src",vroot+"static/tick.png");
+                }
+                else {
+                    $("#fnresult").attr("src",vroot+"static/cross.png");
+                }
+            });
+            $("#fntb").keyup();
             $("#ptb").keyup(function() {
                 if ($(this).val().length >= 6) {
                     $("#presult").attr("src",vroot+"static/tick.png");
@@ -48,6 +86,8 @@ append scripts
             });
             $("#ptb").keyup();
             $("form").submit(function() {
+                if ($("#iiresult").attr("src") == vroot+"static/cross.png")
+                    return false;
                 if ($("#uresult").attr("src") == vroot+"static/cross.png")
                     return false;
                 if ($("#fnresult").attr("src") == vroot+"static/cross.png")

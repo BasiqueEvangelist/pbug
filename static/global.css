@@ -321,7 +321,7 @@ label {
 .register-grid {
 	display: grid;
 	grid-template-columns: [val] 100px [fields] 300px [info] 300px [end-col];
-	grid-template-rows: [name] auto [login] auto [pass] auto [btn] auto [end-row];
+	grid-template-rows: [inviteid] auto [name] auto [login] auto [pass] auto [btn] auto [end-row];
 	column-gap: 15px;
 	row-gap: 25px;
 	text-align: center;
@@ -344,6 +344,10 @@ label {
 	justify-self: start;
 	align-self: start;
 	text-align: left;
+}
+
+.inviteidrow {
+	grid-row: inviteid;
 }
 
 .namerow {
