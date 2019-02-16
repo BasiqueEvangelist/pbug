@@ -1,6 +1,7 @@
 {
     "name": "pbug",
     "private": true,
+    "version": "1.0.0",
     "dependencies": {
         "compression": "^1.7.3",
         "connect-busboy": "0.0.2",
