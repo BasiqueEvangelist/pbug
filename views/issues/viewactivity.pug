@@ -33,15 +33,6 @@ block body
             |  
         a(href=vroot+"issues/" + issue.id +"/posts") show posts
         br
-    if req.user.id !== -1
-        form(action=vroot+"issue/" + issue.id +"/assign",method="GET")
-            fieldset
-                legend Assign
-                select(name="userid")
-                    option(value="-1") Unassign
-                    each user in users
-                        option(value=user.id)=user.fullname
-                input(type="submit",value="Assign")
     ul.postlist
         each thing in things
             li.entry

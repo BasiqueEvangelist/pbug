@@ -26,8 +26,9 @@ html(lang="en")
                         else
                             a(href=vroot+"issues/create") New Issue
                             |  | 
-                            a(href=vroot+"kb/create") New Info Page
-                            |  | 
+                            if req.user.isadmin
+                                a(href=vroot+"kb/create") New Info Page
+                                |  | 
                             a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out
                         |  | 
         .page-main
