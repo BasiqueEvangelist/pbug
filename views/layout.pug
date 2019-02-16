@@ -26,7 +26,7 @@ html(lang="en")
                         else
                             a(href=vroot+"issues/create") New Issue
                             |  | 
-                            if req.user.isadmin
+                            if req.user.isadmin || config.features["non-admin-infopages"]
                                 a(href=vroot+"kb/create") New Info Page
                                 |  | 
                             a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out

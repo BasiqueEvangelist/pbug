@@ -8,5 +8,6 @@ block body
             if post.dateofedit !== null
                 .date="Edited on " + post.dateofedit
             textarea.submit-text(name="newtext")=post.containedtext
-            //- input(type="file" multiple name="file[]")
+            if config.features.files
+                input(type="file" multiple name="file[]")
         input.submitpost(type="submit", value="Repost",style="float:right")

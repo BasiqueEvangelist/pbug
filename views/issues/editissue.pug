@@ -18,8 +18,9 @@ block body
                     option(value="-1") Unassign
                     each user in users
                         option(value=user.id)=user.fullname
-        //- |  
-        //- input(type="file" multiple name="file[]")
+        if config.features.files
+            |  
+            input(type="file" multiple name="file[]")
         br
         input.submitpost(type="submit",value="Repost",style="float:right")
 append css
