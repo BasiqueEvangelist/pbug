@@ -21,8 +21,9 @@ html(lang="en")
                         |  | 
                         if req.user.id == -1
                             a(href=vroot+"login?"+qs.stringify({redirect:req.path})) Login
-                            |  | 
-                            a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
+                            if config.login.allowregistration != "closed"
+                                |  | 
+                                a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
                         else
                             a(href=vroot+"issues/create") New Issue
                             |  | 

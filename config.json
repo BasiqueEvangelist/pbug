@@ -1,6 +1,6 @@
 {
 	"login": {
-		"allowregistration": true
+		"allowregistration": "open"
 	},
 	"design": {
 		"logo": "static/PB.svg"
