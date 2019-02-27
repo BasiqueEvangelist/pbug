@@ -209,7 +209,7 @@ input.title-input {
 
 input.submit-search {
 	float: right;
-	background:url(/static/magnifying_glass.png) no-repeat;
+	background:url(<%=vroot%>static/magnifying_glass.png) no-repeat;
 	background-size: contain;
     cursor:pointer;
 	border: none;
