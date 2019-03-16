@@ -1,8 +1,5 @@
 require("dotenv").config();
-var Knex = require("knex");
-var connection = new Knex({
-    client: process.env.DB_TYPE
-});
+var connection = require("./lib/knexfile");
 console.log(
     connection.schema
         .dropTableIfExists("sessions")
@@ -24,14 +21,14 @@ console.log(
             tbl.boolean("isadministrator").defaultTo(false);
             tbl.string("passwordhash", 128);
             tbl.integer("passwordsalt").notNullable();
-            tbl.integer("roleid").references("id").inTable("roles");
+//          tbl.integer("roleid").references("id").inTable("roles");
             tbl.string("apikey", 128).notNullable().unique();
         })
-        .createTable("roles", function (tbl) {
-            tbl.increments("id");
-            tbl.string("name", 100).notNullable().unique();
-            tbl.text("permissions");
-        })
+//      .createTable("roles", function (tbl) {
+//          tbl.increments("id");
+//          tbl.string("name", 100).notNullable().unique();
+//          tbl.text("permissions");
+//      })
         .createTable("projects", function (tbl) {
             tbl.increments("id");
             tbl.string("projectname", 100).notNullable();
