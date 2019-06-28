@@ -11,13 +11,19 @@ block body
         label(for="projectchooser") Project: 
         select.blueunderline#projectchooser(name="newprojectid",required)
             each project in projects
-                option(value=project.id.toString())= project.projectname
+                if issue.projectid == project.id
+                    option(value=project.id.toString() selected)= project.projectname
+                else
+                    option(value=project.id.toString())= project.projectname
         |  
         label(for="assigneechooser") Assignee: 
         select.blueunderline#assigneechooser(name="newassigneeid")
                     option(value="-1") Unassign
                     each user in users
-                        option(value=user.id)=user.fullname
+                        if issue.assigneeid == user.id
+                            option(value=user.id selected)=user.fullname
+                        else
+                            option(value=user.id)=user.fullname
         if config.features.files
             |  
             input(type="file" multiple name="file[]")
