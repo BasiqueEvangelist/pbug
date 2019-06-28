@@ -29,9 +29,8 @@ block body
             else
                 a(href=vroot+"issues/" + issue.id + "/close") close
             |  | 
-            if req.user.id == issue.authorid
-                a(href=vroot+"issues/" + issue.id + "/edit") edit
-                |  | 
+            a(href=vroot+"issues/" + issue.id + "/edit") edit
+            |  | 
         if req.user.isadmin
             a(href=vroot+"issues/" + issue.id + "/delete/areyousure") delete issue
             |  | 
@@ -46,7 +45,7 @@ block body
                 if thing.dateofedit !== null
                     .date="Edited on " + thing.dateofedit
                 .comment-underpanel
-                    if req.user.id == thing.authorid
+                    if req.user.id == thing.authorid || req.user.isadmin
                         a(href=vroot+"issues/post/" + thing.id +"/edit") edit
                         |  
                     a(href=vroot+"issues/" + issue.id + "#" + thing.id) permalink
