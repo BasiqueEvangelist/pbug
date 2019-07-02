@@ -86,6 +86,7 @@ console.log(
         .createTable("issuefiles", function (tbl) {
             tbl.increments("id");
             tbl.integer("issueid").unsigned().references("id").inTable("issues");
+            tbl.string("filename",12).notNullable();
             tbl.string("fileid", 128);
         })
         .createTable("invites", function (tbl) {

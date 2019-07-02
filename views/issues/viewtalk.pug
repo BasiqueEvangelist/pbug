@@ -37,6 +37,9 @@ block body
         a(href=vroot+"issues/" + issue.id + "/activity") activity
         br
     p!=parseMarkdown(issue.description)
+    ul
+        each file in files
+            =file.filename + " (" + file.fileid + ")"    
     ul.postlist
         each thing in things
             li.entry(id=thing.id)
