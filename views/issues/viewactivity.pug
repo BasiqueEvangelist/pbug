@@ -36,7 +36,7 @@ block body
     ul.postlist
         each thing in things
             li.entry
-                .date=thing.dateofoccurance
+                .date=mkdate(thing.dateofoccurance)
                 span.username=thing.fullname
                 |  
                 if thing.data.type == "assign"

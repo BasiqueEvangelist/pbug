@@ -5,8 +5,8 @@ append css
 
 block body
     .issue-tag
-        .date="Authored by " + infopage.fullname + " on " + infopage.dateofcreation
-        .date="Edited on " + infopage.dateofedit
+        .date="Authored by " + infopage.fullname + " on " + mkdate(infopage.dateofcreation)
+        .date="Edited on " + mkdate(infopage.dateofedit)
     h2.issue-name=infopage.pagename
     hr
     .underpanel

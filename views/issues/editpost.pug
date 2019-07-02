@@ -6,8 +6,8 @@ block body
             .username=post.fullname
             .date=post.dateofcreation
             if post.dateofedit !== null
-                .date="Edited on " + post.dateofedit
-            textarea.submit-text(name="newtext")=post.containedtext
+                .date="Edited on " + mkdate(post.dateofedit)
+            textarea.submit-text(name="newtext")=mkdate(post.containedtext)
             if config.features.files
                 input(type="file" multiple name="file[]")
         input.submitpost(type="submit", value="Repost",style="float:right")

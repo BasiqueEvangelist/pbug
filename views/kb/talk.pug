@@ -17,9 +17,9 @@ block body
         each comment in comments
             li.entry(id=comment.id)
                 .username=comment.fullname
-                .date=comment.dateofcreation
+                .date=mkdate(comment.dateofcreation)
                 if comment.dateofedit !== null
-                    .date="Edited on " + comment.dateofedit
+                    .date="Edited on " + mkdate(comment.dateofedit)
                 .comment-underpanel
                     if req.user.id == comment.authorid
                         a(href=vroot+"kb/post/" + comment.id +"/edit") edit

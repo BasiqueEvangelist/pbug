@@ -44,9 +44,9 @@ block body
         each thing in things
             li.entry(id=thing.id)
                 .username=thing.fullname
-                .date=thing.dateofcreation
+                .date=mkdate(thing.dateofcreation)
                 if thing.dateofedit !== null
-                    .date="Edited on " + thing.dateofedit
+                    .date="Edited on " + mkdate(thing.dateofedit)
                 .comment-underpanel
                     if req.user.id == thing.authorid || req.user.isadmin
                         a(href=vroot+"issues/post/" + thing.id +"/edit") edit
