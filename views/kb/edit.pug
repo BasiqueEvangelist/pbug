@@ -4,6 +4,17 @@ block body
     h2 Editing info page
     form(action=vroot+"kb/" + infopage.id +"/edit",method="POST",enctype="application/x-www-form-urlencoded")
         input.h2.blueunderline.issue-name(type="text",name="newtitle",value=infopage.pagename,style="width:100%")
+        input.taglist(type="text",name="newtags",id="taglist",value=infopage.pagetags,onkeypress="return event.keyCode != 13;")
+        br
         .entry
             textarea.submit-text(name="newtext")=infopage.containedtext
         input.submitpost(type="submit", value="Repost",style="float:right")
+append css
+    link(rel="stylesheet",href=vroot+"static/jquery.tag-editor.css")
+append scripts
+    script(src=vroot+"static/jquery.tag-editor.min.js")
+    script.
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });

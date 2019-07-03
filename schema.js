@@ -64,6 +64,7 @@ console.log(
         .createTable("infopages", function (tbl) {
             tbl.increments("id");
             tbl.dateTime("dateofcreation").notNullable();
+            tbl.text("pagetags").notNullable().defaultTo("");
             tbl.integer("authorid").unsigned().references("id").inTable("users").notNullable();
             tbl.dateTime("dateofedit").notNullable();
             tbl.integer("editorid").unsigned().references("id").inTable("users").notNullable();
@@ -77,11 +78,6 @@ console.log(
             tbl.integer("infopageid").unsigned().references("id").inTable("infopages");
             tbl.dateTime("dateofedit");
             tbl.text("containedtext");
-        })
-        .createTable("infopagetags", function (tbl) {
-            tbl.increments("id");
-            tbl.integer("infopageid").unsigned().references("id").inTable("infopages");
-            tbl.string("tagtext", 64).notNullable();
         })
         .createTable("issuefiles", function (tbl) {
             tbl.increments("id");

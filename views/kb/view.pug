@@ -17,17 +17,9 @@ block body
             =" | "
             a(href=vroot+"kb/"+infopage.id+"/edit") edit
     .taglist
-        each tag in tags
-            span.tag
-                = "#" + tag.tagtext + " "
-                a(href=vroot+"kb/tag/" + tag.id + "/remove") &times;
-        if tags.length > 0 
-            br
-    if req.user.isadmin || infopage.authorid === req.user.id
-        form(action=vroot+"kb/" + infopage.id +"/addtag",method="GET")
-            fieldset
-                legend Add tag
-                input(type="text",name="tagtext",placeholder="Tag name")
-                input(type="submit",value="Add")
+        if infopage.pagetags.length > 1
+            each tag in infopage.pagetags.split(",")
+                span.tag
+                    = "#" + tag + " "
     .entry
         !=parseMarkdown(infopage.containedtext)

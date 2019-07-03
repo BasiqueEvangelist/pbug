@@ -4,7 +4,17 @@ block body
     form(action=vroot+"kb/create", method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
-        br
+        input.taglist(type="text",name="tags",id="taglist",onkeypress="return event.keyCode != 13;")
+        br 
         textarea.submit-text(name="text",placeholder="Description",required)
         br
         input.submitpost(type="submit",value="Post",style="float:right")
+append css
+    link(rel="stylesheet",href=vroot+"static/jquery.tag-editor.css")
+append scripts
+    script(src=vroot+"static/jquery.tag-editor.min.js")
+    script.
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
