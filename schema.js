@@ -20,7 +20,7 @@ console.log(
             tbl.string("fullname", 100).notNullable();
             tbl.boolean("isadministrator").defaultTo(false);
             tbl.string("passwordhash", 128);
-            tbl.integer("passwordsalt").notNullable();
+            tbl.string("passwordsalt", 64).notNullable();
 //          tbl.integer("roleid").references("id").inTable("roles");
             tbl.string("apikey", 128).notNullable().unique();
         })
