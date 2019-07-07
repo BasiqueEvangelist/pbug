@@ -2,6 +2,7 @@ extends ../layout
 
 block body
     form(action=vroot+"issues/" + issue.id +"/edit", method="POST",enctype="multipart/form-data")
+        input#filesremoved(type="hidden" name="filesremoved" value="[]")
         input.title-input(type="text",value=issue.issuename,name="newtitle",required)
         hr
         input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")
@@ -24,9 +25,14 @@ block body
                             option(value=user.id selected)=user.fullname
                         else
                             option(value=user.id)=user.fullname
-        if config.features.files
-            |  
-            input(type="file" multiple name="file[]")
+        br
+        each file in files
+            a(href=vroot+"file/"+file.fileid data-uid=file.fileid)=file.filename
+            a(onclick="removefile(this);" href="javascript:void(0)" data-uid=file.fileid) X
+            br
+        |  
+        br
+        input(type="file" multiple name="file[]")
         br
         input.submitpost(type="submit",value="Repost",style="float:right")
 append css
@@ -38,3 +44,10 @@ append scripts
         $(document).on("keypress", ".tag-editor", function(event) {
             return event.keyCode != 13;
         });
+        function removefile(ev) {
+            var uid = $(ev).attr("data-uid");
+            var flist = JSON.parse($("#filesremoved").val());
+            flist.push(uid);
+            $("#filesremoved").val(JSON.stringify(flist));
+            $('[data-uid="' + uid + '"]').remove();
+        }
