@@ -27,9 +27,10 @@ block body
                             option(value=user.id)=user.fullname
         br
         each file in files
-            a.filename(href=vroot+"file/"+file.fileid data-uid=file.fileid)=file.filename
-            a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
-            br
+            div.file
+                a.filename(href=vroot+"file/"+file.fileid)=file.filename
+                |  
+                a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
         |  
         br
         input(type="file" multiple name="file[]")
@@ -49,15 +50,15 @@ append scripts
             var flist = JSON.parse($("#filesremoved").val());
             flist.push(uid);
             $("#filesremoved").val(JSON.stringify(flist));
-            $('a.sendbutton[data-uid="' + uid + '"]').off("click").click(function() {unremovefile(this)});
-            $('a.filename[data-uid="' + uid + '"]').addClass("strike");
+            $(ev).off("click").click(function() {unremovefile(this)});
+            $(ev).parent().children(".filename").addClass("strike");
         }
         function unremovefile(ev) {
             var uid = $(ev).attr("data-uid");
             var flist = JSON.parse($("#filesremoved").val());
             flist.splice(flist.indexOf(uid),1);
             $("#filesremoved").val(JSON.stringify(flist));
-            $('a.sendbutton[data-uid="' + uid + '"]').off("click").click(function() {removefile(this)});
-            $('a.filename[data-uid="' + uid + '"]').removeClass("strike");
+            $(ev).off("click").click(function() {removefile(this)});
+            $(ev).parent().children(".filename").removeClass("strike");
         }
         $("a.sendbutton").click(function() {removefile(this)});
