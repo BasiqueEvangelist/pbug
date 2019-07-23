@@ -1,0 +1,10 @@
+extends ../layout.pug
+
+block body
+    ul.issues-list
+        li
+            a(href=vroot+"admin/createproject") Create new project code
+        li
+            a(href=vroot+"admin/users") View all registered users
+        li
+            a(href=vroot+"admin/invites") View unredeemed invites

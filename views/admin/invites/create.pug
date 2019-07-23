@@ -1,9 +1,0 @@
-extends ../../layout.pug
-
-block body
-    if typeof req.query.error !== "undefined"
-        fieldset
-            legend Error
-            = errors[Number(req.query.error)]
-    form.register-grid(action=vroot+"admin/invites/create",method="POST",type="application/x-www-form-urlencoded")
-        input.h2.submitpost.fieldcol.buttonrow(type="submit",value="Create",style="margin-top:10px; justify-self: center;")

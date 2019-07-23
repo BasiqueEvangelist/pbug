@@ -1,13 +1,17 @@
 extends ../../layout.pug
 
 block body
+    form(action=vroot+"admin/invites/create",method="POST",type="application/x-www-form-urlencoded")
+        input.h2.submitpost(type="submit",value="Create invite",style="margin-top:10px;")
+    br
+    hr
+    h3 Unredeemed invites
     ul.issues-list
         each invite in invites
             li
-                span(id="inviteid-"+invite.id)= invite.uid
-                a(href=vroot+"admin/invites/"+invite.uid+"/remove",style="display:inline")
-                    img(src=vroot+"static/cross.png",height=20,width=20)
-                a.copier(href="javascript:void(0)",data-clipboard-target="#inviteid-"+invite.id) Copy
+                span(id="inviteid-"+invite.id,style="font-family:monospace;")= invite.uid
+                a(href=vroot+"admin/invites/"+invite.uid+"/remove",style="display:inline; color:red;") ❌
+                a.copier(href="javascript:void(0)",data-clipboard-target="#inviteid-"+invite.id, style="display:inline; color:blue;") 📤
 append scripts
     script(src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js")
     script.
