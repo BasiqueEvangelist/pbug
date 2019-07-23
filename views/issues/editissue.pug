@@ -28,10 +28,10 @@ block body
         br
         each file in files
             div.file
+                a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
+                |          
                 a.filename(href=vroot+"file/"+file.fileid)=file.filename
                 |  
-                a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
-        |  
         br
         input(type="file" multiple name="file[]")
         br

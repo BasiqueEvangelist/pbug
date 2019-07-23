@@ -39,7 +39,8 @@ block body
     p!=parseMarkdown(issue.description)
     ul
         each file in files
-            a(href=vroot+"file/" + file.fileid)=file.filename    
+            a(href=vroot+"file/" + file.fileid)=file.filename
+            br    
     ul.postlist
         each thing in things
             li.entry(id=thing.id)
