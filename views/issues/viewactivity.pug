@@ -39,26 +39,14 @@ block body
                 .date=mkdate(thing.dateofoccurance)
                 span.username=thing.fullname
                 |  
-                if thing.data.type == "assign"
-                    if (thing.data.oldassigneeid === -1 && thing.data.newassigneeid !== -1)
-                        span.blue has assigned 
-                        span.username=thing.newfn
-                    else if (thing.data.newassigneeid !== -1 && thing.data.oldassigneeid !== -1)
-                        span.blue has reassigned
-                        span.username=thing.newfn
-                        span.blue  from 
-                        span.username=thing.oldfn
-                    else if (thing.data.newassigneeid === -1 && thing.data.oldassigneeid !== -1)
-                        span.blue has unassigned 
-                        span.username=thing.oldfn
-                else if thing.data.type == "status"
-                    span.blue has changed issue status from 
+                if thing.data.type == "status"
+                    span.blue changed issue status from 
                     = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
                     span.blue  to 
                     = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
                 else if thing.data.type == "post"
                     span.showable-container
-                        a.blue.show-button.underline(href="javascript:void(0)") has posted
+                        a.blue.show-button.underline(href="javascript:void(0)") posted
                         .showable
                             .postborder
                                 pre
@@ -92,7 +80,7 @@ block body
                 else if thing.data.type == "editissue"
                     span.showable-container
                         if thing.data.from.text !== thing.data.to.text
-                            a.blue.show-button.underline(href="javascript:void(0)") has edited description
+                            a.blue.show-button.underline(href="javascript:void(0)") edited description
                             table.showable.hide(style="width:100%")
                                 tr
                                     td.postborder.fleft(style="width:48%")
@@ -116,8 +104,7 @@ block body
                                                         div.smallmargin.afteredit=tv[0]
                                                     else if tv[1] == "filler"
                                                         div.smallmargin.filler=" "
-                            if thing.data.from.tags !== thing.data.to.tags
-                                span.blue  and 
+                            br
                         if thing.data.from.tags !== thing.data.to.tags
                             span.blue changed tags from 
                             span.taglist
@@ -131,13 +118,19 @@ block body
                                     each tag in thing.data.to.tags.split(",")
                                         span.tag
                                             = "#" + tag + " "
-                            if thing.data.from.title !== thing.data.to.title
-                                span.blue  and 
+                            br
                         if thing.data.from.title !== thing.data.to.title
                             span.blue changed title from 
                             = thing.data.from.title
                             span.blue  to 
                             = thing.data.to.title
+                            br
+                        if thing.data.from.assigneeid !== thing.data.to.assigneeid
+                            if (thing.data.to.assigneeid !== "-1")
+                                span.blue assigned 
+                                span.username=thing.newassigneename
+                            else
+                                span.blue removed assignee 
                 else if thing.data.type == "createissue"
                     span.showable-container
                         a.blue.show-button.underline(href="javascript:void(0)") has created issue with description
