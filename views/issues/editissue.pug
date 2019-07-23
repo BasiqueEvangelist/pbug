@@ -7,7 +7,7 @@ block body
         hr
         input.taglist(type="text",name="newtags",id="taglist",value=issue.issuetags,onkeypress="return event.keyCode != 13;")
         br
-        textarea.submit-text(name="newdesc",placeholder="Description",required)=issue.description
+        textarea.submit-text(name="newtext",placeholder="Description",required)=issue.description
         br
         label(for="projectchooser") Project: 
         select.blueunderline#projectchooser(name="newprojectid",required)
@@ -31,7 +31,7 @@ block body
                 a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
                 |          
                 a.filename(href=vroot+"file/"+file.fileid)=file.filename
-                |  
+        |  
         br
         input(type="file" multiple name="file[]")
         br
