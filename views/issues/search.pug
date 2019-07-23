@@ -63,4 +63,8 @@ append scripts
                 }
                 $("#searchbox").val($("#searchbox").val() + " " + thing);
             }
+            else {
+                $("#searchbox").val($("#searchbox").val().replace(" " + thing, ""));
+                $("#searchbox").val($("#searchbox").val().replace(thing + " ", ""));
+            }
         }
