@@ -4,5 +4,4 @@ block body
     ul.issues-list
         each user in users
             li
-                -console.log(user)
                 = user.fullname + " (" + user.username + ") " + (user.isadministrator?"(Administrator)":"")
