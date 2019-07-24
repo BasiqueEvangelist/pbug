@@ -88,5 +88,6 @@ console.log(
         .createTable("invites", function (tbl) {
             tbl.increments("id");
             tbl.string("uid", 128).notNullable().unique();
+            tbl.boolean("isadministrator").defaultTo(false);
         })
         .toString());
