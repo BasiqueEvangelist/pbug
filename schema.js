@@ -21,14 +21,14 @@ console.log(
             tbl.boolean("isadministrator").defaultTo(false);
             tbl.string("passwordhash", 128);
             tbl.string("passwordsalt", 64).notNullable();
-//          tbl.integer("roleid").references("id").inTable("roles");
+            //          tbl.integer("roleid").references("id").inTable("roles");
             tbl.string("apikey", 128).notNullable().unique();
         })
-//      .createTable("roles", function (tbl) {
-//          tbl.increments("id");
-//          tbl.string("name", 100).notNullable().unique();
-//          tbl.text("permissions");
-//      })
+        //      .createTable("roles", function (tbl) {
+        //          tbl.increments("id");
+        //          tbl.string("name", 100).notNullable().unique();
+        //          tbl.text("permissions");
+        //      })
         .createTable("projects", function (tbl) {
             tbl.increments("id");
             tbl.string("projectname", 100).notNullable();
@@ -82,7 +82,7 @@ console.log(
         .createTable("issuefiles", function (tbl) {
             tbl.increments("id");
             tbl.integer("issueid").unsigned().references("id").inTable("issues");
-            tbl.string("filename",12).notNullable();
+            tbl.string("filename", 100).notNullable();
             tbl.string("fileid", 128);
         })
         .createTable("invites", function (tbl) {
