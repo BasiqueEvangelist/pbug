@@ -13,5 +13,6 @@
 	"include": [
 		"./config-secret.json"
 	],
-	"virtual-root": "/"
+	"virtual-root": "/",
+	"environment": "development"
 }
