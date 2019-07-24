@@ -11,7 +11,7 @@ block body
             li
                 span(id="inviteid-"+invite.id,style="font-family:monospace;")= invite.uid
                 a(href=vroot+"admin/invites/"+invite.uid+"/remove",style="display:inline; color:red;") ❌
-                a.copier(href="javascript:void(0)",data-clipboard-target="#inviteid-"+invite.id, style="display:inline; color:blue;") 📤
+                a.copier(href="javascript:void(0)",data-clipboard-text=req.headers.host+vroot+"useinvite?invite="+invite.uid, style="display:inline; color:blue;") 📤
 append scripts
     script(src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js")
     script.
