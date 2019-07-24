@@ -20,10 +20,16 @@ html(lang="en")
                         a(href=vroot+"issues") Issues
                         |  | 
                         if req.user.id == -1
-                            a(href=vroot+"login?"+qs.stringify({redirect:req.path})) Login
+                            if typeof req.query.redirect !== typeof undefined
+                                a(href=vroot+"login?"+qs.stringify({redirect:req.query.redirect})) Login
+                            else
+                                a(href=vroot+"login?"+qs.stringify({redirect:req.path})) Login
                             if config.login.allowregistration != "closed"
                                 |  | 
-                                a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
+                                if typeof req.query.redirect !== typeof undefined
+                                    a(href=vroot+"register?"+qs.stringify({redirect:req.query.redirect})) Register
+                                else
+                                    a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
                         else
                             a(href=vroot+"issues/create") New Issue
                             |  | 
