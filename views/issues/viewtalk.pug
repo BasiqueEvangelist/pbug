@@ -23,7 +23,7 @@ block body
                 span.tag
                     = "#" + tag + " "
     .underpanel
-        if req.user.isadmin || issue.assigneeid === req.user.id
+        if canopen || issue.assigneeid == req.user.id
             if issue.isclosed
                 a(href=vroot+"issues/" + issue.id +"/open") open
             else
