@@ -50,13 +50,13 @@ block body
                 if thing.dateofedit !== null
                     .date="Edited on " + mkdate(thing.dateofedit)
                 .comment-underpanel
-                    if req.user.id == thing.authorid || req.user.isadmin
+                    if (caneditownpost && thing.authorid == req.user.id) || caneditotherpost
                         a(href=vroot+"issues/post/" + thing.id +"/edit") edit
                         |  
                     a(href=vroot+"issues/" + issue.id + "#" + thing.id) permalink
                     |  
                 !=parseMarkdown(thing.containedtext)
-        if req.user.id != -1
+        if canpost
             li.entry
                 form(action=vroot+"issues/" + issue.id, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.fullname
