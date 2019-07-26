@@ -5,10 +5,6 @@
 	"design": {
 		"logo": "static/PB.svg"
 	},
-	"features": {
-		"files": false,
-		"non-admin-infopages": false
-	},
 	"port": 8080,
 	"include": [
 		"./config-secret.json"

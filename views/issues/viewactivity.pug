@@ -22,13 +22,13 @@ block body
             span.tag
                 = "#" + tag + " "
     .underpanel
-        if req.user.isadmin || issue.assigneeid === req.user.id
+        if canopen
             if issue.isclosed
                 a(href=vroot+"issues/" + issue.id +"/open") open
             else
                 a(href=vroot+"issues/" + issue.id +"/close") close
             |  
-        if req.user.isadmin
+        if candelete
             a(href=vroot+"issues/" + issue.id +"/delete/areyousure") delete issue
             |  
         a(href=vroot+"issues/" + issue.id +"/posts") show posts

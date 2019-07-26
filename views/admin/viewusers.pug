@@ -4,4 +4,16 @@ block body
     ul.issues-list
         each user in users
             li
-                = user.fullname + " (" + user.username + ") " + (user.isadministrator?"(Administrator)":"")
+                = user.fullname + " (" + user.username + ") ("
+                if provePermission(req.user.permissions, "roles.rerole")
+                    form(action=vroot+"admin/users/"+user.id+"/rerole", method="POST",enctype="application/x-www-form-urlencoded",style="display:inline")
+                        select.blueunderline(name="roleid",required)
+                            each role in roles
+                                if user.roleid == role.id
+                                    option(value=role.id.toString() selected)= role.name
+                                else
+                                    option(value=role.id.toString())= role.name
+                        input(type="submit")
+                else
+                    =user.rolename
+                =")"

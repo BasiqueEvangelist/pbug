@@ -1,0 +1,15 @@
+extends ../../layout.pug
+
+block body
+    form(action=vroot+"admin/roles/create",method="POST",type="application/x-www-form-urlencoded")
+        input(type="text",name="name",placeholder="Name of role")
+        br
+        input(type="text",name="permissions",placeholder="Permissions contained in role")
+        br
+        input.h2.submitpost(type="submit",value="Create role",style="margin-top:10px;")
+    ul.issues-list
+        each role in roles
+            li
+                = role.name + " ("
+                a(href=vroot+"admin/roles/"+role.id+"/edit",style="display: inline") Edit
+                = ")"

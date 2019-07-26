@@ -1,0 +1,9 @@
+extends ../../layout.pug
+
+block body
+    form(action=vroot+"admin/roles/"+role.id+"/edit", method="POST",enctype="application/x-www-form-urlencoded")
+        input(type="text",name="name",placeholder="Name of role",value=role.name)
+        br
+        input(type="text",name="permissions",placeholder="Permissions contained in role",value=role.permissions)
+        br
+        input(type="submit")
