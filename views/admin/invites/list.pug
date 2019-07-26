@@ -2,8 +2,10 @@ extends ../../layout.pug
 
 block body
     form(action=vroot+"admin/invites/create",method="POST",type="application/x-www-form-urlencoded")
-        input(type="checkbox",name="isadmin",value="yes",id="adminbox")
-        label(for="adminbox") Administrator
+        select(name="roleid",required)
+            each role in roles
+                option(value=role.id.toString())= role.name
+        label(for="adminbox") Role
         input.h2.submitpost(type="submit",value="Create invite",style="margin-top:10px;")
     br
     hr
@@ -11,7 +13,7 @@ block body
     ul.issues-list
         each invite in invites
             li
-                span(style="font-family:monospace;")= invite.uid + (invite.isadministrator ? " (Admin)" : "")
+                span(style="font-family:monospace;")= invite.uid + "(" + invite.rolename + ")"
                 a(href=vroot+"admin/invites/"+invite.uid+"/remove",style="display:inline; color:red;") ❌
                 a.copier(href="javascript:void(0)",data-clipboard-text=req.headers.host+vroot+"useinvite?invite="+invite.uid, style="display:inline; color:blue;") 📤
 append scripts

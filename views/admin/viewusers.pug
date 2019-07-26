@@ -4,4 +4,4 @@ block body
     ul.issues-list
         each user in users
             li
-                = user.fullname + " (" + user.username + ") " + (user.isadministrator?"(Administrator)":"")
+                = user.fullname + " (" + user.username + ") (" + user.rolename + ")" 
