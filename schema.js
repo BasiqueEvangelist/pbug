@@ -93,13 +93,11 @@ async function schema() {
         });
     await connection("roles")
         .insert({
-            "id": 0,
             "name": "Anonymous",
             "permissions": ""
         });
     await connection("roles")
         .insert({
-            "id": 1,
             "name": "Administrator",
             "permissions": "**"
         });
@@ -113,7 +111,7 @@ async function schema() {
             "passwordhash": adminhash,
             "passwordsalt": adminsalt,
             "apikey": "",
-            "roleid": 1
+            "roleid": 2
         });
     return adminpass;
 }
