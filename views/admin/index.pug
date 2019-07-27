@@ -2,11 +2,15 @@ extends ../layout.pug
 
 block body
     ul.issues-list
-        li
-            a(href=vroot+"admin/createproject") Create new project code
-        li
-            a(href=vroot+"admin/users") View all registered users
-        li
-            a(href=vroot+"admin/invites") View unredeemed invites
-        li
-            a(href=vroot+"admin/roles") View all roles
+        if provePermission(req.user.permissions, "admin.createproject")
+            li
+                a(href=vroot+"admin/createproject") Create new project code
+        if provePermission(req.user.permissions, "users.list")
+            li
+                a(href=vroot+"admin/users") View all registered users
+        if provePermission(req.user.permissions, "users.invites")
+            li
+                a(href=vroot+"admin/invites") View unredeemed invites
+        if provePermission(req.user.permissions, "roles.list")
+            li
+                a(href=vroot+"admin/roles") View all roles
