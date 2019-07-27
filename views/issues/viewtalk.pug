@@ -45,7 +45,7 @@ block body
     ul.postlist
         each thing in things
             li.entry(id=thing.id)
-                .username=thing.fullname
+                .username=thing.fullname === null ? "Anonymous" : thing.fullname
                 .date=mkdate(thing.dateofcreation)
                 if thing.dateofedit !== null
                     .date="Edited on " + mkdate(thing.dateofedit)

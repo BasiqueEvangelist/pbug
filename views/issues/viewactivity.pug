@@ -37,7 +37,7 @@ block body
         each thing in things
             li.entry
                 .date=mkdate(thing.dateofoccurance)
-                span.username=thing.fullname
+                span.username=thing.fullname === null ? "Anonymous" : thing.fullname
                 |  
                 if thing.data.type == "status"
                     span.blue changed issue status from 

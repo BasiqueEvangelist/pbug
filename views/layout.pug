@@ -17,6 +17,12 @@ html(lang="en")
                                 img.logo(src=vroot+"logo",width="32",height="32")
                             | 
                         |  | 
+                        if provePermission(req.user.permissions, "issues.search")
+                            a(href=vroot+"issues") Issues
+                            |  | 
+                        if provePermission(req.user.permissions, "issues.create")
+                            a(href=vroot+"issues/create") New Issue
+                            |  | 
                         if req.user.id == -1
                             if typeof req.query.redirect !== typeof undefined
                                 a(href=vroot+"login?"+qs.stringify({redirect:req.query.redirect})) Login
@@ -29,12 +35,6 @@ html(lang="en")
                                 else
                                     a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
                         else
-                            if provePermission(req.user.permissions, "issues.search")
-                                a(href=vroot+"issues") Issues
-                                |  | 
-                            if provePermission(req.user.permissions, "issues.create")
-                                a(href=vroot+"issues/create") New Issue
-                                |  | 
                             //- a(href=vroot+"kb/create") New Info Page
                             //- |  | 
                             a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out

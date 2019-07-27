@@ -3,10 +3,10 @@ block body
     h2 Editing post
     form(action=vroot+"issues/post/" + post.id +"/edit",method="POST",enctype="multipart/form-data")
         .entry
-            .username=post.fullname
-            .date=post.dateofcreation
+            .username=post.fullname === null ? "Anonymous" : post.fullname
+            .date=mkdate(post.dateofcreation)
             if post.dateofedit !== null
                 .date="Edited on " + mkdate(post.dateofedit)
-            textarea.submit-text(name="newtext")=mkdate(post.containedtext)
+            textarea.submit-text(name="newtext")=post.containedtext
             input(type="file" multiple name="file[]")
         input.submitpost(type="submit", value="Repost",style="float:right")

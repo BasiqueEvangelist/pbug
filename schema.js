@@ -33,7 +33,7 @@ async function schema() {
             tbl.increments("id");
             tbl.string("projectname", 100).notNullable();
             tbl.string("shortprojectid", 3).unique().notNullable();
-            tbl.integer("authorid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("authorid").unsigned().references("id").inTable("users");
         })
         .createTable("issues", function (tbl) {
             tbl.increments("id");
@@ -48,7 +48,7 @@ async function schema() {
         })
         .createTable("issueposts", function (tbl) {
             tbl.increments("id");
-            tbl.integer("authorid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("authorid").unsigned().references("id").inTable("users");
             tbl.integer("issueid").unsigned().references("id").inTable("issues").notNullable();
             tbl.text("containedtext").notNullable();
             tbl.dateTime("dateofcreation").notNullable();
@@ -58,7 +58,7 @@ async function schema() {
             tbl.increments("id");
             tbl.dateTime("dateofoccurance");
             tbl.integer("issueid").unsigned().references("id").inTable("issues").notNullable();
-            tbl.integer("authorid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("authorid").unsigned().references("id").inTable("users");
             tbl.json("data");
         })
         .createTable("infopages", function (tbl) {
@@ -90,12 +90,20 @@ async function schema() {
             tbl.string("uid", 128).notNullable().unique();
             tbl.integer("roleid").references("id").inTable("roles");
         });
-    var adminRoleId = (await connection("roles")
+    await connection("roles")
         .insert({
+            "id": 0,
+            "name": "Anonymous",
+            "permissions": ""
+        })
+        .returning("id");
+    await connection("roles")
+        .insert({
+            "id": 1,
             "name": "Administrator",
             "permissions": "**"
         })
-        .returning("id"))[0];
+        .returning("id");
     var adminsalt = await mksalt();
     var adminpass = await mksalt();
     var adminhash = await hashpassword(adminpass, adminsalt);
@@ -106,7 +114,7 @@ async function schema() {
             "passwordhash": adminhash,
             "passwordsalt": adminsalt,
             "apikey": "",
-            "roleid": adminRoleId
+            "roleid": 1
         });
     return adminpass;
 }
