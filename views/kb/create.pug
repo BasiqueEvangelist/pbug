@@ -8,6 +8,8 @@ block body
         br 
         textarea.submit-text(name="text",placeholder="Description",required)
         br
+        label(for="secrecychooser") Secrecy: 
+        input.blueunderline#secrecychoose(type="number",min="0",max=getMaxSecrecy(req.user.permissions),name="secrecy")
         input.submitpost(type="submit",value="Post",style="float:right")
 append css
     link(rel="stylesheet",href=vroot+"static/jquery.tag-editor.css")

@@ -64,6 +64,7 @@ async function schema() {
         .createTable("infopages", function (tbl) {
             tbl.increments("id");
             tbl.dateTime("dateofcreation").notNullable();
+            tbl.integer("secrecy", 255);
             tbl.text("pagetags").notNullable().defaultTo("");
             tbl.integer("authorid").unsigned().references("id").inTable("users");
             tbl.dateTime("dateofedit").notNullable();

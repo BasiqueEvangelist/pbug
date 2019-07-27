@@ -8,6 +8,8 @@ block body
         br
         .entry
             textarea.submit-text(name="newtext")=infopage.containedtext
+        label(for="secrecychooser") Secrecy: 
+        input.blueunderline#secrecychoose(type="number",min="0",max=getMaxSecrecy(req.user.permissions),name="secrecy",value=infopage.secrecy)
         input.submitpost(type="submit", value="Repost",style="float:right")
 append css
     link(rel="stylesheet",href=vroot+"static/jquery.tag-editor.css")
