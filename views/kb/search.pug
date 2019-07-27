@@ -16,7 +16,7 @@ block body
                 li
                     a(href=vroot+"kb/" + result.id)
                         .issue-tag
-                            span.assigneetext="Author: " + result.authorname
+                            span.assigneetext="Author: " + (result.authorid === null ? "Anonymous" : result.authorname)
                         = result.pagename
         if pagec>1
             .pagination
