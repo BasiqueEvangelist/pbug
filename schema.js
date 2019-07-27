@@ -12,22 +12,22 @@ async function schema() {
         .dropTableIfExists("projects")
         .dropTableIfExists("infopagecomments")
         .dropTableIfExists("infopages")
-        .dropTableIfExists("roles")
         .dropTableIfExists("invites")
         .dropTableIfExists("users")
+        .dropTableIfExists("roles")
+        .createTable("roles", function (tbl) {
+            tbl.increments("id");
+            tbl.string("name", 100).notNullable().unique();
+            tbl.text("permissions");
+        })
         .createTable("users", function (tbl) {
             tbl.increments("id");
             tbl.string("username", 64).notNullable().unique();
             tbl.string("fullname", 100).notNullable();
             tbl.string("passwordhash", 128);
             tbl.string("passwordsalt", 64).notNullable();
-            tbl.integer("roleid").references("id").inTable("roles");
+            tbl.integer("roleid").unsigned().references("id").inTable("roles");
             tbl.string("apikey", 128).notNullable().unique();
-        })
-        .createTable("roles", function (tbl) {
-            tbl.increments("id");
-            tbl.string("name", 100).notNullable().unique();
-            tbl.text("permissions");
         })
         .createTable("projects", function (tbl) {
             tbl.increments("id");
@@ -89,22 +89,20 @@ async function schema() {
         .createTable("invites", function (tbl) {
             tbl.increments("id");
             tbl.string("uid", 128).notNullable().unique();
-            tbl.integer("roleid").references("id").inTable("roles");
+            tbl.integer("roleid").unsigned().references("id").inTable("roles");
         });
     await connection("roles")
         .insert({
             "id": 0,
             "name": "Anonymous",
             "permissions": ""
-        })
-        .returning("id");
+        });
     await connection("roles")
         .insert({
             "id": 1,
             "name": "Administrator",
             "permissions": "**"
-        })
-        .returning("id");
+        });
     var adminsalt = await mksalt();
     var adminpass = await mksalt();
     var adminhash = await hashpassword(adminpass, adminsalt);
