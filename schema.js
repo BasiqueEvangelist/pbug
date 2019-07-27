@@ -1,7 +1,8 @@
 require("dotenv").config();
 var connection = require("./lib/knexfile");
-console.log(
-    connection.schema
+var { hashpassword, mksalt } = require("./lib/users/common");
+async function schema() {
+    await connection.schema
         .dropTableIfExists("sessions")
         .dropTableIfExists("issueposts")
         .dropTableIfExists("issuetags")
@@ -88,5 +89,30 @@ console.log(
             tbl.increments("id");
             tbl.string("uid", 128).notNullable().unique();
             tbl.integer("roleid").references("id").inTable("roles");
+        });
+    var adminRoleId = (await connection("roles")
+        .insert({
+            "name": "Administrator",
+            "permissions": "**"
         })
-        .toString());
+        .returning("id"))[0];
+    var adminsalt = await mksalt();
+    var adminpass = await mksalt();
+    var adminhash = await hashpassword(adminpass, adminsalt);
+    await connection("users")
+        .insert({
+            "username": "pbug",
+            "fullname": "System",
+            "passwordhash": adminhash,
+            "passwordsalt": adminsalt,
+            "apikey": "",
+            "roleid": adminRoleId
+        });
+    return adminpass;
+}
+schema().then((password) => {
+    console.log("Login with username pbug and password " + password);
+    process.exit(0);
+}).catch((err) => {
+    console.error(err);
+});
