@@ -14,7 +14,9 @@ block body
         if issue.assigneeid === null
             span.assigneetext No assignee
         else
-            span.assigneetext="Assignee: " + issue.fullname
+            span.assigneetext="Assignee: " + issue.assigneename
+        |  
+        span.assigneetext(style="float:right")="Author: " + (issue.authorid === null ? "Anonymous" : issue.authorname)
     h2.issue-name=issue.issuename
     hr
     .taglist
