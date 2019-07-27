@@ -65,9 +65,9 @@ async function schema() {
             tbl.increments("id");
             tbl.dateTime("dateofcreation").notNullable();
             tbl.text("pagetags").notNullable().defaultTo("");
-            tbl.integer("authorid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("authorid").unsigned().references("id").inTable("users");
             tbl.dateTime("dateofedit").notNullable();
-            tbl.integer("editorid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("editorid").unsigned().references("id").inTable("users");
             tbl.string("pagename", 100).notNullable();
             tbl.text("containedtext").notNullable();
         })

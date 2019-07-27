@@ -5,7 +5,7 @@ append css
 
 block body
     .issue-tag
-        .date="Authored by " + infopage.fullname + " on " + mkdate(infopage.dateofcreation)
+        .date="Authored by " + (infopage.authorid === null ? "Anonymous" : infopage.fullname) + " on " + mkdate(infopage.dateofcreation)
         .date="Edited on " + mkdate(infopage.dateofedit)
     h2.issue-name=infopage.pagename
     hr
@@ -13,7 +13,7 @@ block body
         a(href=vroot+"kb/"+infopage.id) view
         =" | "
         a(href=vroot+"kb/"+infopage.id+"/talk") talk
-        if req.user.id !== -1
+        if provePermission(req.user.permissions, "kb.edit")
             =" | "
             a(href=vroot+"kb/"+infopage.id+"/edit") edit
     .taglist

@@ -23,6 +23,9 @@ html(lang="en")
                         if provePermission(req.user.permissions, "issues.create")
                             a(href=vroot+"issues/create") New Issue
                             |  | 
+                        if provePermission(req.user.permissions, "kb.search")
+                            a(href=vroot+"kb") Knowledge base
+                            |  | 
                         if req.user.id == -1
                             if typeof req.query.redirect !== typeof undefined
                                 a(href=vroot+"login?"+qs.stringify({redirect:req.query.redirect})) Login
@@ -35,8 +38,6 @@ html(lang="en")
                                 else
                                     a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
                         else
-                            //- a(href=vroot+"kb/create") New Info Page
-                            //- |  | 
                             a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out
                         |  | 
         .page-main

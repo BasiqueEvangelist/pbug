@@ -16,21 +16,21 @@ block body
     ul.postlist
         each comment in comments
             li.entry(id=comment.id)
-                .username=comment.fullname
+                .username=comment.authorid === null ? "Anonymous" : comment.fullname
                 .date=mkdate(comment.dateofcreation)
                 if comment.dateofedit !== null
                     .date="Edited on " + mkdate(comment.dateofedit)
                 .comment-underpanel
-                    if req.user.id == comment.authorid
+                    if (req.user.id == comment.authorid && provePermission(req.user.permissions, "kb.editpost.own")) || provePermission(req.user.permissions, "kb.editpost.other")
                         a(href=vroot+"kb/post/" + comment.id +"/edit") edit
                         |  
-                    a(href=vroot+"kb/" + infopage.id + "#" + comment.id) permalink
+                    a(href=vroot+"kb/" + infopage.id + "/talk#" + comment.id) permalink
                     |  
                 !=parseMarkdown(comment.containedtext)
-        if req.user.id != -1
+        if provePermission(req.user.permissions, "kb.post")
             li.entry
                 form(action=vroot+"kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
-                    .username=req.user.fullname
+                    .username=req.user.id === -1 ? "Anonymous" : req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Comment contents (Markdown)")
                     br
