@@ -10,8 +10,6 @@ block body
     h2.issue-name=infopage.pagename
     hr
     .underpanel
-        a(href=vroot+"kb/"+infopage.id) view
-        =" | "
         a(href=vroot+"kb/"+infopage.id+"/talk") talk
         if provePermission(req.user.permissions, "kb.edit")
             =" | "

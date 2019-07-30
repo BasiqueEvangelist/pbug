@@ -7,8 +7,6 @@ block body
     h2.issue-name=infopage.pagename
     .underpanel
         a(href=vroot+"kb/"+infopage.id) view
-        =" | "
-        a(href=vroot+"kb/"+infopage.id+"/talk") talk
         if req.user.id !== -1
             =" | "
             a(href=vroot+"kb/"+infopage.id+"/edit") edit
