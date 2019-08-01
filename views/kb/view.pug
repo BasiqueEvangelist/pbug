@@ -14,6 +14,9 @@ block body
         if provePermission(req.user.permissions, "kb.edit")
             =" | "
             a(href=vroot+"kb/"+infopage.id+"/edit") edit
+        if provePermission(req.user.permissions, "kb.delete")
+            =" | "
+            a(href=vroot+"kb/"+infopage.id+"/delete") delete
     .taglist
         if infopage.pagetags.length > 1
             each tag in infopage.pagetags.split(",")

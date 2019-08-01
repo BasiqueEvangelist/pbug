@@ -7,9 +7,12 @@ block body
     h2.issue-name=infopage.pagename
     .underpanel
         a(href=vroot+"kb/"+infopage.id) view
-        if req.user.id !== -1
+        if provePermission(req.user.permissions, "kb.edit")
             =" | "
             a(href=vroot+"kb/"+infopage.id+"/edit") edit
+        if provePermission(req.user.permissions, "kb.delete")
+            =" | "
+            a(href=vroot+"kb/"+infopage.id+"/delete") delete
     hr
     ul.postlist
         each comment in comments
