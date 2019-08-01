@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block body
-    form(action=vroot+"kb/create", method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"kb/create/"+req.params.path, method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
         input.taglist(type="text",name="tags",id="taglist",onkeypress="return event.keyCode != 13;")

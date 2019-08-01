@@ -1,7 +1,7 @@
 extends ../layout
 block body
     h2 Editing comment
-    form(action=vroot+"kb/post/" + post.id +"/edit",method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"kb/editpost/"+post.id,method="POST",enctype="application/x-www-form-urlencoded")
         .entry
             .username=post.authorid === null ? "Anonymous" : post.fullname
             .date=mkdate(post.dateofcreation)

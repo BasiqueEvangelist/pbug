@@ -14,7 +14,7 @@ block body
         ul.issues-list
             each result in results
                 li
-                    a(href=vroot+"kb/" + result.id)
+                    a(href=vroot+"kb/view/" + result.path)
                         .issue-tag
                             span.assigneetext="Author: " + (result.authorid === null ? "Anonymous" : result.authorname)
                         = result.pagename

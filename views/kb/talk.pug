@@ -6,13 +6,13 @@ append css
 block body
     h2.issue-name=infopage.pagename
     .underpanel
-        a(href=vroot+"kb/"+infopage.id) view
+        a(href=vroot+"kb/view/"+req.params.path) view
         if provePermission(req.user.permissions, "kb.edit")
             =" | "
-            a(href=vroot+"kb/"+infopage.id+"/edit") edit
+            a(href=vroot+"kb/edit/"+req.params.path) edit
         if provePermission(req.user.permissions, "kb.delete")
             =" | "
-            a(href=vroot+"kb/"+infopage.id+"/delete") delete
+            a(href=vroot+"kb/delete/"+req.params.path) delete
     hr
     ul.postlist
         each comment in comments
@@ -23,14 +23,14 @@ block body
                     .date="Edited on " + mkdate(comment.dateofedit)
                 .comment-underpanel
                     if (req.user.id == comment.authorid && provePermission(req.user.permissions, "kb.editpost.own")) || provePermission(req.user.permissions, "kb.editpost.other")
-                        a(href=vroot+"kb/post/" + comment.id +"/edit") edit
+                        a(href=vroot+"kb/editpost/"+comment.id) edit
                         |  
                     a(href=vroot+"kb/" + infopage.id + "/talk#" + comment.id) permalink
                     |  
                 !=parseMarkdown(comment.containedtext)
         if provePermission(req.user.permissions, "kb.post")
             li.entry
-                form(action=vroot+"kb/" + infopage.id, method="POST",enctype="application/x-www-form-urlencoded")
+                form(action=vroot+"kb/talk/"+req.params.path, method="POST",enctype="application/x-www-form-urlencoded")
                     .username=req.user.id === -1 ? "Anonymous" : req.user.fullname
                     .date=new Date()
                     textarea.submit-text(name="text",placeholder="Comment contents (Markdown)")

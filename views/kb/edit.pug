@@ -2,7 +2,7 @@ extends ../layout
 
 block body
     h2 Editing info page
-    form(action=vroot+"kb/" + infopage.id +"/edit",method="POST",enctype="application/x-www-form-urlencoded")
+    form(action=vroot+"kb/edit/"+req.params.path,method="POST",enctype="application/x-www-form-urlencoded")
         input.h2.blueunderline.issue-name(type="text",name="newtitle",value=infopage.pagename,style="width:100%")
         input.taglist(type="text",name="newtags",id="taglist",value=infopage.pagetags,onkeypress="return event.keyCode != 13;")
         br

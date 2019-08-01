@@ -63,6 +63,7 @@ async function schema() {
         })
         .createTable("infopages", function (tbl) {
             tbl.increments("id");
+            tbl.string("path", 200).unique().notNullable();
             tbl.dateTime("dateofcreation").notNullable();
             tbl.integer("secrecy", 255);
             tbl.text("pagetags").notNullable().defaultTo("");
