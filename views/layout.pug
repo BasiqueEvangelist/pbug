@@ -38,8 +38,8 @@ html(lang="en")
                                         a(href=vroot+"register?"+qs.stringify({redirect:req.query.redirect})) Register
                                     else
                                         a(href=vroot+"register?"+qs.stringify({redirect:req.path})) Register
-                            else
-                                a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out
+                                else
+                                    a(href=vroot+"logout?"+qs.stringify({redirect:req.path})) Log out
                             |  | 
         .page-main
             block body
