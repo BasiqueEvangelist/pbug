@@ -25,7 +25,7 @@ block body
                     if (req.user.id == comment.authorid && provePermission(req.user.permissions, "kb.editpost.own")) || provePermission(req.user.permissions, "kb.editpost.other")
                         a(href=vroot+"kb/editpost/"+comment.id) edit
                         |  
-                    a(href=vroot+"kb/" + infopage.id + "/talk#" + comment.id) permalink
+                    a(href=vroot+"kb/talk/" + req.params.path + "#" + comment.id) permalink
                     |  
                 !=parseMarkdown(comment.containedtext)
         if provePermission(req.user.permissions, "kb.post")
