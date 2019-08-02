@@ -1,0 +1,46 @@
+extends ../layout.pug
+block body
+    .searchbox
+        form(action=vroot+"kb/search", method="GET")
+            input#searchbox(type="text",placeholder="Search...",name="q",value=query,class="search")
+            input(type="submit",value="Search",class="submit-search")
+        .links
+            a(onclick="addthing('author:me',[])" href="javascript:void(0)") created by me
+            |  | 
+            a(onclick="addthing('order:asc',['order:desc'])" href="javascript:void(0)") ⇧
+            |  / 
+            a(onclick="addthing('order:desc',['order:asc'])" href="javascript:void(0)") ⇩
+    if typeof results !== "undefined"
+        ul.issues-list
+            each result in results
+                li
+                    a(href=vroot+"kb/view/" + result.path)
+                        .issue-tag
+                            span.assigneetext="Author: " + (result.authorid === null ? "Anonymous" : result.authorname)
+                        = result.pagename
+        if pagec>1
+            .pagination
+                if req.query.page !== 1
+                    a(href=paginate.href(true)) ←
+                |  
+                each page in pages
+                    if req.query.page === page.number
+                        =page.number
+                    else
+                        a(href=page.url)=page.number
+                    |  
+                if req.query.page < pagec
+                    a(href=paginate.href(false)) →
+append scripts
+    script.
+        function addthing(thing,repl) {
+            if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
+                $("#searchbox").val($("#searchbox").val() + " " + thing);
+            }
+        }
