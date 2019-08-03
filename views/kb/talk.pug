@@ -4,6 +4,7 @@ append css
     link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
 
 block body
+    .issue-tag="/"+req.params.path
     h2.issue-name=infopage.pagename
     hr
     .underpanel

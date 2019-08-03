@@ -1,6 +1,7 @@
 extends ../layout.pug
 
 block body
+    .issue-tag="/"+req.params.path
     form(action=vroot+"kb/create/"+req.params.path, method="POST",enctype="application/x-www-form-urlencoded")
         input.title-input(type="text",name="name",placeholder="Title",required)
         hr
