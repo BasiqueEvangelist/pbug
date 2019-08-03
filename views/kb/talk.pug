@@ -5,6 +5,7 @@ append css
 
 block body
     h2.issue-name=infopage.pagename
+    hr
     .underpanel
         a(href=vroot+"kb/view/"+req.params.path) view
         if provePermission(req.user.permissions, "kb.edit")
@@ -13,7 +14,6 @@ block body
         if provePermission(req.user.permissions, "kb.delete")
             =" | "
             a(href=vroot+"kb/delete/"+req.params.path) delete
-    hr
     ul.postlist
         each comment in comments
             li.entry(id=comment.id)
