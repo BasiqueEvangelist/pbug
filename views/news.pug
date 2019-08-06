@@ -4,7 +4,6 @@ include issues/common.pug
 block body
     ul.issues-list
         each thing in things
-            -console.log(thing)
             +activitySpecified(thing, thing.issue)
 append scripts
     script(src=vroot+"static/expandable.js")

@@ -418,3 +418,7 @@ label {
 .strike {
 	text-decoration: line-through;
 }
+
+a.show-button {
+	display: inline;
+}
