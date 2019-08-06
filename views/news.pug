@@ -1,0 +1,9 @@
+extends layout.pug
+include issues/common.pug
+
+block body
+    ul.issues-list
+        each issue in issues
+            li IssueID #{issue.issue}
+            each thing in issue.things
+                +activity(thing)

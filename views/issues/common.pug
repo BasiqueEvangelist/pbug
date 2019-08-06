@@ -72,13 +72,13 @@ mixin activity(thing)
                 if thing.data.from.tags !== thing.data.to.tags
                     span.blue changed tags from 
                     span.taglist
-                        if issue.issuetags.length > 1
+                        if thing.data.from.length > 1
                             each tag in thing.data.from.tags.split(",")
                                 span.tag
                                     = "#" + tag + " "
                     span.blue  to 
                     span.taglist
-                        if issue.issuetags.length > 1
+                        if thing.data.to.length > 1
                             each tag in thing.data.to.tags.split(",")
                                 span.tag
                                     = "#" + tag + " "
@@ -109,7 +109,7 @@ mixin activity(thing)
                 if thing.data.tags !== ""
                     span.blue and with tags 
                     span.taglist
-                        if issue.issuetags.length > 1
+                        if thing.data.tags.length > 1
                             each tag in thing.data.tags.split(",")
                                 span.tag
                                     = "#" + tag + " "
