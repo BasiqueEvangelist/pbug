@@ -8,6 +8,7 @@ async function schema() {
         .dropTableIfExists("issuetags")
         .dropTableIfExists("issueactivities")
         .dropTableIfExists("issuefiles")
+        .dropTableIfExists("issuewatchers")
         .dropTableIfExists("issues")
         .dropTableIfExists("projects")
         .dropTableIfExists("infopagecomments")
@@ -45,6 +46,11 @@ async function schema() {
             tbl.integer("assigneeid").unsigned().references("id").inTable("users");
             tbl.text("description").notNullable();
             tbl.dateTime("dateofcreation").notNullable();
+        })
+        .createTable("issuewatchers", function (tbl) {
+            tbl.increments("id");
+            tbl.integer("watcherid").unsigned().references("id").inTable("users").notNullable();
+            tbl.integer("issueid").unsigned().references("id").inTable("issuesq").notNullable();
         })
         .createTable("issueposts", function (tbl) {
             tbl.increments("id");

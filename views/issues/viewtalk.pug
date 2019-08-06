@@ -37,6 +37,12 @@ block body
         if candelete
             a(href=vroot+"issues/" + issue.id + "/delete/areyousure") delete issue
             |  | 
+        if req.user.id !== -1
+            if watching
+                a(href=vroot+"issues/" + issue.id + "/watch") unwatch
+            else
+                a(href=vroot+"issues/" + issue.id + "/watch") watch
+            |  | 
         a(href=vroot+"issues/" + issue.id + "/activity") activity
         br
     p!=parseMarkdown(issue.description)
