@@ -63,3 +63,5 @@ typings/
 /files/
 
 config-secret.json
+
+**.sqlite
