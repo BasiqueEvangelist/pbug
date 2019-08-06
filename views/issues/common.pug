@@ -1,23 +1,57 @@
 mixin activity(thing)
     li.entry
         .date=mkdate(thing.dateofoccurance)
-        span.username=thing.fullname === null ? "Anonymous" : thing.fullname
-        |  
-        if thing.data.type == "status"
-            span.blue changed issue status from 
-            = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
-            span.blue  to 
-            = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
-        else if thing.data.type == "post"
-            span.showable-container
-                a.blue.show-button.underline(href="javascript:void(0)") posted
-                .showable
-                    .postborder
+        +activityBody(thing)
+mixin activitySpecified(thing, issue)
+    li.entry
+        a.date(href=vroot+"issues/"+issue.id)="From " + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4)
+        .date=mkdate(thing.dateofoccurance)
+        +activityBody(thing)
+mixin activityBody(thing)
+    span.username=thing.fullname === null ? "Anonymous" : thing.fullname
+    |  
+    if thing.data.type == "status"
+        span.blue changed issue status from 
+        = thing.data.oldstatus.charAt(0).toUpperCase() + thing.data.oldstatus.slice(1)
+        span.blue  to 
+        = thing.data.newstatus.charAt(0).toUpperCase() + thing.data.newstatus.slice(1)
+    else if thing.data.type == "post"
+        span.showable-container
+            a.blue.show-button.underline(href="javascript:void(0)") posted
+            .showable
+                .postborder
+                    pre
+                        code.smallmargin= thing.data.text
+    else if thing.data.type == "editpost"
+        span.showable-container
+            a.blue.show-button.underline(href="javascript:void(0)") has edited
+            table.showable.hide(style="width:100%")
+                tr
+                    td.postborder.fleft(style="width:48%")
                         pre
-                            code.smallmargin= thing.data.text
-        else if thing.data.type == "editpost"
-            span.showable-container
-                a.blue.show-button.underline(href="javascript:void(0)") has edited
+                            code
+                                each tv in thing.oldtext
+                                    if tv[1] == ""
+                                        div.smallmargin=tv[0]
+                                    else if tv[1] == "red"
+                                        div.smallmargin.beforeedit=tv[0]
+                                    else if tv[1] == "filler"
+                                        div.smallmargin.filler=" "
+                    br
+                    td.postborder.fright(style="width:48%")
+                        pre
+                            code
+                                each tv in thing.newtext
+                                    if tv[1] == ""
+                                        div.smallmargin=tv[0]
+                                    else if tv[1] == "green"
+                                        div.smallmargin.afteredit=tv[0]
+                                    else if tv[1] == "filler"
+                                        div.smallmargin.filler=" "
+    else if thing.data.type == "editissue"
+        span.showable-container
+            if thing.data.from.text !== thing.data.to.text
+                a.blue.show-button.underline(href="javascript:void(0)") edited description
                 table.showable.hide(style="width:100%")
                     tr
                         td.postborder.fleft(style="width:48%")
@@ -41,79 +75,52 @@ mixin activity(thing)
                                             div.smallmargin.afteredit=tv[0]
                                         else if tv[1] == "filler"
                                             div.smallmargin.filler=" "
-        else if thing.data.type == "editissue"
-            span.showable-container
-                if thing.data.from.text !== thing.data.to.text
-                    a.blue.show-button.underline(href="javascript:void(0)") edited description
-                    table.showable.hide(style="width:100%")
-                        tr
-                            td.postborder.fleft(style="width:48%")
-                                pre
-                                    code
-                                        each tv in thing.oldtext
-                                            if tv[1] == ""
-                                                div.smallmargin=tv[0]
-                                            else if tv[1] == "red"
-                                                div.smallmargin.beforeedit=tv[0]
-                                            else if tv[1] == "filler"
-                                                div.smallmargin.filler=" "
-                            br
-                            td.postborder.fright(style="width:48%")
-                                pre
-                                    code
-                                        each tv in thing.newtext
-                                            if tv[1] == ""
-                                                div.smallmargin=tv[0]
-                                            else if tv[1] == "green"
-                                                div.smallmargin.afteredit=tv[0]
-                                            else if tv[1] == "filler"
-                                                div.smallmargin.filler=" "
-                    br
-                if thing.data.from.tags !== thing.data.to.tags
-                    span.blue changed tags from 
-                    span.taglist
-                        if thing.data.from.length > 1
-                            each tag in thing.data.from.tags.split(",")
-                                span.tag
-                                    = "#" + tag + " "
-                    span.blue  to 
-                    span.taglist
-                        if thing.data.to.length > 1
-                            each tag in thing.data.to.tags.split(",")
-                                span.tag
-                                    = "#" + tag + " "
-                    br
-                if thing.data.from.title !== thing.data.to.title
-                    span.blue changed title from 
-                    = thing.data.from.title
-                    span.blue  to 
-                    = thing.data.to.title
-                    br
-                if thing.data.from.assigneeid !== thing.data.to.assigneeid
-                    if (thing.data.to.assigneeid !== "-1")
-                        span.blue assigned 
-                        span.username=thing.newassigneename
-                    else
-                        span.blue removed assignee 
-        else if thing.data.type == "createissue"
-            span.showable-container
-                a.blue.show-button.underline(href="javascript:void(0)") has created issue with description
-                table.showable.hide(style="width:100%")
-                    tr
-                        td.postborder
-                            pre
-                                code
-                                    each tv in thing.data.text.split("\n")
-                                        div.smallmargin=tv
-                |  
-                if thing.data.tags !== ""
-                    span.blue and with tags 
-                    span.taglist
-                        if thing.data.tags.length > 1
-                            each tag in thing.data.tags.split(",")
-                                span.tag
-                                    = "#" + tag + " "
-                span.blue  and with title 
-                = thing.data.title
-        else
-            =JSON.stringify(thing.data)
+                br
+            if thing.data.from.tags !== thing.data.to.tags
+                span.blue changed tags from 
+                span.taglist
+                    if thing.data.from.length > 1
+                        each tag in thing.data.from.tags.split(",")
+                            span.tag
+                                = "#" + tag + " "
+                span.blue  to 
+                span.taglist
+                    if thing.data.to.length > 1
+                        each tag in thing.data.to.tags.split(",")
+                            span.tag
+                                = "#" + tag + " "
+                br
+            if thing.data.from.title !== thing.data.to.title
+                span.blue changed title from 
+                = thing.data.from.title
+                span.blue  to 
+                = thing.data.to.title
+                br
+            if thing.data.from.assigneeid !== thing.data.to.assigneeid
+                if (thing.data.to.assigneeid !== "-1")
+                    span.blue assigned 
+                    span.username=thing.newassigneename
+                else
+                    span.blue removed assignee 
+    else if thing.data.type == "createissue"
+        span.showable-container
+            a.blue.show-button.underline(href="javascript:void(0)") has created issue with description
+            table.showable.hide(style="width:100%")
+                tr
+                    td.postborder
+                        pre
+                            code
+                                each tv in thing.data.text.split("\n")
+                                    div.smallmargin=tv
+            |  
+            if thing.data.tags !== ""
+                span.blue and with tags 
+                span.taglist
+                    if thing.data.tags.length > 1
+                        each tag in thing.data.tags.split(",")
+                            span.tag
+                                = "#" + tag + " "
+            span.blue  and with title 
+            = thing.data.title
+    else
+        =JSON.stringify(thing.data)

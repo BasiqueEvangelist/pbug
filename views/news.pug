@@ -3,7 +3,8 @@ include issues/common.pug
 
 block body
     ul.issues-list
-        each issue in issues
-            li IssueID #{issue.issue}
-            each thing in issue.things
-                +activity(thing)
+        each thing in things
+            -console.log(thing)
+            +activitySpecified(thing, thing.issue)
+append scripts
+    script(src=vroot+"static/expandable.js")
