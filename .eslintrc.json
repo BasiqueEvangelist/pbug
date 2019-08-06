@@ -10,13 +10,13 @@
         ],
         "eqeqeq": "error",
         "no-undef": "error",
+        "no-console": "warn",
+        "no-debugger": "warn",
         "use-isnan": "warn"
     },
     "env": {
         "node": true,
-        "es6": true,
-        "browser": true,
-        "jquery": true
+        "es6": true
     },
     "parserOptions": {
         "ecmaVersion": 2017
