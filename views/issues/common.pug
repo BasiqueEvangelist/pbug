@@ -4,11 +4,11 @@ mixin activity(thing)
         +activityBody(thing)
 mixin activitySpecified(thing)
     li.entry
-        a.date(href=vroot+"issues/"+thing.issueid)="From " + thing.shortprojectid + "-" + ("0000" + thing.issueid).slice(-4)
+        a.date(href=vroot+"issues/"+thing.issueid) From [#{thing.shortprojectid}-#{("0000" + thing.issueid).slice(-4)}] #{thing.issuename}
         .date=mkdate(thing.dateofoccurance)
         +activityBody(thing)
 mixin activityBody(thing)
-    span.username=thing.fullname === null ? "Anonymous" : thing.fullname
+    =thing.fullname === null ? "Anonymous" : thing.fullname
     |  
     if thing.data.type == "status"
         span.blue changed issue status from 
@@ -99,7 +99,7 @@ mixin activityBody(thing)
             if thing.data.from.assigneeid !== thing.data.to.assigneeid
                 if (thing.data.to.assigneeid !== "-1")
                     span.blue assigned 
-                    span.username=thing.newassigneename
+                    =thing.newassigneename
                 else
                     span.blue removed assignee 
     else if thing.data.type == "createissue"
