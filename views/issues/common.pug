@@ -2,9 +2,9 @@ mixin activity(thing)
     li.entry
         .date=mkdate(thing.dateofoccurance)
         +activityBody(thing)
-mixin activitySpecified(thing, issue)
+mixin activitySpecified(thing)
     li.entry
-        a.date(href=vroot+"issues/"+issue.id)="From " + issue.shortprojectid + "-" + ("0000" + issue.id).slice(-4)
+        a.date(href=vroot+"issues/"+thing.issueid)="From " + thing.shortprojectid + "-" + ("0000" + thing.issueid).slice(-4)
         .date=mkdate(thing.dateofoccurance)
         +activityBody(thing)
 mixin activityBody(thing)
