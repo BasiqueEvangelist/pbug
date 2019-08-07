@@ -3,7 +3,7 @@ extends ../layout.pug
 block body
     h2(style="text-align:center") 500 Internal Server Error 
     p
-        if config.environment !== "development"
+        if process.env.NODE_ENV === "production"
             | Something happened, and that which happened isn't supposed to happen.
         else
             | Something happened.     
