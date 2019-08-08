@@ -159,9 +159,13 @@ nav>a:hover {
 	font-family: tahoma, sans-serif;
 }
 
-.entry .date {
+.entry .date, .entry .from {
 	font-size: 10px;
 	color: #059;
+}
+
+.entry .from .issue {
+	color: #222;
 }
 
 .entry .username {

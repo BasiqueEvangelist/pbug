@@ -4,7 +4,9 @@ mixin activity(thing)
         +activityBody(thing)
 mixin activitySpecified(thing)
     li.entry
-        a.date(href=vroot+"issues/"+thing.issueid) From [#{thing.shortprojectid}-#{("0000" + thing.issueid).slice(-4)}] #{thing.issuename}
+        a.from(href=vroot+"issues/"+thing.issueid)
+            | From 
+            span.issue [#{thing.shortprojectid}-#{("0000" + thing.issueid).slice(-4)}] #{thing.issuename}
         .date=mkdate(thing.dateofoccurance)
         +activityBody(thing)
 mixin activityBody(thing)
