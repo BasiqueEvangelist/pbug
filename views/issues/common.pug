@@ -77,31 +77,33 @@ mixin activityBody(thing)
                                             div.smallmargin.afteredit=tv[0]
                                         else if tv[1] == "filler"
                                             div.smallmargin.filler=" "
-                br
+                |  
             if thing.data.from.tags !== thing.data.to.tags
-                span.blue changed tags from 
+                span.blue changed tags from (
                 span.taglist
                     if thing.data.from.length > 1
                         each tag in thing.data.from.tags.split(",")
                             span.tag
                                 = "#" + tag + " "
-                span.blue  to 
+                span.blue ) to (
                 span.taglist
                     if thing.data.to.length > 1
                         each tag in thing.data.to.tags.split(",")
                             span.tag
                                 = "#" + tag + " "
-                br
+                span.blue )
+                |  
             if thing.data.from.title !== thing.data.to.title
                 span.blue changed title from 
                 = thing.data.from.title
                 span.blue  to 
                 = thing.data.to.title
-                br
+                |  
             if thing.data.from.assigneeid !== thing.data.to.assigneeid
                 if (thing.data.to.assigneeid !== "-1")
                     span.blue assigned 
                     =thing.newassigneename
+                    |  
                 else
                     span.blue removed assignee 
     else if thing.data.type == "createissue"
