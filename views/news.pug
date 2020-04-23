@@ -1,9 +1,64 @@
 extends layout.pug
 include issues/common.pug
 
+append css
+    link(rel="stylesheet",href=vroot+"static/highlightstyles/default.css")
+
 block body
-    ul.issues-list
-        each thing in things
-            +activitySpecified(thing, thing.issue)
+    .searchbox
+        form(action=vroot, method="GET")
+            input#searchbox(type="text",placeholder="Search...",name="q",value=query,class="search")
+            input(type="submit",value="Search",class="submit-search")
+        .links
+            | assigned to 
+            a(onclick="addthing('assignee:me',['assignee:none'])" href="javascript:void(0)") me
+            | /
+            a(onclick="addthing('assignee:none',['assignee:me'])" href="javascript:void(0)") nobody
+
+            |  | 
+            a(onclick="addthing('author:me',[])" href="javascript:void(0)") created by me
+            |  | 
+            | watched: 
+            a(onclick="addthing('watched:yes',['watched:no'])" href="javascript:void(0)") yes
+            | /
+            a(onclick="addthing('watched:no',['watched:yes'])" href="javascript:void(0)") no
+            |  | 
+            a(onclick="addthing('order:asc',['order:desc'])" href="javascript:void(0)") ⇧
+            |  / 
+            a(onclick="addthing('order:desc',['order:asc'])" href="javascript:void(0)") ⇩
+    if typeof things !== "undefined"
+        ul.postlist
+            each thing in things
+                li
+                    +activitySpecified(thing)
+        if pagec>1
+            .pagination
+                if req.query.page !== 1
+                    a(href=paginate.href(true)) ←
+                |  
+                each page in pages
+                    if req.query.page === page.number
+                        =page.number
+                    else
+                        a(href=page.url)=page.number
+                    |  
+                if req.query.page < pagec
+                    a(href=paginate.href(false)) →
 append scripts
+    script.
+        function addthing(thing,repl) {
+            if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
+                $("#searchbox").val($("#searchbox").val() + " " + thing);
+            }
+            else {
+                $("#searchbox").val($("#searchbox").val().replace(" " + thing, ""));
+                $("#searchbox").val($("#searchbox").val().replace(thing + " ", ""));
+            }
+        }
     script(src=vroot+"static/expandable.js")
