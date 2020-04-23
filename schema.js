@@ -59,9 +59,9 @@ async function schema() {
     debug.main.log("info", "Created issues");
     await connection.schema
         .createTable("issuewatchers", function (tbl) {
-            tbl.increments("id");
             tbl.integer("watcherid").unsigned().references("id").inTable("users").notNullable();
             tbl.integer("issueid").unsigned().references("id").inTable("issues").notNullable();
+            tbl.primary(["watcherid", "issueid"]);
         });
     debug.main.log("info", "Created issuewatchers");
     await connection.schema
