@@ -10,15 +10,10 @@ block body
             input#searchbox(type="text",placeholder="Search...",name="q",value=query,class="search")
             input(type="submit",value="Search",class="submit-search")
         .links
-            | assigned to 
-            a(onclick="addthing('assignee:me',['assignee:none'])" href="javascript:void(0)") me
+            a(onclick="addthing('status:open',['status:closed'])" href="javascript:void(0)") open
             | /
-            a(onclick="addthing('assignee:none',['assignee:me'])" href="javascript:void(0)") nobody
-
-            |  | 
-            a(onclick="addthing('author:me',[])" href="javascript:void(0)") created by me
-            |  | 
-            | watched: 
+            a(onclick="addthing('status:closed',['status:open'])" href="javascript:void(0)") closed
+            |  | watched: 
             a(onclick="addthing('watched:yes',['watched:no'])" href="javascript:void(0)") yes
             | /
             a(onclick="addthing('watched:no',['watched:yes'])" href="javascript:void(0)") no
