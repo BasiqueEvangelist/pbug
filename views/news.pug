@@ -52,8 +52,12 @@ append scripts
                 $("#searchbox").val($("#searchbox").val() + " " + thing);
             }
             else {
-                $("#searchbox").val($("#searchbox").val().replace(" " + thing, ""));
-                $("#searchbox").val($("#searchbox").val().replace(thing + " ", ""));
+                var data = $("#searchbox").val();
+                data = data
+                    .replace(" " + thing, "")
+                    .replace(thing + " ", "")
+                    .replace(thing, "");
+                $("#searchbox").val(data);
             }
         }
     script(src=vroot+"static/expandable.js")

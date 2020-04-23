@@ -43,4 +43,12 @@ append scripts
                 }
                 $("#searchbox").val($("#searchbox").val() + " " + thing);
             }
+            else {
+                var data = $("#searchbox").val();
+                data = data
+                    .replace(" " + thing, "")
+                    .replace(thing + " ", "")
+                    .replace(thing, "");
+                $("#searchbox").val(data);
+            }
         }
