@@ -61,7 +61,7 @@ async function schema() {
         .createTable("issuewatchers", function (tbl) {
             tbl.increments("id");
             tbl.integer("watcherid").unsigned().references("id").inTable("users").notNullable();
-            tbl.integer("issueid").unsigned().references("id").inTable("issuesq").notNullable();
+            tbl.integer("issueid").unsigned().references("id").inTable("issues").notNullable();
         });
     debug.main.log("info", "Created issuewatchers");
     await connection.schema
@@ -153,6 +153,6 @@ schema().then((password) => {
     debug.main.log("info", "Login with username pbug and password " + password);
     process.exit(0);
 }).catch((err) => {
-    debug.log.log("error", err);
+    debug.main.log("error", err);
     process.exit(0);
 });
