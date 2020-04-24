@@ -4,9 +4,17 @@ mixin activity(thing)
         +activityBody(thing)
 mixin activitySpecified(thing)
     li.entry
-        a.from(href=vroot+"issues/"+thing.issueid)
-            | From 
-            span.issue [#{thing.shortprojectid}-#{("0000" + thing.issueid).slice(-4)}] #{thing.issuename}
+        a
+            span.from(href=vroot+"issues/"+thing.issueid)
+                | From 
+                ="[" + thing.shortprojectid + "-" + ("0000" + thing.id).slice(-4) + "] "
+                | (
+                if thing.isclosed
+                    span.issue-closed-marker Closed
+                else
+                    span.issue-opened-marker Open
+                | ) 
+                span.issue= thing.issuename
         .date=mkdate(thing.dateofoccurance)
         +activityBody(thing)
 mixin activityBody(thing)
